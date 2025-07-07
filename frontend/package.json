@@ -1,6 +1,7 @@
 {
   "name": "legacy-booth-frontend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Frontend for The Legacy Booth - A storytelling space for seniors",
   "private": true,
   "dependencies": {
@@ -25,13 +26,14 @@
     "react-query": "^3.39.3",
     "react-hook-form": "^7.48.2",
     "react-select": "^5.8.0",
-    "recharts": "^2.8.0"
+    "recharts": "^2.8.0",
+    "@tanstack/react-query": "^5.8.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +53,17 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "^4.1.1",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
 } 

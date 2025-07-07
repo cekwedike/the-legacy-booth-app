@@ -7,10 +7,13 @@ const Story = require('../models/Story');
 const { authenticateToken, requireOwnershipOrStaff } = require('../middleware/auth');
 const router = express.Router();
 
-// Configure OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Configure OpenAI (optional)
+let openai = null;
+if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -173,7 +176,7 @@ router.post('/:storyId/recording', authenticateToken, upload.single('recording')
     await story.save();
 
     // Start transcription process
-    if (process.env.OPENAI_API_KEY) {
+    if (openai) {
       transcribeRecording(story._id, req.file.path);
     }
 
@@ -318,6 +321,19 @@ async function transcribeRecording(storyId, filePath) {
     const story = await Story.findById(storyId);
     if (!story) return;
 
+    // Check if OpenAI is available
+    if (!openai) {
+      console.log('OpenAI not configured, skipping transcription');
+      story.transcription = {
+        text: 'Transcription not available - OpenAI API key not configured',
+        confidence: 0,
+        language: 'en',
+        status: 'not_available'
+      };
+      await story.save();
+      return;
+    }
+
     story.transcription.status = 'processing';
     await story.save();
 
@@ -358,6 +374,12 @@ async function transcribeRecording(storyId, filePath) {
 // Generate story insights using OpenAI
 async function generateStoryInsights(storyId, text) {
   try {
+    // Check if OpenAI is available
+    if (!openai) {
+      console.log('OpenAI not configured, skipping story insights generation');
+      return;
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
