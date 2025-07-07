@@ -9,8 +9,7 @@
     "client": "cd frontend && npm start",
     "build": "cd frontend && npm run build",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "start": "cd backend && npm start",
-    "init-db": "cd backend && node scripts/init-db.js"
+    "start": "cd backend && npm start"
   },
   "keywords": ["legacy", "seniors", "storytelling", "assisted-living"],
   "author": "Legacy Booth Team",
