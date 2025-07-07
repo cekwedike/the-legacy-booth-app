@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger');
 
 // Load environment variables
 dotenv.config();
@@ -94,6 +96,9 @@ app.use('/api/stories', authenticateToken, storyRoutes);
 app.use('/api/messages', authenticateToken, messageRoutes);
 app.use('/api/legacy-books', authenticateToken, legacyBookRoutes);
 app.use('/api/admin', authenticateToken, adminRoutes);
+
+// Swagger API docs
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
