@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import type { Prompt, View, Recording } from '../types';
-import { RecordingType, TranscriptionStatus } from '../types';
+import type { Prompt, View, Recording } from '../types/types';
+import { RecordingType, TranscriptionStatus } from '../types/types';
 import { useAuth } from '../hooks/useAuth';
 import { useLegacyData } from '../hooks/useLegacyData';
 import Button from './ui/Button';

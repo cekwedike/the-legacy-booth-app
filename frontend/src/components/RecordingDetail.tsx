@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import type { Recording, View } from '../types';
-import { TranscriptionStatus } from '../types';
+import type { Recording, View } from '../types/types';
+import { TranscriptionStatus } from '../types/types';
 import { useLegacyData } from '../hooks/useLegacyData';
 import Button from './ui/Button';
 import Card from './ui/Card';

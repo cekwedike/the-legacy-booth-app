@@ -1,5 +1,5 @@
-import type { Resident, Prompt, Recording } from '../types';
-import { RecordingType, TranscriptionStatus } from '../types';
+import type { Resident, Prompt, Recording } from '../types/types';
+import { RecordingType, TranscriptionStatus } from '../types/types';
 
 export const residents: Resident[] = [
   {

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import type { Prompt, View } from '../types';
-import { RecordingType } from '../types';
+import type { Prompt, View } from '../types/types';
+import { RecordingType } from '../types/types';
 import { useLegacyData } from '../hooks/useLegacyData';
 import Card from './ui/Card';
 import Header from './ui/Header';

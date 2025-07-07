@@ -1,5 +1,5 @@
 import React from 'react';
-import type { View } from '../types';
+import type { View } from '../types/types';
 import { useAuth } from '../hooks/useAuth';
 import Header from './ui/Header';
 import Card from './ui/Card';

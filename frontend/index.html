@@ -7,54 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <style type="text/tailwindcss">
-      body {
-        font-family: 'Poppins', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        background-color: #2C2521; /* Deep warm brown */
-        color: #F5F0E8; /* Creamy off-white */
-      }
-      .font-serif {
-        font-family: 'Lora', serif;
-      }
-    </style>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
-              serif: ['Lora', 'serif'],
-            },
-            colors: {
-              'brand-background': '#2C2521', // Deep warm brown
-              'brand-surface': '#3A322E',    // Lighter warm brown for cards
-              'brand-primary': '#E57A44',    // Burnt Copper as primary action color
-              'brand-secondary': '#A9A095',  // Muted, warm gray for secondary text/elements
-              'brand-accent': '#E57A44',     // Burnt Copper
-              'brand-text-primary': '#F5F0E8', // Creamy off-white
-              'brand-text-secondary': '#A9A095', // Muted, warm gray
-            }
-          }
-        }
-      }
-    </script>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-    "react/": "https://esm.sh/react@^19.1.0/",
-    "react": "https://esm.sh/react@^19.1.0",
-    "@google/genai": "https://esm.sh/@google/genai"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/src/styles/index.css">
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
