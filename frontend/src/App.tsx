@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { LegacyDataProvider } from './hooks/useLegacyData';
-import type { View } from './types';
+import type { View } from './types/types';
 import LoginScreen from './components/LoginScreen';
 import ResidentHome from './components/ResidentHome';
 import PromptsList from './components/PromptsList';
