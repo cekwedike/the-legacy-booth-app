@@ -3,6 +3,13 @@ const User = require('../models/User');
 const { authenticateToken, generateToken, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: User authentication and management
+ */
+
 // Register new user (staff/admin only)
 router.post('/register', authenticateToken, requireRole(['staff', 'admin']), async (req, res) => {
   try {
