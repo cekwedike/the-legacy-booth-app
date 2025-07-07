@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import type { View, Resident } from '../types';
+import type { View, Resident } from '../types/types';
 import { useAuth } from '../hooks/useAuth';
 import { useLegacyData } from '../hooks/useLegacyData';
 import Header from './ui/Header';

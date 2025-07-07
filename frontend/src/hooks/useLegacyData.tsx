@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useMemo, useCallback, useEffect } from 'react';
-import type { Resident, Prompt, Recording } from '../types';
+import type { Resident, Prompt, Recording } from '../types/types';
 import { residents as mockResidents, prompts as mockPrompts, recordings as mockRecordings } from '../services/mockData';
 
 interface LegacyDataContextType {

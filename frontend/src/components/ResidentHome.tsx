@@ -1,6 +1,6 @@
 import React from 'react';
-import type { View } from '../types';
-import { RecordingType } from '../types';
+import type { View } from '../types/types';
+import { RecordingType } from '../types/types';
 import { useAuth } from '../hooks/useAuth';
 import Header from './ui/Header';
 import { StoryIcon, VideoIcon, LogoutIcon, PhoneIcon, CameraIcon } from './ui/icons';

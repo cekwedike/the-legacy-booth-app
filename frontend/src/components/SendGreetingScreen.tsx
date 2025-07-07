@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import type { View } from '../types';
+import type { View } from '../types/types';
 import Header from './ui/Header';
 import Card from './ui/Card';
 import Button from './ui/Button';

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { View } from '../types';
+import type { View } from '../types/types';
 import Button from './ui/Button';
 
 interface WelcomeScreenProps {

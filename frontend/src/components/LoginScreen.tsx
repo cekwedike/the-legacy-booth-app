@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Resident, View } from '../types';
+import type { Resident, View } from '../types/types';
 import { useAuth } from '../hooks/useAuth';
 import { useLegacyData } from '../hooks/useLegacyData';
 import Avatar from './ui/Avatar';

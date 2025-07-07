@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useMemo } from 'react';
-import type { Resident } from '../types';
+import type { Resident } from '../types/types';
 
 interface AuthContextType {
   currentUser: Resident | null;

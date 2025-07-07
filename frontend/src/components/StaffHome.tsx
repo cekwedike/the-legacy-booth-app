@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Recording, View } from '../types';
+import type { Recording, View } from '../types/types';
 import { useAuth } from '../hooks/useAuth';
 import { useLegacyData } from '../hooks/useLegacyData';
 import Button from './ui/Button';
