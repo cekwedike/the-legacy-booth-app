@@ -1,0 +1,9 @@
+{
+  "name": "The Legacy Booth",
+  "description": "A simple, intuitive tablet application for seniors in an assisted living facility to record life stories and messages for their families.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "prompt": ""
+}
