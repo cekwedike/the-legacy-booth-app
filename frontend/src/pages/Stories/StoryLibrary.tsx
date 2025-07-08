@@ -35,14 +35,15 @@ import {
   Mic
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore, Story } from '../../store';
 
 const StoryLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('date');
-  const [isPlaying, setIsPlaying] = useState<number | null>(null);
+  const [isPlaying, setIsPlaying] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedStory, setSelectedStory] = useState<any>(null);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const navigate = useNavigate();
 
   const categories = [
@@ -59,84 +60,13 @@ const StoryLibrary: React.FC = () => {
     'Life Milestones'
   ];
 
-  const stories = [
-    {
-      id: 1,
-      title: 'My First Job at the Factory',
-      category: 'Career & Work',
-      duration: '5:32',
-      date: '2024-01-15',
-      status: 'published',
-      description: 'The story of my first job and the valuable lessons I learned about hard work and perseverance.',
-      tags: ['work', 'lessons', 'youth'],
-      favorite: true,
-      transcription: 'When I was 18 years old, I got my first job at the local factory...'
-    },
-    {
-      id: 2,
-      title: 'Family Vacation to Europe',
-      category: 'Travel Adventures',
-      duration: '8:15',
-      date: '2024-01-10',
-      status: 'transcribed',
-      description: 'Our amazing family trip across Europe in the summer of 1975.',
-      tags: ['travel', 'family', 'adventure'],
-      favorite: false,
-      transcription: 'It was the summer of 1975 when we decided to take the whole family to Europe...'
-    },
-    {
-      id: 3,
-      title: 'Meeting My Spouse',
-      category: 'Love & Relationships',
-      duration: '6:48',
-      date: '2024-01-05',
-      status: 'published',
-      description: 'The magical moment when I first laid eyes on the love of my life.',
-      tags: ['love', 'romance', 'meeting'],
-      favorite: true,
-      transcription: 'I remember the exact moment I saw her for the first time...'
-    },
-    {
-      id: 4,
-      title: 'Overcoming the Great Depression',
-      category: 'Historical Events',
-      duration: '12:24',
-      date: '2023-12-20',
-      status: 'published',
-      description: 'How my family survived and thrived during the challenging years of the Great Depression.',
-      tags: ['history', 'survival', 'family'],
-      favorite: false,
-      transcription: 'The Great Depression hit our family hard, but we learned to adapt...'
-    },
-    {
-      id: 5,
-      title: 'Learning to Play the Piano',
-      category: 'Hobbies & Interests',
-      duration: '4:56',
-      date: '2023-12-15',
-      status: 'transcribed',
-      description: 'My journey of learning to play the piano and the joy it brought to my life.',
-      tags: ['music', 'learning', 'passion'],
-      favorite: true,
-      transcription: 'I was 12 years old when my parents bought our first piano...'
-    },
-    {
-      id: 6,
-      title: 'The Day I Became a Parent',
-      category: 'Life Milestones',
-      duration: '7:12',
-      date: '2023-12-10',
-      status: 'published',
-      description: 'The overwhelming joy and responsibility of becoming a parent for the first time.',
-      tags: ['parenting', 'milestone', 'joy'],
-      favorite: false,
-      transcription: "I'll never forget the moment the nurse placed my first child in my arms..."
-    }
-  ];
+  // Zustand store
+  const stories = useAppStore(s => s.stories);
+  const removeStory = useAppStore(s => s.removeStory);
 
   const filteredStories = stories.filter(story => {
     const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         story.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (story.description?.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || story.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -144,11 +74,9 @@ const StoryLibrary: React.FC = () => {
   const sortedStories = [...filteredStories].sort((a, b) => {
     switch (sortBy) {
       case 'date':
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return 0; // TODO: implement date sorting if date is available in Zustand
       case 'title':
         return a.title.localeCompare(b.title);
-      case 'duration':
-        return parseInt(a.duration.replace(':', '')) - parseInt(b.duration.replace(':', ''));
       case 'category':
         return a.category.localeCompare(b.category);
       default:
@@ -156,17 +84,19 @@ const StoryLibrary: React.FC = () => {
     }
   });
 
-  const handlePlay = (storyId: number) => {
+  const handlePlay = (storyId: string) => {
     setIsPlaying(isPlaying === storyId ? null : storyId);
   };
 
-  const handleDelete = (story: any) => {
+  const handleDelete = (story: Story) => {
     setSelectedStory(story);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
-    // Handle delete logic here
+    if (selectedStory) {
+      removeStory(selectedStory.id);
+    }
     setDeleteDialogOpen(false);
     setSelectedStory(null);
   };

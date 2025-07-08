@@ -20,70 +20,29 @@ import {
   Delete
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Story } from '../../types';
+import { useAppStore, Story } from '../../store';
 
 const StoryDetail: React.FC = () => {
-  const [story, setStory] = useState<Story | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const navigate = useNavigate();
   const { storyId } = useParams<{ storyId: string }>();
 
-  useEffect(() => {
-    if (storyId) {
-      fetchStory(storyId);
-    }
-  }, [storyId]);
-
-  const fetchStory = async (id: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/stories/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch story');
-      }
-
-      const data = await response.json();
-      setStory(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch story');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Zustand store
+  const stories = useAppStore(s => s.stories);
+  const removeStory = useAppStore(s => s.removeStory);
+  const story = stories.find(s => s.id === storyId);
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!story || !window.confirm('Are you sure you want to delete this story?')) {
       return;
     }
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/stories/${story._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete story');
-      }
-
-      navigate('/stories/library');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete story');
-    }
+    removeStory(story.id);
+    navigate('/stories/library');
   };
 
   const getStatusColor = (status: string) => {
@@ -100,16 +59,6 @@ const StoryDetail: React.FC = () => {
         return 'default';
     }
   };
-
-  if (loading) {
-    return (
-      <Container maxWidth="md">
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
-  }
 
   if (!story) {
     return (

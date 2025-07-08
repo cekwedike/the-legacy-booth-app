@@ -9,6 +9,11 @@ export interface Story {
   category: string;
   mediaType: MediaType;
   mediaUrl: string;
+  favorite: boolean;
+  duration: string;
+  date: string;
+  status: string;
+  tags: string[];
 }
 
 export interface MediaState {
