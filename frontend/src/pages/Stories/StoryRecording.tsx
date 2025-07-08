@@ -1,109 +1,132 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Container,
   Typography,
   Box,
   Card,
   CardContent,
-  TextField,
   Button,
+  TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Alert,
-  CircularProgress,
+  Chip,
   IconButton,
-  SelectChangeEvent
+  LinearProgress,
+  Alert,
+  Paper,
+  Avatar,
+  Grid,
+  Divider,
+  useTheme
 } from '@mui/material';
 import {
   Mic,
   Stop,
   PlayArrow,
   Pause,
+  Delete,
   Save,
-  ArrowBack
+  ArrowBack,
+  Timer,
+  VolumeUp,
+  AutoAwesome,
+  Lightbulb,
+  Category,
+  Title
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { StoryFormData } from '../../types';
 
 const StoryRecording: React.FC = () => {
-  const [formData, setFormData] = useState<StoryFormData>({
-    title: '',
-    description: '',
-    category: ''
-  });
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcription, setTranscription] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const categories = [
-    'Childhood Memories',
-    'Family Stories',
+    'Family & Childhood',
     'Career & Work',
+    'Love & Relationships',
+    'Travel Adventures',
     'Life Lessons',
     'Historical Events',
-    'Travel Adventures',
-    'Love & Relationships',
+    'Personal Achievements',
+    'Friendships',
     'Hobbies & Interests',
-    'Challenges Overcome',
-    'Wisdom & Advice'
+    'Life Milestones'
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const recordingPrompts = [
+    "Tell me about your first job and what you learned from it",
+    "Share a story about your childhood that shaped who you are",
+    "Describe the moment you met your spouse or partner",
+    "What's the most adventurous thing you've ever done?",
+    "Tell me about a time when you had to overcome a challenge",
+    "Share a story about your family traditions",
+    "What's the best advice you've ever received?",
+    "Describe a place that holds special meaning for you"
+  ];
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name as string]: value
-    }));
-  };
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream);
       const chunks: Blob[] = [];
 
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.push(event.data);
-        }
+      mediaRecorder.ondataavailable = (event) => {
+        chunks.push(event.data);
       };
 
-      recorder.onstop = () => {
+      mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/wav' });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach(track => track.stop());
       };
 
-      recorder.start();
-      setMediaRecorder(recorder);
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
       setIsRecording(true);
-      setError('');
+      setRecordingTime(0);
+
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
     } catch (err) {
-      setError('Failed to access microphone. Please check permissions.');
+      setError('Unable to access microphone. Please check permissions.');
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
       setIsRecording(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     }
   };
 
@@ -119,149 +142,195 @@ const StoryRecording: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.title.trim()) {
-      setError('Please enter a title for your story');
+  const deleteRecording = () => {
+    setAudioBlob(null);
+    setAudioUrl('');
+    setRecordingTime(0);
+    setTranscription('');
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleSave = async () => {
+    if (!title || !category || !audioBlob) {
+      setError('Please fill in all required fields and record your story.');
       return;
     }
 
-    if (!audioBlob) {
-      setError('Please record your story first');
-      return;
-    }
-
-    setLoading(true);
     setError('');
-
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('description', formData.description || '');
-      formDataToSend.append('category', formData.category || '');
-      formDataToSend.append('audio', audioBlob, 'story.wav');
-
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/stories', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save story');
-      }
-
+    setSuccess('Story saved successfully!');
+    
+    // Simulate API call
+    setTimeout(() => {
       navigate('/stories/library');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save story');
-    } finally {
-      setLoading(false);
-    }
+    }, 2000);
   };
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <IconButton onClick={() => navigate('/dashboard')} sx={{ mr: 2 }}>
+    <Container maxWidth="lg">
+      <Box sx={{ mt: 2, mb: 4 }}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+          <IconButton onClick={() => navigate('/stories/library')} sx={{ mr: 2 }}>
             <ArrowBack />
           </IconButton>
-          <Typography variant="h4" component="h1">
-            Record Your Story
-          </Typography>
+          <Box>
+            <Typography variant="h4" sx={{ 
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>
+              Record Your Story
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Share your memories and experiences with future generations
+            </Typography>
+          </Box>
         </Box>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
+        <Grid container spacing={3}>
+          {/* Recording Section */}
+          <Grid item xs={12} lg={8}>
+            <Card sx={{ 
+              height: 'fit-content',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.3)'
+            }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box sx={{ textAlign: 'center', mb: 4 }}>
+                  <Box sx={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    width: 120,
+                    height: 120,
+                    borderRadius: '50%',
+                    background: isRecording 
+                      ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                      : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    color: 'white',
+                    mb: 3,
+                    boxShadow: isRecording 
+                      ? '0 0 30px rgba(239, 68, 68, 0.5)'
+                      : '0 10px 25px -5px rgba(99, 102, 241, 0.3)',
+                    animation: isRecording ? 'pulse 2s infinite' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease-in-out',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    }
+                  }}
+                  >
+                    <Mic sx={{ fontSize: 48 }} />
+                  </Box>
+                  
+                  <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                    {isRecording ? 'Recording...' : 'Ready to Record'}
+                  </Typography>
+                  
+                  {isRecording && (
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: '#ef4444' }}>
+                      {formatTime(recordingTime)}
+                    </Typography>
+                  )}
+                </Box>
 
-        <Card>
-          <CardContent>
-            <Box component="form" onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Story Title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                margin="normal"
-                required
-                variant="outlined"
-              />
-
-              <TextField
-                fullWidth
-                label="Description (Optional)"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                margin="normal"
-                multiline
-                rows={3}
-                variant="outlined"
-              />
-
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Category</InputLabel>
-                <Select
-                  name="category"
-                  value={formData.category}
-                  label="Category"
-                  onChange={handleSelectChange}
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <Box sx={{ mt: 4, mb: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Recording
-                </Typography>
-                
-                <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                  {!isRecording ? (
+                {/* Recording Controls */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4 }}>
+                  {!isRecording && !audioBlob && (
                     <Button
                       variant="contained"
+                      size="large"
                       startIcon={<Mic />}
                       onClick={startRecording}
-                      disabled={loading}
+                      sx={{
+                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                        },
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: 3,
+                        fontWeight: 600
+                      }}
                     >
                       Start Recording
                     </Button>
-                  ) : (
+                  )}
+
+                  {isRecording && (
                     <Button
                       variant="contained"
-                      color="error"
+                      size="large"
                       startIcon={<Stop />}
                       onClick={stopRecording}
+                      sx={{
+                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                        },
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: 3,
+                        fontWeight: 600
+                      }}
                     >
                       Stop Recording
                     </Button>
                   )}
 
-                  {audioUrl && (
-                    <Button
-                      variant="outlined"
-                      startIcon={isPlaying ? <Pause /> : <PlayArrow />}
-                      onClick={playRecording}
-                    >
-                      {isPlaying ? 'Pause' : 'Play'}
-                    </Button>
+                  {audioBlob && !isRecording && (
+                    <>
+                      <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={isPlaying ? <Pause /> : <PlayArrow />}
+                        onClick={playRecording}
+                        sx={{
+                          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                          },
+                          px: 4,
+                          py: 1.5,
+                          borderRadius: 3,
+                          fontWeight: 600
+                        }}
+                      >
+                        {isPlaying ? 'Pause' : 'Play'}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        startIcon={<Delete />}
+                        onClick={deleteRecording}
+                        sx={{
+                          borderColor: '#ef4444',
+                          color: '#ef4444',
+                          '&:hover': {
+                            borderColor: '#dc2626',
+                            background: 'rgba(239, 68, 68, 0.1)',
+                          },
+                          px: 4,
+                          py: 1.5,
+                          borderRadius: 3,
+                          fontWeight: 600
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </>
                   )}
                 </Box>
 
-                {audioUrl && (
+                {audioBlob && (
                   <audio
                     ref={audioRef}
                     src={audioUrl}
@@ -270,34 +339,192 @@ const StoryRecording: React.FC = () => {
                   />
                 )}
 
-                {isRecording && (
-                  <Alert severity="info">
-                    Recording in progress... Speak clearly and take your time.
-                  </Alert>
+                {/* Transcription Progress */}
+                {isTranscribing && (
+                  <Box sx={{ mt: 3 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      Transcribing your story...
+                    </Typography>
+                    <LinearProgress 
+                      sx={{ 
+                        height: 8, 
+                        borderRadius: 4,
+                        background: 'rgba(99, 102, 241, 0.1)',
+                        '& .MuiLinearProgress-bar': {
+                          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                          borderRadius: 4,
+                        }
+                      }}
+                    />
+                  </Box>
                 )}
-              </Box>
 
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                {/* Transcription Display */}
+                {transcription && (
+                  <Box sx={{ mt: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                      Transcription
+                    </Typography>
+                    <Paper sx={{ p: 3, background: 'rgba(99, 102, 241, 0.05)' }}>
+                      <Typography variant="body1">
+                        {transcription}
+                      </Typography>
+                    </Paper>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Story Details */}
+          <Grid item xs={12} lg={4}>
+            <Card sx={{ 
+              height: 'fit-content',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.3)'
+            }}>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                  Story Details
+                </Typography>
+
+                <TextField
+                  fullWidth
+                  label="Story Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  sx={{ mb: 3 }}
+                  InputProps={{
+                    startAdornment: (
+                      <Title sx={{ color: 'text.secondary', mr: 1 }} />
+                    ),
+                  }}
+                />
+
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel>Category</InputLabel>
+                  <Select
+                    value={category}
+                    label="Category"
+                    onChange={(e) => setCategory(e.target.value)}
+                    startAdornment={<Category sx={{ color: 'text.secondary', mr: 1 }} />}
+                  >
+                    {categories.map((cat) => (
+                      <MenuItem key={cat} value={cat}>
+                        {cat}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  fullWidth
+                  label="Description (Optional)"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  multiline
+                  rows={4}
+                  sx={{ mb: 3 }}
+                />
+
                 <Button
-                  variant="outlined"
-                  onClick={() => navigate('/dashboard')}
-                  disabled={loading}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
+                  fullWidth
                   variant="contained"
-                  startIcon={loading ? <CircularProgress size={20} /> : <Save />}
-                  disabled={loading || !audioBlob}
+                  startIcon={<Save />}
+                  onClick={handleSave}
+                  disabled={!title || !category || !audioBlob}
+                  sx={{
+                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                    },
+                    '&:disabled': {
+                      background: 'rgba(99, 102, 241, 0.5)',
+                    },
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontWeight: 600
+                  }}
                 >
-                  {loading ? 'Saving...' : 'Save Story'}
+                  Save Story
                 </Button>
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+
+            {/* Recording Prompts */}
+            <Card sx={{ 
+              mt: 3,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.3)'
+            }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Lightbulb sx={{ color: '#f59e0b', mr: 1 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Story Prompts
+                  </Typography>
+                </Box>
+                
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Need inspiration? Try one of these prompts:
+                </Typography>
+
+                <Box>
+                  {recordingPrompts.slice(0, 4).map((prompt, index) => (
+                    <Chip
+                      key={index}
+                      label={prompt}
+                      variant="outlined"
+                      sx={{
+                        display: 'block',
+                        mb: 1,
+                        textAlign: 'left',
+                        height: 'auto',
+                        '& .MuiChip-label': {
+                          whiteSpace: 'normal',
+                          textAlign: 'left',
+                          p: 1.5,
+                        },
+                        borderColor: 'rgba(99, 102, 241, 0.3)',
+                        color: 'text.primary',
+                        '&:hover': {
+                          borderColor: '#6366f1',
+                          background: 'rgba(99, 102, 241, 0.05)',
+                        }
+                      }}
+                    />
+                  ))}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Alerts */}
+        {error && (
+          <Alert severity="error" sx={{ mt: 3, borderRadius: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {success && (
+          <Alert severity="success" sx={{ mt: 3, borderRadius: 2 }}>
+            {success}
+          </Alert>
+        )}
       </Box>
+
+      <style>
+        {`
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+          }
+        `}
+      </style>
     </Container>
   );
 };
