@@ -90,8 +90,8 @@ const MessageRecording: React.FC = () => {
       setMediaRecorder(recorder);
       setIsRecording(true);
       setError('');
-    } catch (err) {
-      setError('Failed to access microphone. Please check permissions.');
+    } catch {
+      setError('Unable to access microphone. Please check permissions.');
     }
   };
 

@@ -16,10 +16,7 @@ import {
   LinearProgress,
   Alert,
   Paper,
-  Avatar,
   Grid,
-  Divider,
-  useTheme
 } from '@mui/material';
 import {
   Mic,
@@ -29,9 +26,6 @@ import {
   Delete,
   Save,
   ArrowBack,
-  Timer,
-  VolumeUp,
-  AutoAwesome,
   Lightbulb,
   Category,
   Title
@@ -56,7 +50,6 @@ const StoryRecording: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
-  const theme = useTheme();
 
   const categories = [
     'Family & Childhood',
