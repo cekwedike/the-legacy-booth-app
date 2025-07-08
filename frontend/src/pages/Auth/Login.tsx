@@ -123,6 +123,25 @@ const Login: React.FC = () => {
       >
         <AutoAwesome sx={{ fontSize: 35, color: 'rgba(6, 182, 212, 0.3)' }} />
       </Box>
+      {/* More stars for magical effect */}
+      <Box sx={{ position: 'absolute', top: '5%', left: '50%', animation: 'float 10s ease-in-out infinite', zIndex: 0 }}>
+        <Star sx={{ fontSize: 22, color: 'rgba(255,255,255,0.18)' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: '30%', left: '80%', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0 }}>
+        <Star sx={{ fontSize: 18, color: 'rgba(139, 92, 246, 0.22)' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: '60%', left: '70%', animation: 'float 9s ease-in-out infinite', zIndex: 0 }}>
+        <Star sx={{ fontSize: 26, color: 'rgba(99, 102, 241, 0.18)' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: '80%', left: '10%', animation: 'float 11s ease-in-out infinite reverse', zIndex: 0 }}>
+        <Star sx={{ fontSize: 20, color: 'rgba(255,255,255,0.13)' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: '70%', left: '60%', animation: 'float 13s ease-in-out infinite', zIndex: 0 }}>
+        <Star sx={{ fontSize: 16, color: 'rgba(139, 92, 246, 0.18)' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: '40%', left: '30%', animation: 'float 14s ease-in-out infinite reverse', zIndex: 0 }}>
+        <Star sx={{ fontSize: 24, color: 'rgba(99, 102, 241, 0.15)' }} />
+      </Box>
 
       <Container maxWidth="sm">
         <Fade in timeout={800}>
