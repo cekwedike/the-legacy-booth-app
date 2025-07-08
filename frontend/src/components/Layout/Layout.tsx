@@ -290,7 +290,7 @@ const Layout: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)' }}>
       <AppBar
         position="fixed"
         sx={{
@@ -366,7 +366,7 @@ const Layout: React.FC = () => {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+              background: 'linear-gradient(180deg, #181826 0%, #23234a 100%)',
             },
           }}
         >
@@ -379,7 +379,7 @@ const Layout: React.FC = () => {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+              background: 'linear-gradient(180deg, #181826 0%, #23234a 100%)',
               borderRight: 'none',
             },
           }}
@@ -393,10 +393,11 @@ const Layout: React.FC = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1, sm: 2, md: 4 },
           width: { md: `calc(100% - ${drawerWidth}px)` },
-          mt: 8,
+          mt: 10,
           minHeight: 'calc(100vh - 64px)',
+          background: 'none',
         }}
       >
         <Outlet />
@@ -404,28 +405,17 @@ const Layout: React.FC = () => {
 
       <Menu
         anchorEl={anchorEl}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        keepMounted
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={Boolean(anchorEl)}
         onClose={handleProfileMenuClose}
-        onClick={handleProfileMenuClose}
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            mt: 1,
-            minWidth: 200,
-          }
-        }}
       >
-        <MenuItem onClick={() => navigate('/settings/profile')}>
-          <ListItemIcon>
-            <Person fontSize="small" />
-          </ListItemIcon>
-          Profile
+        <MenuItem onClick={() => { navigate('/settings/profile'); handleProfileMenuClose(); }}>
+          <ListItemIcon><Person /></ListItemIcon> Profile
         </MenuItem>
         <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
+          <ListItemIcon><Logout /></ListItemIcon> Logout
         </MenuItem>
       </Menu>
     </Box>
