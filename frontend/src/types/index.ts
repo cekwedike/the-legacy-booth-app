@@ -3,7 +3,7 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  role: 'resident' | 'staff' | 'admin';
+  role: 'resident' | 'family' | 'caregiver' | 'staff' | 'admin';
   status?: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;
@@ -92,7 +92,7 @@ export interface RegisterData {
   email: string;
   password: string;
   confirmPassword: string;
-  role?: 'resident' | 'staff' | 'admin';
+  role?: 'resident' | 'family' | 'caregiver' | 'staff' | 'admin';
   roomNumber?: string;
   dateOfBirth?: string;
   emergencyContact?: string;

@@ -128,9 +128,17 @@ const Dashboard: React.FC = () => {
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Card sx={{ 
                   height: '100%',
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
+                  background: 'linear-gradient(135deg, #181826 0%, #23234a 100%)',
+                  border: `2px solid ${stat.color}`,
+                  boxShadow: `0 4px 24px 0 ${stat.color}33`,
+                  color: stat.color,
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.3)'
+                  borderRadius: 4,
+                  transition: 'all 0.3s',
+                  '&:hover': {
+                    boxShadow: `0 8px 32px 0 ${stat.color}66`,
+                    borderColor: '#fff',
+                  },
                 }}>
                   <CardContent sx={{ textAlign: 'center', p: 3 }}>
                     <Box sx={{ 
@@ -140,16 +148,17 @@ const Dashboard: React.FC = () => {
                       width: 60,
                       height: 60,
                       borderRadius: '50%',
-                      background: `${stat.color}20`,
+                      background: `${stat.color}22`,
                       color: stat.color,
-                      mb: 2
+                      mb: 2,
+                      boxShadow: `0 2px 8px 0 ${stat.color}33`,
                     }}>
                       {stat.icon}
                     </Box>
-                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: '#fff' }}>
                       {stat.value}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
                       {stat.label}
                     </Typography>
                   </CardContent>
