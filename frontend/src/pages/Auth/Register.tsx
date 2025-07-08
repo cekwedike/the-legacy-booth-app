@@ -37,7 +37,10 @@ const Register: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'resident'
+    role: 'resident',
+    roomNumber: '',
+    dateOfBirth: '',
+    emergencyContact: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -72,6 +75,13 @@ const Register: React.FC = () => {
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
       return;
+    }
+
+    if (formData.role === 'resident') {
+      if (!formData.roomNumber || !formData.dateOfBirth || !formData.emergencyContact) {
+        setError('Room number, date of birth, and emergency contact are required for residents');
+        return;
+      }
     }
 
     setLoading(true);
@@ -326,6 +336,54 @@ const Register: React.FC = () => {
                   <MenuItem value="caregiver">Caregiver</MenuItem>
                 </Select>
               </FormControl>
+              
+              {formData.role === 'resident' && (
+                <>
+                  <TextField
+                    fullWidth
+                    label="Room Number"
+                    name="roomNumber"
+                    value={formData.roomNumber}
+                    onChange={handleChange}
+                    required
+                    sx={{ mb: 3 }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Person sx={{ color: 'rgba(255, 255, 255, 0.6)' }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Date of Birth"
+                    name="dateOfBirth"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={handleChange}
+                    required
+                    sx={{ mb: 3 }}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Emergency Contact"
+                    name="emergencyContact"
+                    value={formData.emergencyContact}
+                    onChange={handleChange}
+                    required
+                    sx={{ mb: 3 }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Person sx={{ color: 'rgba(255, 255, 255, 0.6)' }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </>
+              )}
               
               <TextField
                 fullWidth

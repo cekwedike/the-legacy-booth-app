@@ -93,6 +93,9 @@ export interface RegisterData {
   password: string;
   confirmPassword: string;
   role?: 'resident' | 'staff' | 'admin';
+  roomNumber?: string;
+  dateOfBirth?: string;
+  emergencyContact?: string;
 }
 
 // Accessibility Types
