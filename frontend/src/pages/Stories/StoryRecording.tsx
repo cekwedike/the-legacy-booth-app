@@ -21,6 +21,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import {
   Mic,
@@ -35,6 +37,7 @@ import {
   Title
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore, MediaType } from '../../store';
 
 const StoryRecording: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -56,11 +59,21 @@ const StoryRecording: React.FC = () => {
   const [customPromptCategories, setCustomPromptCategories] = useState<{ [prompt: string]: string }>({});
   const [newPromptCategory, setNewPromptCategory] = useState('Family & Childhood');
   const [customPromptDialogOpen, setCustomPromptDialogOpen] = useState(false);
+  const [recordMode, setRecordMode] = useState<MediaType>('audio');
+  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [videoRecorder, setVideoRecorder] = useState<MediaRecorder | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string>('');
+  const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+
+  // Zustand store
+  const setCurrentMedia = useAppStore(s => s.setCurrentMedia);
+  const clearCurrentMedia = useAppStore(s => s.clearCurrentMedia);
 
   const categories = [
     'Family & Childhood',
@@ -221,6 +234,52 @@ const StoryRecording: React.FC = () => {
     setCustomCategories(customCategories.filter(c => c !== cat));
   };
 
+  // Video recording handlers
+  const startVideoRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      setVideoStream(stream);
+      const recorder = new MediaRecorder(stream);
+      const chunks: Blob[] = [];
+      recorder.ondataavailable = (event) => {
+        chunks.push(event.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        setVideoBlob(blob);
+        setVideoUrl(URL.createObjectURL(blob));
+        setCurrentMedia({ type: 'video', blob, url: URL.createObjectURL(blob) });
+        stream.getTracks().forEach(track => track.stop());
+      };
+      setVideoRecorder(recorder);
+      recorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    } catch {
+      setError('Unable to access webcam. Please check permissions.');
+    }
+  };
+
+  const stopVideoRecording = () => {
+    if (videoRecorder && isRecording) {
+      videoRecorder.stop();
+      setIsRecording(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }
+  };
+
+  const deleteVideoRecording = () => {
+    setVideoBlob(null);
+    setVideoUrl('');
+    clearCurrentMedia();
+    setRecordingTime(0);
+  };
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 2, mb: 4 }}>
@@ -256,43 +315,118 @@ const StoryRecording: React.FC = () => {
               backdropFilter: 'blur(10px)',
             }}>
               <CardContent sx={{ p: 4 }}>
-                <Box sx={{ textAlign: 'center', mb: 4 }}>
-                  <Box sx={{ 
-                    display: 'inline-flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    width: 120,
-                    height: 120,
-                    borderRadius: '50%',
-                    background: isRecording 
-                      ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                      : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                    color: 'white',
-                    mb: 3,
-                    boxShadow: isRecording 
-                      ? '0 0 30px rgba(239, 68, 68, 0.5)'
-                      : '0 10px 25px -5px rgba(99, 102, 241, 0.3)',
-                    animation: isRecording ? 'pulse 2s infinite' : 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease-in-out',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={recordMode === 'video'}
+                        onChange={(_, checked) => setRecordMode(checked ? 'video' : 'audio')}
+                        color="primary"
+                      />
                     }
-                  }}
-                  >
-                    <Mic sx={{ fontSize: 48 }} />
-                  </Box>
-                  
-                  <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-                    {isRecording ? 'Recording...' : 'Ready to Record'}
-                  </Typography>
-                  
-                  {isRecording && (
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: '#ef4444' }}>
-                      {formatTime(recordingTime)}
-                    </Typography>
-                  )}
+                    label={recordMode === 'video' ? 'Video Mode' : 'Audio Mode'}
+                  />
                 </Box>
+
+                {recordMode === 'audio' ? (
+                  <Box sx={{ textAlign: 'center', mb: 4 }}>
+                    <Box sx={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: 120,
+                      height: 120,
+                      borderRadius: '50%',
+                      background: isRecording 
+                        ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                        : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      color: 'white',
+                      mb: 3,
+                      boxShadow: isRecording 
+                        ? '0 0 30px rgba(239, 68, 68, 0.5)'
+                        : '0 10px 25px -5px rgba(99, 102, 241, 0.3)',
+                      animation: isRecording ? 'pulse 2s infinite' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease-in-out',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                      }
+                    }}
+                    >
+                      <Mic sx={{ fontSize: 48 }} />
+                    </Box>
+                    
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                      {isRecording ? 'Recording...' : 'Ready to Record'}
+                    </Typography>
+                    
+                    {isRecording && (
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#ef4444' }}>
+                        {formatTime(recordingTime)}
+                      </Typography>
+                    )}
+                  </Box>
+                ) : (
+                  <Box sx={{ textAlign: 'center', mb: 4 }}>
+                    <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 180, height: 120, borderRadius: 4, background: 'rgba(30,30,50,0.7)', color: 'white', mb: 3, boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.3)', animation: isRecording ? 'pulse 2s infinite' : 'none', cursor: 'pointer', transition: 'all 0.3s ease-in-out', '&:hover': { transform: 'scale(1.05)' } }}>
+                      <video ref={videoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', borderRadius: 4, objectFit: 'cover', background: '#181826' }} src={videoUrl || undefined} />
+                    </Box>
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                      {isRecording ? 'Recording Video...' : 'Ready to Record Video'}
+                    </Typography>
+                    {isRecording && (
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: '#ef4444' }}>
+                        {formatTime(recordingTime)}
+                      </Typography>
+                    )}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                      {!isRecording && !videoBlob && (
+                        <Button
+                          variant="contained"
+                          size="large"
+                          startIcon={<Mic />}
+                          onClick={startVideoRecording}
+                          sx={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', '&:hover': { background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                        >
+                          Start Video Recording
+                        </Button>
+                      )}
+                      {isRecording && (
+                        <Button
+                          variant="contained"
+                          size="large"
+                          startIcon={<Stop />}
+                          onClick={stopVideoRecording}
+                          sx={{ background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', '&:hover': { background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                        >
+                          Stop Recording
+                        </Button>
+                      )}
+                      {videoBlob && !isRecording && (
+                        <>
+                          <Button
+                            variant="contained"
+                            size="large"
+                            startIcon={<PlayArrow />}
+                            onClick={() => videoRef.current && videoRef.current.play()}
+                            sx={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', '&:hover': { background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                          >
+                            Play
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            size="large"
+                            startIcon={<Delete />}
+                            onClick={deleteVideoRecording}
+                            sx={{ borderColor: '#ef4444', color: '#ef4444', '&:hover': { borderColor: '#dc2626', background: 'rgba(239, 68, 68, 0.1)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                          >
+                            Delete
+                          </Button>
+                        </>
+                      )}
+                    </Box>
+                  </Box>
+                )}
 
                 {/* Recording Controls */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4 }}>
