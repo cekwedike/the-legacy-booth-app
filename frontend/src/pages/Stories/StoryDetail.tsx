@@ -111,7 +111,7 @@ const StoryDetail: React.FC = () => {
                 Category: {story.category}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
-                Created: {new Date(story.createdAt).toLocaleDateString()}
+                Created: {story.createdAt ? new Date(story.createdAt).toLocaleDateString() : 'Unknown'}
               </Typography>
             </Box>
 
@@ -129,10 +129,10 @@ const StoryDetail: React.FC = () => {
                     {isPlaying ? <Pause /> : <PlayArrow />}
                   </IconButton>
                   <Typography variant="body2" color="text.secondary">
-                    Duration: {Math.round((story.recording.duration || 0) / 60)}:{(story.recording.duration || 0) % 60 < 10 ? '0' : ''}{(story.recording.duration || 0) % 60}
+                    Duration: {story.recording?.duration !== undefined ? `${Math.floor(story.recording.duration / 60)}:${(story.recording.duration % 60).toString().padStart(2, '0')}` : 'N/A'}
                   </Typography>
                 </Box>
-                {story.recording.audioUrl && (
+                {story.recording?.audioUrl && (
                   <audio
                     src={story.recording.audioUrl}
                     onEnded={() => setIsPlaying(false)}
@@ -142,7 +142,7 @@ const StoryDetail: React.FC = () => {
               </Box>
             )}
 
-            {story.transcription && story.transcription.text && (
+            {story.transcription?.text && (
               <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   Transcription
@@ -153,7 +153,7 @@ const StoryDetail: React.FC = () => {
               </Box>
             )}
 
-            {story.content && story.content.summary && (
+            {story.content?.summary && (
               <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   Summary
@@ -170,7 +170,7 @@ const StoryDetail: React.FC = () => {
               <Button
                 variant="outlined"
                 startIcon={<Edit />}
-                onClick={() => navigate(`/stories/${story._id}`, { state: { edit: true } })}
+                onClick={() => navigate(`/stories/${story.id}`, { state: { edit: true } })}
               >
                 Edit
               </Button>

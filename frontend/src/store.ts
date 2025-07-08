@@ -4,6 +4,7 @@ export type MediaType = 'audio' | 'video';
 
 export interface Story {
   id: string;
+  _id?: string;
   title: string;
   description: string;
   category: string;
@@ -14,6 +15,17 @@ export interface Story {
   date: string;
   status: string;
   tags: string[];
+  createdAt?: string;
+  recording?: {
+    duration?: number;
+    audioUrl?: string;
+  };
+  transcription?: {
+    text?: string;
+  };
+  content?: {
+    summary?: string;
+  };
 }
 
 export interface MediaState {
