@@ -4,6 +4,13 @@ const Story = require('../models/Story');
 const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: LegacyBooks
+ *   description: Legacy Book management
+ */
+
 // Create a new legacy book
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -34,6 +41,69 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/legacy-books:
+ *   post:
+ *     summary: Create a new legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *               subtitle:
+ *                 type: string
+ *               dedication:
+ *                 type: string
+ *               design:
+ *                 type: object
+ *               format:
+ *                 type: object
+ *     responses:
+ *       201:
+ *         description: Legacy book created successfully
+ *       400:
+ *         description: Title is required
+ *       500:
+ *         description: Failed to create legacy book
+ *   get:
+ *     summary: Get legacy books for current user
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by status
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Limit results
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Page number
+ *     responses:
+ *       200:
+ *         description: List of legacy books
+ */
+
 // Get legacy books for current user
 router.get('/', authenticateToken, async (req, res) => {
   try {
@@ -63,6 +133,30 @@ router.get('/', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch legacy books' });
   }
 });
+
+/**
+ * @swagger
+ * /api/legacy-books/{bookId}:
+ *   get:
+ *     summary: Get a specific legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     responses:
+ *       200:
+ *         description: Legacy book details
+ *       404:
+ *         description: Legacy book not found
+ *       500:
+ *         description: Failed to fetch legacy book
+ */
 
 // Get a specific legacy book
 router.get('/:bookId', authenticateToken, async (req, res) => {

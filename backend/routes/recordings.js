@@ -4,6 +4,40 @@ const path = require('path');
 const fs = require('fs').promises;
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Recordings
+ *   description: Audio/video recording uploads
+ */
+
+/**
+ * @swagger
+ * /api/recordings/upload:
+ *   post:
+ *     summary: Upload a recording
+ *     tags: [Recordings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               recording:
+ *                 type: string
+ *                 format: binary
+ *               duration:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Recording uploaded successfully
+ *       400:
+ *         description: No recording file provided
+ *       500:
+ *         description: Failed to upload recording
+ */
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {

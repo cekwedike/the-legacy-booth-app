@@ -7,6 +7,13 @@ const Story = require('../models/Story');
 const { authenticateToken, requireOwnershipOrStaff } = require('../middleware/auth');
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Stories
+ *   description: Story management
+ */
+
 // Configure OpenAI (optional)
 let openai = null;
 if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here') {
@@ -100,17 +107,142 @@ const storyPrompts = {
   ]
 };
 
-// Get prompts by category
+/**
+ * @swagger
+ * /api/stories/prompts/{category}:
+ *   get:
+ *     summary: Get story prompts by category
+ *     tags: [Stories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: category
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Story category
+ *     responses:
+ *       200:
+ *         description: List of prompts
+ */
 router.get('/prompts/:category', authenticateToken, (req, res) => {
   const { category } = req.params;
   const prompts = storyPrompts[category] || storyPrompts.memories;
   res.json({ prompts });
 });
 
-// Get all categories
+/**
+ * @swagger
+ * /api/stories/categories:
+ *   get:
+ *     summary: Get all story categories
+ *     tags: [Stories]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of categories
+ */
 router.get('/categories', authenticateToken, (req, res) => {
   const categories = Object.keys(storyPrompts);
   res.json({ categories });
+});
+
+/**
+ * @swagger
+ * /api/stories:
+ *   post:
+ *     summary: Create a new story
+ *     tags: [Stories]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - prompt
+ *               - category
+ *             properties:
+ *               title:
+ *                 type: string
+ *               prompt:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Story created successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Failed to create story
+ *   get:
+ *     summary: Get stories for current user
+ *     tags: [Stories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by category
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by status
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Limit results
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Page number
+ *     responses:
+ *       200:
+ *         description: List of stories
+ */
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const { category, status, limit = 20, page = 1 } = req.query;
+    const filter = { resident: req.user._id };
+
+    if (category) filter.category = category;
+    if (status) filter.status = status;
+
+    const stories = await Story.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    const total = await Story.countDocuments(filter);
+
+    res.json({
+      stories,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
+  } catch (error) {
+    console.error('Stories fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch stories' });
+  }
 });
 
 // Create a new story
@@ -141,7 +273,43 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Upload recording for a story
+/**
+ * @swagger
+ * /api/stories/{storyId}/recording:
+ *   post:
+ *     summary: Upload a recording for a story
+ *     tags: [Stories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: storyId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Story ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               recording:
+ *                 type: string
+ *                 format: binary
+ *               duration:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Recording uploaded successfully
+ *       400:
+ *         description: No recording file provided
+ *       404:
+ *         description: Story not found
+ *       500:
+ *         description: Failed to upload recording
+ */
 router.post('/:storyId/recording', authenticateToken, upload.single('recording'), async (req, res) => {
   try {
     const { storyId } = req.params;
@@ -187,37 +355,6 @@ router.post('/:storyId/recording', authenticateToken, upload.single('recording')
   } catch (error) {
     console.error('Recording upload error:', error);
     res.status(500).json({ error: 'Failed to upload recording' });
-  }
-});
-
-// Get stories for current user
-router.get('/', authenticateToken, async (req, res) => {
-  try {
-    const { category, status, limit = 20, page = 1 } = req.query;
-    const filter = { resident: req.user._id };
-
-    if (category) filter.category = category;
-    if (status) filter.status = status;
-
-    const stories = await Story.find(filter)
-      .sort({ createdAt: -1 })
-      .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
-
-    const total = await Story.countDocuments(filter);
-
-    res.json({
-      stories,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / parseInt(limit))
-      }
-    });
-  } catch (error) {
-    console.error('Stories fetch error:', error);
-    res.status(500).json({ error: 'Failed to fetch stories' });
   }
 });
 

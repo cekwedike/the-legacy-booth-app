@@ -6,6 +6,13 @@ const Message = require('../models/Message');
 const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Messages
+ *   description: Message management
+ */
+
 // Configure multer for message uploads
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
@@ -38,6 +45,78 @@ const upload = multer({
   }
 });
 
+/**
+ * @swagger
+ * /api/messages:
+ *   post:
+ *     summary: Create a new message
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - type
+ *               - recipient
+ *             properties:
+ *               title:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *               recipient:
+ *                 type: object
+ *               message:
+ *                 type: string
+ *               scheduledFor:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       201:
+ *         description: Message created successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Failed to create message
+ *   get:
+ *     summary: Get messages for current user
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by type
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by status
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Limit results
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Page number
+ *     responses:
+ *       200:
+ *         description: List of messages
+ */
+
 // Create a new message
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -67,6 +146,44 @@ router.post('/', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to create message' });
   }
 });
+
+/**
+ * @swagger
+ * /api/messages/{messageId}/recording:
+ *   post:
+ *     summary: Upload a recording for a message
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Message ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               recording:
+ *                 type: string
+ *                 format: binary
+ *               duration:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Recording uploaded successfully
+ *       400:
+ *         description: No recording file provided
+ *       404:
+ *         description: Message not found
+ *       500:
+ *         description: Failed to upload recording
+ */
 
 // Upload recording for a message
 router.post('/:messageId/recording', authenticateToken, upload.single('recording'), async (req, res) => {
@@ -108,6 +225,44 @@ router.post('/:messageId/recording', authenticateToken, upload.single('recording
     res.status(500).json({ error: 'Failed to upload recording' });
   }
 });
+
+/**
+ * @swagger
+ * /api/messages:
+ *   get:
+ *     summary: Get messages for current user
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by type
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by status
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Limit results
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Page number
+ *     responses:
+ *       200:
+ *         description: List of messages
+ */
 
 // Get messages for current user
 router.get('/', authenticateToken, async (req, res) => {

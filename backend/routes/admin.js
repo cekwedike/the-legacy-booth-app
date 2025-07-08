@@ -6,6 +6,28 @@ const LegacyBook = require('../models/LegacyBook');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Admin
+ *   description: Admin and staff endpoints
+ */
+
+/**
+ * @swagger
+ * /api/admin/stats:
+ *   get:
+ *     summary: Get facility statistics
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Facility statistics
+ *       500:
+ *         description: Failed to fetch statistics
+ */
+
 // Get facility statistics
 router.get('/stats', authenticateToken, requireRole(['staff', 'admin']), async (req, res) => {
   try {
@@ -55,6 +77,40 @@ router.get('/stats', authenticateToken, requireRole(['staff', 'admin']), async (
     res.status(500).json({ error: 'Failed to fetch statistics' });
   }
 });
+
+/**
+ * @swagger
+ * /api/admin/residents:
+ *   get:
+ *     summary: Get all residents
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: isActive
+ *         schema:
+ *           type: boolean
+ *         required: false
+ *         description: Filter by active status
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Limit results
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Page number
+ *     responses:
+ *       200:
+ *         description: List of residents
+ *       500:
+ *         description: Failed to fetch residents
+ */
 
 // Get all residents
 router.get('/residents', authenticateToken, requireRole(['staff', 'admin']), async (req, res) => {
