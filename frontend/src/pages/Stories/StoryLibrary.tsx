@@ -21,7 +21,6 @@ import {
 import {
   Add,
   Search,
-  FilterList,
   PlayArrow,
   Pause,
   Edit,

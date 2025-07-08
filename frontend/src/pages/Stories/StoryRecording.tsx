@@ -13,7 +13,8 @@ import {
   MenuItem,
   Alert,
   CircularProgress,
-  IconButton
+  IconButton,
+  SelectChangeEvent
 } from '@mui/material';
 import {
   Mic,
@@ -39,7 +40,6 @@ const StoryRecording: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
   const navigate = useNavigate();
 
@@ -56,7 +56,15 @@ const StoryRecording: React.FC = () => {
     'Wisdom & Advice'
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -80,7 +88,6 @@ const StoryRecording: React.FC = () => {
         const blob = new Blob(chunks, { type: 'audio/wav' });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
-        setAudioChunks(chunks);
       };
 
       recorder.start();
@@ -207,7 +214,7 @@ const StoryRecording: React.FC = () => {
                   name="category"
                   value={formData.category}
                   label="Category"
-                  onChange={handleInputChange}
+                  onChange={handleSelectChange}
                 >
                   {categories.map((category) => (
                     <MenuItem key={category} value={category}>
