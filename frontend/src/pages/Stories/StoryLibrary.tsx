@@ -229,9 +229,11 @@ const StoryLibrary: React.FC = () => {
         {/* Search and Filters */}
         <Card sx={{ 
           mb: 4,
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255,255,255,0.3)'
+          background: 'linear-gradient(135deg, #181826 0%, #23234a 100%)',
+          border: '1.5px solid rgba(99,102,241,0.18)',
+          boxShadow: '0 4px 24px 0 rgba(99,102,241,0.10)',
+          color: '#fff',
+          backdropFilter: 'blur(12px)',
         }}>
           <CardContent sx={{ p: 3 }}>
             <Grid container spacing={3} alignItems="center">
@@ -294,12 +296,13 @@ const StoryLibrary: React.FC = () => {
                 cursor: 'pointer',
                 '&:hover': {
                   transform: 'translateY(-8px)',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                  boxShadow: '0 25px 50px -12px rgba(99,102,241,0.18)',
                 },
                 transition: 'all 0.3s ease-in-out',
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+                background: 'linear-gradient(135deg, #23234a 0%, #181826 100%)',
+                border: '1.5px solid rgba(99,102,241,0.18)',
+                color: '#fff',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.3)'
               }}>
                 <CardContent sx={{ p: 3 }}>
                   {/* Header */}
@@ -424,9 +427,10 @@ const StoryLibrary: React.FC = () => {
           <Card sx={{ 
             textAlign: 'center', 
             py: 8,
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+            background: 'linear-gradient(135deg, #181826 0%, #23234a 100%)',
+            border: '1.5px solid rgba(99,102,241,0.18)',
+            color: '#fff',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255,255,255,0.3)'
           }}>
             <CardContent>
               <Box sx={{ 
