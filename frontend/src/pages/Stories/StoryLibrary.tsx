@@ -12,9 +12,6 @@ import {
   Chip,
   IconButton,
   Grid,
-  Avatar,
-  LinearProgress,
-  useTheme,
   Fab,
   Dialog,
   DialogTitle,
@@ -32,19 +29,10 @@ import {
   Pause,
   Edit,
   Delete,
-  FilterList,
-  Sort,
   Book,
   Timer,
-  Category,
-  Person,
-  CalendarToday,
-  Star,
-  Favorite,
-  Share,
   MoreVert,
-  Mic,
-  AutoAwesome
+  Mic
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,7 +44,6 @@ const StoryLibrary: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedStory, setSelectedStory] = useState<any>(null);
   const navigate = useNavigate();
-  const theme = useTheme();
 
   const categories = [
     'All Categories',
@@ -351,7 +338,7 @@ const StoryLibrary: React.FC = () => {
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
+                      <Timer sx={{ fontSize: 16, color: 'text.secondary' }} />
                       <Typography variant="caption" color="text.secondary">
                         {formatDate(story.date)}
                       </Typography>
@@ -489,7 +476,7 @@ const StoryLibrary: React.FC = () => {
         <DialogTitle>Delete Story</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete "{selectedStory?.title}"? This action cannot be undone.
+            Are you sure you want to delete &quot;{selectedStory?.title}&quot;? This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
