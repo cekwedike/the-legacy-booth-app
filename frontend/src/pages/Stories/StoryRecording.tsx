@@ -17,6 +17,10 @@ import {
   Alert,
   Paper,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import {
   Mic,
@@ -49,6 +53,9 @@ const StoryRecording: React.FC = () => {
   const [newPrompt, setNewPrompt] = useState('');
   const [customCategories, setCustomCategories] = useState<string[]>([]);
   const [newCategory, setNewCategory] = useState('');
+  const [customPromptCategories, setCustomPromptCategories] = useState<{ [prompt: string]: string }>({});
+  const [newPromptCategory, setNewPromptCategory] = useState('Family & Childhood');
+  const [customPromptDialogOpen, setCustomPromptDialogOpen] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -81,6 +88,18 @@ const StoryRecording: React.FC = () => {
 
   const allPrompts = [...recordingPrompts.slice(0, 4), ...customPrompts];
   const allCategories = [...categories, ...customCategories];
+
+  // Map built-in prompts to categories
+  const promptCategoryMap: { [prompt: string]: string } = {
+    "Tell me about your first job and what you learned from it": "Career & Work",
+    "Share a story about your childhood that shaped who you are": "Family & Childhood",
+    "Describe the moment you met your spouse or partner": "Love & Relationships",
+    "What's the most adventurous thing you've ever done?": "Travel Adventures",
+    "Tell me about a time when you had to overcome a challenge": "Life Lessons",
+    "Share a story about your family traditions": "Family & Childhood",
+    "What's the best advice you've ever received?": "Life Lessons",
+    "Describe a place that holds special meaning for you": "Travel Adventures",
+  };
 
   useEffect(() => {
     return () => {
@@ -170,10 +189,20 @@ const StoryRecording: React.FC = () => {
     }, 2000);
   };
 
+  const handlePromptClick = (prompt: string) => {
+    setTitle(prompt);
+    // Set category based on prompt
+    const cat = promptCategoryMap[prompt] || customPromptCategories[prompt] || categories[0];
+    setCategory(cat);
+  };
+
   const handleAddPrompt = () => {
     if (newPrompt.trim() && !customPrompts.includes(newPrompt.trim())) {
       setCustomPrompts([newPrompt.trim(), ...customPrompts]);
+      setCustomPromptCategories({ ...customPromptCategories, [newPrompt.trim()]: newPromptCategory });
       setNewPrompt('');
+      setNewPromptCategory(categories[0]);
+      setCustomPromptDialogOpen(false);
     }
   };
 
@@ -543,17 +572,17 @@ const StoryRecording: React.FC = () => {
                     flexWrap: 'wrap',
                     mb: 2,
                     alignItems: 'flex-start',
-                    flexDirection: { xs: 'column', sm: 'row' },
+                    flexDirection: 'row',
                   }}
                 >
                   {allPrompts.map((prompt, index) => (
                     <Chip
                       key={prompt}
-                      label={<span style={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}>{prompt}</span>}
+                      label={prompt}
                       variant="outlined"
-                      onClick={() => setDescription(prompt)}
+                      onClick={() => handlePromptClick(prompt)}
                       sx={{
-                        mb: { xs: 1.5, sm: 1.5 },
+                        mb: 1.5,
                         px: 1.5,
                         py: 1.2,
                         fontSize: '0.95rem',
@@ -561,16 +590,24 @@ const StoryRecording: React.FC = () => {
                         color: '#fff',
                         borderColor: 'rgba(99,102,241,0.3)',
                         cursor: 'pointer',
-                        maxWidth: { xs: '100%', sm: 320 },
+                        maxWidth: 320,
                         minWidth: 0,
                         textAlign: 'left',
+                        height: 'auto',
+                        minHeight: 32,
+                        display: 'flex',
+                        alignItems: 'center',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word',
+                        whiteSpace: 'pre-line',
                         '& .MuiChip-label': {
                           whiteSpace: 'pre-line',
                           wordBreak: 'break-word',
+                          overflowWrap: 'break-word',
                           textAlign: 'left',
                           width: '100%',
                           display: 'block',
-                          p: 1.5,
+                          boxSizing: 'border-box',
                         },
                         '&:hover': {
                           borderColor: '#6366f1',
@@ -582,40 +619,14 @@ const StoryRecording: React.FC = () => {
                   ))}
                 </Box>
 
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: 1,
-                    mb: 2,
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    alignItems: { xs: 'stretch', sm: 'center' },
-                  }}
+                {/* Add Custom Prompt Button */}
+                <Button
+                  variant="outlined"
+                  onClick={() => setCustomPromptDialogOpen(true)}
+                  sx={{ mb: 2, width: { xs: '100%', sm: 'auto' } }}
                 >
-                  <TextField
-                    value={newPrompt}
-                    onChange={e => setNewPrompt(e.target.value)}
-                    placeholder="Add custom prompt"
-                    size="small"
-                    sx={{
-                      flex: 1,
-                      background: 'rgba(30,30,50,0.7)',
-                      borderRadius: 2,
-                      input: { color: '#fff' },
-                      minWidth: 0,
-                    }}
-                    InputProps={{
-                      sx: { color: '#fff' },
-                    }}
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={handleAddPrompt}
-                    disabled={!newPrompt.trim()}
-                    sx={{ borderRadius: 2, mt: { xs: 1, sm: 0 }, width: { xs: '100%', sm: 'auto' } }}
-                  >
-                    Add
-                  </Button>
-                </Box>
+                  Add Custom Prompt
+                </Button>
               </CardContent>
             </Card>
           </Grid>
@@ -634,6 +645,43 @@ const StoryRecording: React.FC = () => {
           </Alert>
         )}
       </Box>
+
+      {/* Custom Prompt Dialog */}
+      <Dialog
+        open={customPromptDialogOpen}
+        onClose={() => setCustomPromptDialogOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        aria-labelledby="custom-prompt-dialog-title"
+      >
+        <DialogTitle id="custom-prompt-dialog-title">Add Custom Prompt</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+          <TextField
+            value={newPrompt}
+            onChange={e => setNewPrompt(e.target.value)}
+            placeholder="Enter your custom prompt"
+            size="small"
+            fullWidth
+            autoFocus
+          />
+          <FormControl size="small" fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={newPromptCategory}
+              label="Category"
+              onChange={e => setNewPromptCategory(e.target.value as string)}
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCustomPromptDialogOpen(false)} color="inherit">Cancel</Button>
+          <Button onClick={handleAddPrompt} variant="contained" disabled={!newPrompt.trim()}>Add</Button>
+        </DialogActions>
+      </Dialog>
 
       <style>
         {`
