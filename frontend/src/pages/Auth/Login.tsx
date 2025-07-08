@@ -19,8 +19,6 @@ import {
   VisibilityOff,
   Email,
   Lock,
-  Person,
-  ArrowForward,
   AutoAwesome
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -36,7 +34,6 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const theme = useTheme();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -53,7 +50,7 @@ const Login: React.FC = () => {
     try {
       await login(formData.email, formData.password);
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
@@ -235,7 +232,7 @@ const Login: React.FC = () => {
           {/* Footer Links */}
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link
                 component={RouterLink}
                 to="/register"

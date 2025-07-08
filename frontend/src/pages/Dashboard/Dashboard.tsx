@@ -19,18 +19,11 @@ import {
   Book,
   Message,
   VideoCall,
-  Settings,
   Mic,
   PlayArrow,
-  TrendingUp,
   Star,
-  Favorite,
-  History,
   Add,
-  ArrowForward,
-  Person,
-  CalendarToday,
-  AccessTime
+  ArrowForward
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -38,7 +31,6 @@ import { useAuth } from '../../contexts/AuthContext';
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const theme = useTheme();
 
   const quickActions = [
     {
@@ -246,7 +238,7 @@ const Dashboard: React.FC = () => {
                   </Button>
                 </Box>
                 <Box>
-                  {recentStories.map((story, index) => (
+                  {recentStories.map((story, _index) => (
                     <Box
                       key={story.id}
                       sx={{

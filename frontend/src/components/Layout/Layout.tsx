@@ -31,9 +31,6 @@ import {
   AdminPanelSettings,
   Notifications,
   Search,
-  Home,
-  Favorite,
-  History,
   Star
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -48,7 +45,6 @@ const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleDrawerToggle = (): void => {
     setMobileOpen(!mobileOpen);
