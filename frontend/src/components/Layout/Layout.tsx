@@ -16,8 +16,6 @@ import {
   Divider,
   Badge,
   Chip,
-  useTheme,
-  useMediaQuery
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -44,7 +42,6 @@ const Layout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const theme = useTheme();
 
   const handleDrawerToggle = (): void => {
     setMobileOpen(!mobileOpen);

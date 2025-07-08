@@ -10,10 +10,7 @@ import {
   Button,
   Avatar,
   Chip,
-  LinearProgress,
-  IconButton,
-  useTheme,
-  Paper
+  LinearProgress
 } from '@mui/material';
 import {
   Book,

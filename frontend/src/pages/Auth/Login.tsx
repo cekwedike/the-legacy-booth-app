@@ -7,12 +7,10 @@ import {
   Button,
   Link,
   Paper,
-  Avatar,
   InputAdornment,
   IconButton,
   Alert,
-  Divider,
-  useTheme
+  Divider
 } from '@mui/material';
 import {
   Visibility,

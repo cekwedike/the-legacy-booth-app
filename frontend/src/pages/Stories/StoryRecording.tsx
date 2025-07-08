@@ -41,7 +41,7 @@ const StoryRecording: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [isTranscribing] = useState<boolean>(false);
   const [transcription, setTranscription] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -108,7 +108,7 @@ const StoryRecording: React.FC = () => {
       timerRef.current = setInterval(() => {
         setRecordingTime(prev => prev + 1);
       }, 1000);
-    } catch (err) {
+    } catch {
       setError('Unable to access microphone. Please check permissions.');
     }
   };
