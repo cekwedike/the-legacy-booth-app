@@ -3,8 +3,8 @@ const User = require('../models/User');
 const { authenticateToken, generateToken, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
-// Register new user (staff/admin only)
-router.post('/register', authenticateToken, requireRole(['staff', 'admin']), async (req, res) => {
+// Register new user (public)
+router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role, roomNumber, dateOfBirth, emergencyContact } = req.body;
 
