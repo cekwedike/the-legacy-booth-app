@@ -262,6 +262,17 @@ const theme = createTheme({
         },
       },
     },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          cursor: 'pointer',
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'none',
+          },
+        },
+      },
+    },
   },
 });
 

@@ -325,7 +325,7 @@ const Login: React.FC = () => {
             </Divider>
 
             {/* Register Link */}
-            <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
               <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>
                 Don't have an account?
               </Typography>
@@ -336,11 +336,16 @@ const Login: React.FC = () => {
                   color: '#6366f1',
                   textDecoration: 'none',
                   fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease-in-out',
                   '&:hover': {
                     color: '#8b5cf6',
-                    textDecoration: 'underline',
+                    background: 'rgba(99, 102, 241, 0.1)',
+                    textDecoration: 'none',
                   },
-                  transition: 'all 0.2s ease-in-out',
                 }}
               >
                 Create an account
