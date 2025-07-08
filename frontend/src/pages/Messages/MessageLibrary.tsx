@@ -48,7 +48,7 @@ const MessageLibrary: React.FC = () => {
       }
 
       const data = await response.json();
-      setMessages(data);
+      setMessages(data.messages || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch messages');
     } finally {

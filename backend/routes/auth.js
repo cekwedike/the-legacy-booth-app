@@ -341,4 +341,29 @@ router.get('/verify', authenticateToken, (req, res) => {
   res.json({ valid: true, user: req.user.toJSON() });
 });
 
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Get current authenticated user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Authenticated user
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user.toJSON());
+  } catch (error) {
+    console.error('Auth me error:', error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
 module.exports = router; 
