@@ -339,7 +339,7 @@ const StoryRecording: React.FC = () => {
                       borderRadius: '50%',
                       background: isRecording 
                         ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                        : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                        : 'linear-gradient(135deg, #6366f1 0%, #8b5cf8 100%)',
                       color: 'white',
                       mb: 3,
                       boxShadow: isRecording 
@@ -355,15 +355,106 @@ const StoryRecording: React.FC = () => {
                     >
                       <Mic sx={{ fontSize: 48 }} />
                     </Box>
-                    
                     <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
                       {isRecording ? 'Recording...' : 'Ready to Record'}
                     </Typography>
-                    
                     {isRecording && (
                       <Typography variant="h4" sx={{ fontWeight: 700, color: '#ef4444' }}>
                         {formatTime(recordingTime)}
                       </Typography>
+                    )}
+                    {/* Audio Recording Controls */}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4 }}>
+                      {!isRecording && !audioBlob && (
+                        <Button
+                          variant="contained"
+                          size="large"
+                          startIcon={<Mic />}
+                          onClick={startRecording}
+                          sx={{
+                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                            '&:hover': {
+                              background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                            },
+                            px: 4,
+                            py: 1.5,
+                            borderRadius: 3,
+                            fontWeight: 600
+                          }}
+                        >
+                          Start Recording
+                        </Button>
+                      )}
+                      {isRecording && (
+                        <Button
+                          variant="contained"
+                          size="large"
+                          startIcon={<Stop />}
+                          onClick={stopRecording}
+                          sx={{
+                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                            '&:hover': {
+                              background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                            },
+                            px: 4,
+                            py: 1.5,
+                            borderRadius: 3,
+                            fontWeight: 600
+                          }}
+                        >
+                          Stop Recording
+                        </Button>
+                      )}
+                      {audioBlob && !isRecording && (
+                        <>
+                          <Button
+                            variant="contained"
+                            size="large"
+                            startIcon={isPlaying ? <Pause /> : <PlayArrow />}
+                            onClick={playRecording}
+                            sx={{
+                              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                              '&:hover': {
+                                background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                              },
+                              px: 4,
+                              py: 1.5,
+                              borderRadius: 3,
+                              fontWeight: 600
+                            }}
+                          >
+                            {isPlaying ? 'Pause' : 'Play'}
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            size="large"
+                            startIcon={<Delete />}
+                            onClick={deleteRecording}
+                            sx={{
+                              borderColor: '#ef4444',
+                              color: '#ef4444',
+                              '&:hover': {
+                                borderColor: '#dc2626',
+                                background: 'rgba(239, 68, 68, 0.1)',
+                              },
+                              px: 4,
+                              py: 1.5,
+                              borderRadius: 3,
+                              fontWeight: 600
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </>
+                      )}
+                    </Box>
+                    {audioBlob && (
+                      <audio
+                        ref={audioRef}
+                        src={audioUrl}
+                        onEnded={() => setIsPlaying(false)}
+                        style={{ display: 'none' }}
+                      />
                     )}
                   </Box>
                 ) : (
@@ -379,6 +470,7 @@ const StoryRecording: React.FC = () => {
                         {formatTime(recordingTime)}
                       </Typography>
                     )}
+                    {/* Video Recording Controls */}
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
                       {!isRecording && !videoBlob && (
                         <Button
@@ -426,103 +518,6 @@ const StoryRecording: React.FC = () => {
                       )}
                     </Box>
                   </Box>
-                )}
-
-                {/* Recording Controls */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4 }}>
-                  {!isRecording && !audioBlob && (
-                    <Button
-                      variant="contained"
-                      size="large"
-                      startIcon={<Mic />}
-                      onClick={startRecording}
-                      sx={{
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                        },
-                        px: 4,
-                        py: 1.5,
-                        borderRadius: 3,
-                        fontWeight: 600
-                      }}
-                    >
-                      Start Recording
-                    </Button>
-                  )}
-
-                  {isRecording && (
-                    <Button
-                      variant="contained"
-                      size="large"
-                      startIcon={<Stop />}
-                      onClick={stopRecording}
-                      sx={{
-                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
-                        },
-                        px: 4,
-                        py: 1.5,
-                        borderRadius: 3,
-                        fontWeight: 600
-                      }}
-                    >
-                      Stop Recording
-                    </Button>
-                  )}
-
-                  {audioBlob && !isRecording && (
-                    <>
-                      <Button
-                        variant="contained"
-                        size="large"
-                        startIcon={isPlaying ? <Pause /> : <PlayArrow />}
-                        onClick={playRecording}
-                        sx={{
-                          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                          '&:hover': {
-                            background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-                          },
-                          px: 4,
-                          py: 1.5,
-                          borderRadius: 3,
-                          fontWeight: 600
-                        }}
-                      >
-                        {isPlaying ? 'Pause' : 'Play'}
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        size="large"
-                        startIcon={<Delete />}
-                        onClick={deleteRecording}
-                        sx={{
-                          borderColor: '#ef4444',
-                          color: '#ef4444',
-                          '&:hover': {
-                            borderColor: '#dc2626',
-                            background: 'rgba(239, 68, 68, 0.1)',
-                          },
-                          px: 4,
-                          py: 1.5,
-                          borderRadius: 3,
-                          fontWeight: 600
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </>
-                  )}
-                </Box>
-
-                {audioBlob && (
-                  <audio
-                    ref={audioRef}
-                    src={audioUrl}
-                    onEnded={() => setIsPlaying(false)}
-                    style={{ display: 'none' }}
-                  />
                 )}
 
                 {/* Transcription Progress */}
