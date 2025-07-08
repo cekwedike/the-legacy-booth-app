@@ -143,7 +143,7 @@ const StoryLibrary: React.FC = () => {
       description: 'The overwhelming joy and responsibility of becoming a parent for the first time.',
       tags: ['parenting', 'milestone', 'joy'],
       favorite: false,
-      transcription: 'I'll never forget the moment the nurse placed my first child in my arms...'
+      transcription: "I'll never forget the moment the nurse placed my first child in my arms..."
     }
   ];
 
@@ -366,7 +366,7 @@ const StoryLibrary: React.FC = () => {
 
                   {/* Tags */}
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 3 }}>
-                    {story.tags.slice(0, 3).map((tag, index) => (
+                    {story.tags.slice(0, 3).map((tag: string, index: number) => (
                       <Chip
                         key={index}
                         label={tag}
