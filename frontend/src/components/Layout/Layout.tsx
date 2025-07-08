@@ -34,7 +34,7 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-const drawerWidth = 280;
+const drawerWidth = 380;
 
 const Layout: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -195,9 +195,19 @@ const Layout: React.FC = () => {
                 mx: 1,
                 mb: 1,
                 borderRadius: 3,
+                p: 1.5,
+                width: '85%',
+                maxWidth: 300,
+                alignSelf: 'center',
                 '&.Mui-selected': {
                   background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                   color: 'white',
+                  boxShadow: '0 4px 16px rgba(99,102,241,0.10)',
+                  pl: 3,
+                  pr: 2.5,
+                  width: '85%',
+                  maxWidth: 300,
+                  alignSelf: 'center',
                   '&:hover': {
                     background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
                   },
