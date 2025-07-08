@@ -45,6 +45,10 @@ const StoryRecording: React.FC = () => {
   const [transcription, setTranscription] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [customPrompts, setCustomPrompts] = useState<string[]>([]);
+  const [newPrompt, setNewPrompt] = useState('');
+  const [customCategories, setCustomCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState('');
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -74,6 +78,9 @@ const StoryRecording: React.FC = () => {
     "What's the best advice you've ever received?",
     "Describe a place that holds special meaning for you"
   ];
+
+  const allPrompts = [...recordingPrompts.slice(0, 4), ...customPrompts];
+  const allCategories = [...categories, ...customCategories];
 
   useEffect(() => {
     return () => {
@@ -163,6 +170,28 @@ const StoryRecording: React.FC = () => {
     }, 2000);
   };
 
+  const handleAddPrompt = () => {
+    if (newPrompt.trim() && !customPrompts.includes(newPrompt.trim())) {
+      setCustomPrompts([newPrompt.trim(), ...customPrompts]);
+      setNewPrompt('');
+    }
+  };
+
+  const handleDeletePrompt = (prompt: string) => {
+    setCustomPrompts(customPrompts.filter(p => p !== prompt));
+  };
+
+  const handleAddCategory = () => {
+    if (newCategory.trim() && !allCategories.includes(newCategory.trim())) {
+      setCustomCategories([newCategory.trim(), ...customCategories]);
+      setNewCategory('');
+    }
+  };
+
+  const handleDeleteCategory = (cat: string) => {
+    setCustomCategories(customCategories.filter(c => c !== cat));
+  };
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 2, mb: 4 }}>
@@ -192,9 +221,10 @@ const StoryRecording: React.FC = () => {
           <Grid item xs={12} lg={8}>
             <Card sx={{ 
               height: 'fit-content',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+              background: 'linear-gradient(135deg, #23234a 0%, #181826 100%)',
+              border: '1.5px solid rgba(99,102,241,0.18)',
+              color: '#fff',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.3)'
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Box sx={{ textAlign: 'center', mb: 4 }}>
@@ -373,9 +403,10 @@ const StoryRecording: React.FC = () => {
           <Grid item xs={12} lg={4}>
             <Card sx={{ 
               height: 'fit-content',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+              background: 'linear-gradient(135deg, #23234a 0%, #181826 100%)',
+              border: '1.5px solid rgba(99,102,241,0.18)',
+              color: '#fff',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.3)'
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
@@ -403,13 +434,53 @@ const StoryRecording: React.FC = () => {
                     onChange={(e) => setCategory(e.target.value)}
                     startAdornment={<Category sx={{ color: 'text.secondary', mr: 1 }} />}
                   >
-                    {categories.map((cat) => (
+                    {allCategories.map((cat) => (
                       <MenuItem key={cat} value={cat}>
                         {cat}
+                        {customCategories.includes(cat) && (
+                          <IconButton size="small" onClick={e => { e.stopPropagation(); handleDeleteCategory(cat); }} sx={{ ml: 1 }}>
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        )}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    mb: 3,
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'stretch', sm: 'center' },
+                  }}
+                >
+                  <TextField
+                    value={newCategory}
+                    onChange={e => setNewCategory(e.target.value)}
+                    placeholder="Add custom category"
+                    size="small"
+                    sx={{
+                      flex: 1,
+                      background: 'rgba(30,30,50,0.7)',
+                      borderRadius: 2,
+                      input: { color: '#fff' },
+                      minWidth: 0,
+                    }}
+                    InputProps={{
+                      sx: { color: '#fff' },
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleAddCategory}
+                    disabled={!newCategory.trim()}
+                    sx={{ borderRadius: 2, mt: { xs: 1, sm: 0 }, width: { xs: '100%', sm: 'auto' } }}
+                  >
+                    Add
+                  </Button>
+                </Box>
 
                 <TextField
                   fullWidth
@@ -448,9 +519,10 @@ const StoryRecording: React.FC = () => {
             {/* Recording Prompts */}
             <Card sx={{ 
               mt: 3,
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+              background: 'linear-gradient(135deg, #23234a 0%, #181826 100%)',
+              border: '1.5px solid rgba(99,102,241,0.18)',
+              color: '#fff',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.3)'
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -461,34 +533,88 @@ const StoryRecording: React.FC = () => {
                 </Box>
                 
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Need inspiration? Try one of these prompts:
+                  Need inspiration? Try one of these prompts or add your own:
                 </Typography>
 
-                <Box>
-                  {recordingPrompts.slice(0, 4).map((prompt, index) => (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    flexWrap: 'wrap',
+                    mb: 2,
+                    alignItems: 'flex-start',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}
+                >
+                  {allPrompts.map((prompt, index) => (
                     <Chip
-                      key={index}
-                      label={prompt}
+                      key={prompt}
+                      label={<span style={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}>{prompt}</span>}
                       variant="outlined"
+                      onClick={() => setDescription(prompt)}
                       sx={{
-                        display: 'block',
-                        mb: 1,
+                        mb: { xs: 1.5, sm: 1.5 },
+                        px: 1.5,
+                        py: 1.2,
+                        fontSize: '0.95rem',
+                        background: 'rgba(99,102,241,0.08)',
+                        color: '#fff',
+                        borderColor: 'rgba(99,102,241,0.3)',
+                        cursor: 'pointer',
+                        maxWidth: { xs: '100%', sm: 320 },
+                        minWidth: 0,
                         textAlign: 'left',
-                        height: 'auto',
                         '& .MuiChip-label': {
-                          whiteSpace: 'normal',
+                          whiteSpace: 'pre-line',
+                          wordBreak: 'break-word',
                           textAlign: 'left',
+                          width: '100%',
+                          display: 'block',
                           p: 1.5,
                         },
-                        borderColor: 'rgba(99, 102, 241, 0.3)',
-                        color: 'text.primary',
                         '&:hover': {
                           borderColor: '#6366f1',
-                          background: 'rgba(99, 102, 241, 0.05)',
-                        }
+                          background: 'rgba(99,102,241,0.18)',
+                        },
                       }}
+                      onDelete={index >= 4 ? () => handleDeletePrompt(prompt) : undefined}
                     />
                   ))}
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    mb: 2,
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'stretch', sm: 'center' },
+                  }}
+                >
+                  <TextField
+                    value={newPrompt}
+                    onChange={e => setNewPrompt(e.target.value)}
+                    placeholder="Add custom prompt"
+                    size="small"
+                    sx={{
+                      flex: 1,
+                      background: 'rgba(30,30,50,0.7)',
+                      borderRadius: 2,
+                      input: { color: '#fff' },
+                      minWidth: 0,
+                    }}
+                    InputProps={{
+                      sx: { color: '#fff' },
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleAddPrompt}
+                    disabled={!newPrompt.trim()}
+                    sx={{ borderRadius: 2, mt: { xs: 1, sm: 0 }, width: { xs: '100%', sm: 'auto' } }}
+                  >
+                    Add
+                  </Button>
                 </Box>
               </CardContent>
             </Card>
