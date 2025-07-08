@@ -9,10 +9,6 @@ import {
   CardActions,
   Button,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Chip,
   IconButton,
   Alert,
@@ -20,11 +16,8 @@ import {
 } from '@mui/material';
 import {
   Add,
-  Search,
   PlayArrow,
-  Pause,
-  Edit,
-  Delete
+  Pause
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { Message } from '../../types';

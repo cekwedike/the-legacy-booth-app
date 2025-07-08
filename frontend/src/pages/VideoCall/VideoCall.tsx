@@ -7,7 +7,7 @@ import {
   CardContent,
   Button
 } from '@mui/material';
-import { VideoCall } from '@mui/icons-material';
+import { VideoCall as VideoCallIcon } from '@mui/icons-material';
 
 const VideoCall: React.FC = () => {
   return (
