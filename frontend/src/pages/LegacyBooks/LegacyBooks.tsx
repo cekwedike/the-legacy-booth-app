@@ -271,7 +271,7 @@ const LegacyBooks: React.FC = () => {
 
   const handleDownloadBook = async (bookId: string) => {
     try {
-      const response = await fetch(`/api/legacy-books/${bookId}/download`, {
+      const response = await fetch(`/api/legacy-books/${bookId}/pdf`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

@@ -30,7 +30,7 @@ const router = express.Router();
  *                 type: string
  *               role:
  *                 type: string
- *                 enum: [resident, family, caregiver, staff, admin]
+ *                 enum: [user, admin, moderator]
  *               roomNumber:
  *                 type: string
  *               dateOfBirth:
@@ -49,7 +49,7 @@ const router = express.Router();
 // Register new user (public)
 router.post('/register', sanitizeHtml, validateRegistration, async (req, res) => {
   try {
-    const { name, email, password, role, roomNumber, dateOfBirth, emergencyContact } = req.body;
+    const { name, email, password, role = 'user' } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -64,10 +64,7 @@ router.post('/register', sanitizeHtml, validateRegistration, async (req, res) =>
       name,
       email,
       password,
-      role,
-      roomNumber,
-      dateOfBirth,
-      emergencyContact
+      role
     });
 
     await user.save();
@@ -135,7 +132,7 @@ router.post('/login', sanitizeHtml, validateLogin, async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user || !user.isActive) {
+    if (!user || user.status !== 'active') {
       return res.status(401).json({ 
         error: 'Invalid credentials',
         details: 'Please check your email and password'

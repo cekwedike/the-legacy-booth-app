@@ -1,95 +1,60 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
 const LegacyBook = require('../models/LegacyBook');
-const Story = require('../models/Story');
-const Message = require('../models/Message');
-const { authenticateToken, requireOwnershipOrStaff } = require('../middleware/auth');
-const { validateStoryCreation, validateId, sanitizeHtml } = require('../middleware/validation');
+const { authenticateToken } = require('../middleware/auth');
+const { body, validationResult } = require('express-validator');
+const PDFDocument = require('pdfkit');
 const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: LegacyBooks
- *   description: Legacy Book management
+ *   description: Legacy book management
  */
 
-// Create a new legacy book
-router.post('/', authenticateToken, sanitizeHtml, async (req, res) => {
-  try {
-    const { 
-      title, 
-      description, 
-      theme, 
-      isPublic, 
-      dedication, 
-      acknowledgments,
-      stories,
-      messages 
-    } = req.body;
-
-    if (!title || !description) {
-      return res.status(400).json({ 
-        error: 'Title and description are required',
-        details: 'Please provide both a title and description for your legacy book'
-      });
+// Configure multer for legacy book uploads
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../uploads/legacyBooks');
+    try {
+      await fs.mkdir(uploadDir, { recursive: true });
+      cb(null, uploadDir);
+    } catch (error) {
+      cb(error);
     }
-
-    // Validate stories and messages exist
-    if (stories && stories.length > 0) {
-      const validStories = await Story.find({ _id: { $in: stories }, user: req.user._id });
-      if (validStories.length !== stories.length) {
-        return res.status(400).json({ 
-          error: 'Invalid stories selected',
-          details: 'Some selected stories do not exist or belong to you'
-        });
-      }
-    }
-
-    if (messages && messages.length > 0) {
-      const validMessages = await Message.find({ _id: { $in: messages }, user: req.user._id });
-      if (validMessages.length !== messages.length) {
-        return res.status(400).json({ 
-          error: 'Invalid messages selected',
-          details: 'Some selected messages do not exist or belong to you'
-        });
-      }
-    }
-
-    const legacyBook = new LegacyBook({
-      user: req.user._id,
-      title,
-      description,
-      theme: theme || 'classic',
-      isPublic: isPublic || false,
-      dedication,
-      acknowledgments,
-      stories: stories || [],
-      messages: messages || [],
-      status: 'draft',
-      isFavorite: false
-    });
-
-    await legacyBook.save();
-
-    res.status(201).json({
-      message: 'Legacy book created successfully',
-      book: legacyBook
-    });
-  } catch (error) {
-    console.error('Legacy book creation error:', error);
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({ 
-        error: 'Validation failed',
-        details: validationErrors
-      });
-    }
-    res.status(500).json({ 
-      error: 'Failed to create legacy book',
-      details: 'Please try again later'
-    });
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, `legacybook-${req.user._id}-${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'audio/wav', 'audio/mp3', 'audio/webm'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only image, video, and audio files are allowed.'));
+    }
+  }
+});
+
+// Validation middleware
+const validateLegacyBook = [
+  body('title').trim().isLength({ min: 1, max: 100 }).withMessage('Title is required and must be less than 100 characters'),
+  body('description').optional().isLength({ max: 1000 }).withMessage('Description must be less than 1000 characters'),
+  body('category').isIn(['family', 'career', 'travel', 'life-lessons', 'achievements', 'memories', 'advice', 'other']).withMessage('Invalid category'),
+  body('isPublic').optional().isBoolean().withMessage('isPublic must be a boolean'),
+  body('tags').optional().isArray().withMessage('Tags must be an array')
+];
 
 /**
  * @swagger
@@ -102,27 +67,31 @@ router.post('/', authenticateToken, sanitizeHtml, async (req, res) => {
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
  *               - title
+ *               - category
  *             properties:
  *               title:
  *                 type: string
- *               subtitle:
+ *               description:
  *                 type: string
- *               dedication:
+ *               category:
  *                 type: string
- *               design:
- *                 type: object
- *               format:
- *                 type: object
+ *               isPublic:
+ *                 type: boolean
+ *               tags:
+ *                 type: array
+ *               media:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Legacy book created successfully
  *       400:
- *         description: Title is required
+ *         description: Missing required fields or validation error
  *       500:
  *         description: Failed to create legacy book
  *   get:
@@ -131,6 +100,12 @@ router.post('/', authenticateToken, sanitizeHtml, async (req, res) => {
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Filter by category
  *       - in: query
  *         name: status
  *         schema:
@@ -154,44 +129,110 @@ router.post('/', authenticateToken, sanitizeHtml, async (req, res) => {
  *         description: List of legacy books
  */
 
+// Create a new legacy book
+router.post('/', authenticateToken, upload.single('media'), validateLegacyBook, async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: errors.array() 
+      });
+    }
+
+    const {
+      title,
+      description,
+      category,
+      isPublic,
+      tags
+    } = req.body;
+
+    // Parse tags if provided
+    let parsedTags = [];
+    if (tags) {
+      try {
+        parsedTags = JSON.parse(tags);
+      } catch (error) {
+        parsedTags = [];
+      }
+    }
+
+    const newLegacyBook = new LegacyBook({
+      author: req.user._id,
+      title,
+      description: description || '',
+      category,
+      isPublic: isPublic === 'true',
+      tags: parsedTags,
+      mediaFile: req.file ? req.file.filename : null,
+      mediaPath: req.file ? req.file.path : null,
+      mediaType: req.file ? req.file.mimetype.split('/')[0] : null, // 'image', 'video', or 'audio'
+      status: 'draft'
+    });
+
+    await newLegacyBook.save();
+
+    res.status(201).json({
+      message: 'Legacy book created successfully',
+      legacyBook: {
+        _id: newLegacyBook._id,
+        title: newLegacyBook.title,
+        category: newLegacyBook.category,
+        isPublic: newLegacyBook.isPublic,
+        status: newLegacyBook.status,
+        createdAt: newLegacyBook.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Legacy book creation error:', error);
+    res.status(500).json({ error: 'Failed to create legacy book' });
+  }
+});
+
 // Get legacy books for current user
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { status, limit = 20, page = 1 } = req.query;
-    const filter = { user: req.user._id };
+    const { category, status, limit = 20, page = 1 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    if (status && status !== 'all') {
+    const filter = { author: req.user._id };
+    
+    if (category) {
+      filter.category = category;
+    }
+    
+    if (status) {
       filter.status = status;
     }
 
-    const books = await LegacyBook.find(filter)
-      .sort({ updatedAt: -1 })
+    const legacyBooks = await LegacyBook.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
       .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
+      .select('-mediaPath'); // Don't send file paths to client
 
     const total = await LegacyBook.countDocuments(filter);
 
     res.json({
-      books,
+      legacyBooks,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / parseInt(limit))
+        current: parseInt(page),
+        total: Math.ceil(total / parseInt(limit)),
+        hasNext: skip + legacyBooks.length < total,
+        hasPrev: parseInt(page) > 1
       }
     });
   } catch (error) {
-    console.error('Legacy books fetch error:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch legacy books',
-      details: 'Please try again later'
-    });
+    console.error('Error fetching legacy books:', error);
+    res.status(500).json({ error: 'Failed to fetch legacy books' });
   }
 });
 
 /**
  * @swagger
- * /api/legacy-books/{bookId}:
+ * /api/legacy-books/{legacyBookId}:
  *   get:
  *     summary: Get a specific legacy book
  *     tags: [LegacyBooks]
@@ -199,7 +240,7 @@ router.get('/', authenticateToken, async (req, res) => {
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: bookId
+ *         name: legacyBookId
  *         schema:
  *           type: string
  *         required: true
@@ -209,360 +250,532 @@ router.get('/', authenticateToken, async (req, res) => {
  *         description: Legacy book details
  *       404:
  *         description: Legacy book not found
- *       500:
- *         description: Failed to fetch legacy book
+ *       403:
+ *         description: Access denied
  */
 
 // Get a specific legacy book
-router.get('/:bookId', authenticateToken, validateId, async (req, res) => {
+router.get('/:legacyBookId', authenticateToken, async (req, res) => {
   try {
-    const { bookId } = req.params;
-    const book = await LegacyBook.findById(bookId)
-      .populate('stories')
-      .populate('messages');
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId)
+      .populate('author', 'name email');
 
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
-      });
-    }
-
-    // Check ownership or if book is public
-    if (book.user.toString() !== req.user._id.toString() && !book.isPublic) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'This book is private and does not belong to you'
-      });
-    }
-
-    res.json({ book });
-  } catch (error) {
-    console.error('Legacy book fetch error:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch legacy book',
-      details: 'Please try again later'
-    });
-  }
-});
-
-// Add story to legacy book
-router.post('/:bookId/stories', authenticateToken, async (req, res) => {
-  try {
-    const { bookId } = req.params;
-    const { storyId, order } = req.body;
-
-    const legacyBook = await LegacyBook.findById(bookId);
     if (!legacyBook) {
       return res.status(404).json({ error: 'Legacy book not found' });
     }
 
-    if (legacyBook.user.toString() !== req.user._id.toString()) {
+    if (legacyBook.author._id.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    const story = await Story.findById(storyId);
-    if (!story) {
-      return res.status(404).json({ error: 'Story not found' });
-    }
+    // Don't send file path to client
+    const legacyBookData = legacyBook.toObject();
+    delete legacyBookData.mediaPath;
 
-    await legacyBook.addStory(storyId, order || 0);
-
-    res.json({
-      message: 'Story added to legacy book successfully',
-      legacyBook
-    });
+    res.json({ legacyBook: legacyBookData });
   } catch (error) {
-    console.error('Add story to book error:', error);
-    res.status(500).json({ error: 'Failed to add story to book' });
+    console.error('Error fetching legacy book:', error);
+    res.status(500).json({ error: 'Failed to fetch legacy book' });
   }
 });
 
-// Update legacy book
-router.put('/:bookId', authenticateToken, validateId, sanitizeHtml, async (req, res) => {
+/**
+ * @swagger
+ * /api/legacy-books/{legacyBookId}/media:
+ *   get:
+ *     summary: Get legacy book media file
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: legacyBookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     responses:
+ *       200:
+ *         description: Media file
+ *       404:
+ *         description: Legacy book or media file not found
+ *       403:
+ *         description: Access denied
+ */
+
+// Get legacy book media file
+router.get('/:legacyBookId/media', authenticateToken, async (req, res) => {
   try {
-    const { bookId } = req.params;
-    const { 
-      title, 
-      description, 
-      theme, 
-      isPublic, 
-      dedication, 
-      acknowledgments,
-      stories,
-      messages,
-      status 
-    } = req.body;
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId);
 
-    const book = await LegacyBook.findById(bookId);
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
+    if (!legacyBook) {
+      return res.status(404).json({ error: 'Legacy book not found' });
+    }
+
+    if (legacyBook.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    if (!legacyBook.mediaPath || !fs.existsSync(legacyBook.mediaPath)) {
+      return res.status(404).json({ error: 'Media file not found' });
+    }
+
+    res.sendFile(legacyBook.mediaPath);
+  } catch (error) {
+    console.error('Error serving media file:', error);
+    res.status(500).json({ error: 'Failed to serve media file' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/legacy-books/{legacyBookId}/pdf:
+ *   get:
+ *     summary: Generate PDF for legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: legacyBookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     responses:
+ *       200:
+ *         description: PDF file
+ *       404:
+ *         description: Legacy book not found
+ *       403:
+ *         description: Access denied
+ */
+
+// Generate PDF for legacy book
+router.get('/:legacyBookId/pdf', authenticateToken, async (req, res) => {
+  try {
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId)
+      .populate('author', 'name email');
+
+    if (!legacyBook) {
+      return res.status(404).json({ error: 'Legacy book not found' });
+    }
+
+    if (legacyBook.author._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Create PDF document
+    const doc = new PDFDocument({
+      size: 'A4',
+      margin: 50
+    });
+
+    // Set response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${legacyBook.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf"`);
+
+    // Pipe PDF to response
+    doc.pipe(res);
+
+    // Add content to PDF
+    doc.fontSize(24)
+       .font('Helvetica-Bold')
+       .text(legacyBook.title, { align: 'center' })
+       .moveDown();
+
+    doc.fontSize(12)
+       .font('Helvetica')
+       .text(`Author: ${legacyBook.author.name}`, { align: 'center' })
+       .moveDown(0.5);
+
+    doc.text(`Category: ${legacyBook.category}`, { align: 'center' })
+       .moveDown(0.5);
+
+    doc.text(`Created: ${new Date(legacyBook.createdAt).toLocaleDateString()}`, { align: 'center' })
+       .moveDown(2);
+
+    if (legacyBook.description) {
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text('Description')
+         .moveDown(0.5);
+
+      doc.fontSize(12)
+         .font('Helvetica')
+         .text(legacyBook.description)
+         .moveDown(2);
+    }
+
+    if (legacyBook.tags && legacyBook.tags.length > 0) {
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text('Tags')
+         .moveDown(0.5);
+
+      doc.fontSize(12)
+         .font('Helvetica')
+         .text(legacyBook.tags.join(', '))
+         .moveDown(2);
+    }
+
+    // Add stories and messages if they exist
+    if (legacyBook.stories && legacyBook.stories.length > 0) {
+      doc.fontSize(16)
+         .font('Helvetica-Bold')
+         .text('Stories')
+         .moveDown();
+
+      legacyBook.stories.forEach((story, index) => {
+        doc.fontSize(14)
+           .font('Helvetica-Bold')
+           .text(`${index + 1}. ${story.title}`)
+           .moveDown(0.5);
+
+        if (story.description) {
+          doc.fontSize(12)
+             .font('Helvetica')
+             .text(story.description)
+             .moveDown();
+        }
+
+        if (story.transcription) {
+          doc.fontSize(11)
+             .font('Helvetica-Oblique')
+             .text(story.transcription)
+             .moveDown();
+        }
+
+        doc.moveDown();
       });
     }
 
-    if (book.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'You can only edit your own books'
+    if (legacyBook.messages && legacyBook.messages.length > 0) {
+      doc.fontSize(16)
+         .font('Helvetica-Bold')
+         .text('Messages')
+         .moveDown();
+
+      legacyBook.messages.forEach((message, index) => {
+        doc.fontSize(14)
+           .font('Helvetica-Bold')
+           .text(`${index + 1}. ${message.title}`)
+           .moveDown(0.5);
+
+        doc.fontSize(12)
+           .font('Helvetica')
+           .text(`To: ${message.recipientName}`)
+           .moveDown(0.5);
+
+        if (message.description) {
+          doc.fontSize(12)
+             .font('Helvetica')
+             .text(message.description)
+             .moveDown();
+        }
+
+        if (message.transcription) {
+          doc.fontSize(11)
+             .font('Helvetica-Oblique')
+             .text(message.transcription)
+             .moveDown();
+        }
+
+        doc.moveDown();
       });
     }
 
-    // Validate stories and messages if provided
-    if (stories && stories.length > 0) {
-      const validStories = await Story.find({ _id: { $in: stories }, user: req.user._id });
-      if (validStories.length !== stories.length) {
-        return res.status(400).json({ 
-          error: 'Invalid stories selected',
-          details: 'Some selected stories do not exist or belong to you'
-        });
-      }
+    // Add footer
+    doc.fontSize(10)
+       .font('Helvetica')
+       .text(`Generated on ${new Date().toLocaleString()}`, { align: 'center' })
+       .moveDown();
+
+    // Finalize PDF
+    doc.end();
+
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).json({ error: 'Failed to generate PDF' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/legacy-books/{legacyBookId}:
+ *   put:
+ *     summary: Update a legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: legacyBookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               isPublic:
+ *                 type: boolean
+ *               tags:
+ *                 type: array
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Legacy book updated successfully
+ *       404:
+ *         description: Legacy book not found
+ *       403:
+ *         description: Access denied
+ */
+
+// Update a legacy book
+router.put('/:legacyBookId', authenticateToken, async (req, res) => {
+  try {
+    const { title, description, category, isPublic, tags, status } = req.body;
+    
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId);
+
+    if (!legacyBook) {
+      return res.status(404).json({ error: 'Legacy book not found' });
     }
 
-    if (messages && messages.length > 0) {
-      const validMessages = await Message.find({ _id: { $in: messages }, user: req.user._id });
-      if (validMessages.length !== messages.length) {
-        return res.status(400).json({ 
-          error: 'Invalid messages selected',
-          details: 'Some selected messages do not exist or belong to you'
-        });
-      }
+    if (legacyBook.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
-    const updates = {};
-    if (title !== undefined) updates.title = title;
-    if (description !== undefined) updates.description = description;
-    if (theme !== undefined) updates.theme = theme;
-    if (isPublic !== undefined) updates.isPublic = isPublic;
-    if (dedication !== undefined) updates.dedication = dedication;
-    if (acknowledgments !== undefined) updates.acknowledgments = acknowledgments;
-    if (stories !== undefined) updates.stories = stories;
-    if (messages !== undefined) updates.messages = messages;
-    if (status !== undefined) updates.status = status;
+    // Only allow updating certain fields
+    if (title !== undefined) legacyBook.title = title;
+    if (description !== undefined) legacyBook.description = description;
+    if (category !== undefined) legacyBook.category = category;
+    if (isPublic !== undefined) legacyBook.isPublic = isPublic;
+    if (tags !== undefined) legacyBook.tags = tags;
+    if (status !== undefined) legacyBook.status = status;
 
-    const updatedBook = await LegacyBook.findByIdAndUpdate(
-      bookId,
-      updates,
-      { new: true, runValidators: true }
-    ).populate('stories').populate('messages');
+    await legacyBook.save();
 
-    res.json({
+    res.json({ 
       message: 'Legacy book updated successfully',
-      book: updatedBook
-    });
-  } catch (error) {
-    console.error('Legacy book update error:', error);
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({ 
-        error: 'Validation failed',
-        details: validationErrors
-      });
-    }
-    res.status(500).json({ 
-      error: 'Failed to update legacy book',
-      details: 'Please try again later'
-    });
-  }
-});
-
-// Delete legacy book
-router.delete('/:bookId', authenticateToken, validateId, async (req, res) => {
-  try {
-    const { bookId } = req.params;
-    const book = await LegacyBook.findById(bookId);
-
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
-      });
-    }
-
-    if (book.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'You can only delete your own books'
-      });
-    }
-
-    await LegacyBook.findByIdAndDelete(bookId);
-
-    res.json({
-      message: 'Legacy book deleted successfully'
-    });
-  } catch (error) {
-    console.error('Legacy book deletion error:', error);
-    res.status(500).json({ 
-      error: 'Failed to delete legacy book',
-      details: 'Please try again later'
-    });
-  }
-});
-
-// Toggle favorite status
-router.patch('/:bookId/favorite', authenticateToken, validateId, async (req, res) => {
-  try {
-    const { bookId } = req.params;
-    const book = await LegacyBook.findById(bookId);
-
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
-      });
-    }
-
-    if (book.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'You can only favorite your own books'
-      });
-    }
-
-    book.isFavorite = !book.isFavorite;
-    await book.save();
-
-    res.json({
-      message: `Book ${book.isFavorite ? 'added to' : 'removed from'} favorites`,
-      book
-    });
-  } catch (error) {
-    console.error('Toggle favorite error:', error);
-    res.status(500).json({ 
-      error: 'Failed to update favorite status',
-      details: 'Please try again later'
-    });
-  }
-});
-
-// Download legacy book (PDF generation)
-router.get('/:bookId/download', authenticateToken, validateId, async (req, res) => {
-  try {
-    const { bookId } = req.params;
-    const book = await LegacyBook.findById(bookId)
-      .populate('stories')
-      .populate('messages');
-
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
-      });
-    }
-
-    if (book.user.toString() !== req.user._id.toString() && !book.isPublic) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'This book is private and does not belong to you'
-      });
-    }
-
-    // TODO: Implement PDF generation
-    // For now, return a placeholder response
-    res.json({
-      message: 'PDF download feature coming soon',
-      book: {
-        title: book.title,
-        stories: book.stories.length,
-        messages: book.messages.length
+      legacyBook: {
+        _id: legacyBook._id,
+        title: legacyBook.title,
+        description: legacyBook.description,
+        category: legacyBook.category,
+        isPublic: legacyBook.isPublic,
+        tags: legacyBook.tags,
+        status: legacyBook.status
       }
     });
-
-    // Future implementation:
-    // const pdfBuffer = await generatePDF(book);
-    // res.setHeader('Content-Type', 'application/pdf');
-    // res.setHeader('Content-Disposition', `attachment; filename="${book.title}.pdf"`);
-    // res.send(pdfBuffer);
-
   } catch (error) {
-    console.error('Download error:', error);
-    res.status(500).json({ 
-      error: 'Failed to generate download',
-      details: 'Please try again later'
-    });
+    console.error('Error updating legacy book:', error);
+    res.status(500).json({ error: 'Failed to update legacy book' });
   }
 });
 
-// Publish legacy book
-router.patch('/:bookId/publish', authenticateToken, validateId, async (req, res) => {
+/**
+ * @swagger
+ * /api/legacy-books/{legacyBookId}:
+ *   delete:
+ *     summary: Delete a legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: legacyBookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     responses:
+ *       200:
+ *         description: Legacy book deleted successfully
+ *       404:
+ *         description: Legacy book not found
+ *       403:
+ *         description: Access denied
+ */
+
+// Delete a legacy book
+router.delete('/:legacyBookId', authenticateToken, async (req, res) => {
   try {
-    const { bookId } = req.params;
-    const book = await LegacyBook.findById(bookId);
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId);
 
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
-      });
+    if (!legacyBook) {
+      return res.status(404).json({ error: 'Legacy book not found' });
     }
 
-    if (book.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'You can only publish your own books'
-      });
+    if (legacyBook.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
-    if (book.stories.length === 0 && book.messages.length === 0) {
-      return res.status(400).json({ 
-        error: 'Cannot publish empty book',
-        details: 'Please add at least one story or message before publishing'
-      });
+    // Delete media file if it exists
+    if (legacyBook.mediaPath && fs.existsSync(legacyBook.mediaPath)) {
+      await fs.unlink(legacyBook.mediaPath);
     }
 
-    book.status = 'published';
-    book.publishedAt = new Date();
-    await book.save();
+    await LegacyBook.findByIdAndDelete(req.params.legacyBookId);
 
-    res.json({
-      message: 'Legacy book published successfully',
-      book
-    });
+    res.json({ message: 'Legacy book deleted successfully' });
   } catch (error) {
-    console.error('Publish error:', error);
-    res.status(500).json({ 
-      error: 'Failed to publish book',
-      details: 'Please try again later'
-    });
+    console.error('Error deleting legacy book:', error);
+    res.status(500).json({ error: 'Failed to delete legacy book' });
   }
 });
 
-// Archive legacy book
-router.patch('/:bookId/archive', authenticateToken, validateId, async (req, res) => {
+/**
+ * @swagger
+ * /api/legacy-books/{legacyBookId}/stories:
+ *   post:
+ *     summary: Add a story to a legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: legacyBookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - storyId
+ *             properties:
+ *               storyId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Story added successfully
+ *       404:
+ *         description: Legacy book or story not found
+ *       403:
+ *         description: Access denied
+ */
+
+// Add a story to a legacy book
+router.post('/:legacyBookId/stories', authenticateToken, async (req, res) => {
   try {
-    const { bookId } = req.params;
-    const book = await LegacyBook.findById(bookId);
+    const { storyId } = req.body;
+    
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId);
 
-    if (!book) {
-      return res.status(404).json({ 
-        error: 'Legacy book not found',
-        details: 'The requested book could not be located'
-      });
+    if (!legacyBook) {
+      return res.status(404).json({ error: 'Legacy book not found' });
     }
 
-    if (book.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        error: 'Access denied',
-        details: 'You can only archive your own books'
-      });
+    if (legacyBook.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
-    book.status = 'archived';
-    book.archivedAt = new Date();
-    await book.save();
+    // Check if story already exists in the legacy book
+    if (legacyBook.stories.includes(storyId)) {
+      return res.status(400).json({ error: 'Story already exists in this legacy book' });
+    }
 
-    res.json({
-      message: 'Legacy book archived successfully',
-      book
+    legacyBook.stories.push(storyId);
+    await legacyBook.save();
+
+    res.json({ 
+      message: 'Story added successfully',
+      legacyBook: {
+        _id: legacyBook._id,
+        stories: legacyBook.stories
+      }
     });
   } catch (error) {
-    console.error('Archive error:', error);
-    res.status(500).json({ 
-      error: 'Failed to archive book',
-      details: 'Please try again later'
+    console.error('Error adding story to legacy book:', error);
+    res.status(500).json({ error: 'Failed to add story to legacy book' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/legacy-books/{legacyBookId}/messages:
+ *   post:
+ *     summary: Add a message to a legacy book
+ *     tags: [LegacyBooks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: legacyBookId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Legacy book ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - messageId
+ *             properties:
+ *               messageId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Message added successfully
+ *       404:
+ *         description: Legacy book or message not found
+ *       403:
+ *         description: Access denied
+ */
+
+// Add a message to a legacy book
+router.post('/:legacyBookId/messages', authenticateToken, async (req, res) => {
+  try {
+    const { messageId } = req.body;
+    
+    const legacyBook = await LegacyBook.findById(req.params.legacyBookId);
+
+    if (!legacyBook) {
+      return res.status(404).json({ error: 'Legacy book not found' });
+    }
+
+    if (legacyBook.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Check if message already exists in the legacy book
+    if (legacyBook.messages.includes(messageId)) {
+      return res.status(400).json({ error: 'Message already exists in this legacy book' });
+    }
+
+    legacyBook.messages.push(messageId);
+    await legacyBook.save();
+
+    res.json({ 
+      message: 'Message added successfully',
+      legacyBook: {
+        _id: legacyBook._id,
+        messages: legacyBook.messages
+      }
     });
+  } catch (error) {
+    console.error('Error adding message to legacy book:', error);
+    res.status(500).json({ error: 'Failed to add message to legacy book' });
   }
 });
 

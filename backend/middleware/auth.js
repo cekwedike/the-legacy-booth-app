@@ -27,7 +27,7 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
 
-    if (!user || !user.isActive) {
+    if (!user || user.status !== 'active') {
       return res.status(401).json({ error: 'Invalid or inactive user' });
     }
 
@@ -62,6 +62,19 @@ const requireRole = (roles) => {
 
     next();
   };
+};
+
+// Check if user is admin
+const requireAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+
+  next();
 };
 
 // Check if user is accessing their own data or is staff/admin
@@ -100,6 +113,7 @@ const generateToken = (userId) => {
 module.exports = {
   authenticateToken,
   requireRole,
+  requireAdmin,
   requireOwnershipOrStaff,
   generateToken
 }; 

@@ -45,27 +45,9 @@ const validateRegistration = [
     }),
   
   body('role')
-    .isIn(['resident', 'staff', 'admin'])
-    .withMessage('Role must be resident, staff, or admin'),
-  
-  body('roomNumber')
-    .if(body('role').equals('resident'))
-    .notEmpty()
-    .withMessage('Room number is required for residents')
-    .isLength({ min: 1, max: 10 })
-    .withMessage('Room number must be between 1 and 10 characters'),
-  
-  body('dateOfBirth')
-    .if(body('role').equals('resident'))
-    .isISO8601()
-    .withMessage('Date of birth must be a valid date')
-    .custom((value) => {
-      const age = Math.floor((new Date() - new Date(value)) / (365.25 * 24 * 60 * 60 * 1000));
-      if (age < 18) {
-        throw new Error('User must be at least 18 years old');
-      }
-      return true;
-    }),
+    .optional()
+    .isIn(['user', 'admin', 'moderator'])
+    .withMessage('Role must be user, admin, or moderator'),
   
   handleValidationErrors
 ];
