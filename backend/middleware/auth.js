@@ -1,9 +1,22 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Validate JWT secret is configured
+const validateJWTSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  if (process.env.JWT_SECRET === 'your-secret-key' || process.env.JWT_SECRET === 'your-super-secret-jwt-key-change-this-in-production') {
+    throw new Error('JWT_SECRET must be changed from default value');
+  }
+};
+
 // Verify JWT token
 const authenticateToken = async (req, res, next) => {
   try {
+    // Validate JWT secret on first use
+    validateJWTSecret();
+    
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
@@ -11,7 +24,7 @@ const authenticateToken = async (req, res, next) => {
       return res.status(401).json({ error: 'Access token required' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
 
     if (!user || !user.isActive) {
@@ -26,6 +39,10 @@ const authenticateToken = async (req, res, next) => {
     }
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expired' });
+    }
+    if (error.message.includes('JWT_SECRET')) {
+      console.error('JWT configuration error:', error.message);
+      return res.status(500).json({ error: 'Server configuration error' });
     }
     console.error('Auth middleware error:', error);
     res.status(500).json({ error: 'Authentication error' });
@@ -67,11 +84,17 @@ const requireOwnershipOrStaff = (resourceUserId) => {
 
 // Generate JWT token
 const generateToken = (userId) => {
-  return jwt.sign(
-    { userId },
-    process.env.JWT_SECRET || 'your-secret-key',
-    { expiresIn: '7d' }
-  );
+  try {
+    validateJWTSecret();
+    return jwt.sign(
+      { userId },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+  } catch (error) {
+    console.error('Token generation error:', error.message);
+    throw new Error('Unable to generate authentication token');
+  }
 };
 
 module.exports = {

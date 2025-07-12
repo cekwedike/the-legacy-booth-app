@@ -9,9 +9,23 @@ const socketIo = require('socket.io');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
+const { validateEnvironment } = require('./env-config');
 
 // Load environment variables
 dotenv.config();
+
+// Validate environment variables
+try {
+  validateEnvironment();
+  console.log('✅ Environment validation passed');
+} catch (error) {
+  console.error('❌ Environment validation failed:', error.message);
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  } else {
+    console.warn('⚠️  Continuing in development mode with warnings');
+  }
+}
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -67,12 +81,17 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/legacy-bo
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+});
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
+  console.log('🔌 New client connected:', socket.id);
 
   // Handle video call signaling
   socket.on('join-room', (roomId) => {
@@ -93,7 +112,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+    console.log('🔌 Client disconnected:', socket.id);
   });
 });
 
@@ -113,13 +132,14 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('❌ Server error:', err.stack);
   res.status(500).json({ 
     error: 'Something went wrong!',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
@@ -137,6 +157,8 @@ server.listen(PORT, () => {
   console.log(`🚀 Legacy Booth Backend running on port ${PORT}`);
   console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
   console.log(`🔗 API URL: http://localhost:${PORT}`);
+  console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = { app, io }; 
