@@ -90,29 +90,115 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/legacy-bo
 });
 
 // Socket.IO connection handling
+const rooms = new Map(); // Store room participants
+
 io.on('connection', (socket) => {
   console.log('🔌 New client connected:', socket.id);
 
-  // Handle video call signaling
+  // Handle video call room management
   socket.on('join-room', (roomId) => {
+    console.log(`👥 User ${socket.id} joining room: ${roomId}`);
+    
+    // Leave previous room if any
+    if (socket.roomId) {
+      socket.leave(socket.roomId);
+      const room = rooms.get(socket.roomId);
+      if (room) {
+        room.delete(socket.id);
+        if (room.size === 0) {
+          rooms.delete(socket.roomId);
+        } else {
+          socket.to(socket.roomId).emit('user-left', { userId: socket.id });
+        }
+      }
+    }
+
+    // Join new room
     socket.join(roomId);
-    socket.to(roomId).emit('user-connected');
+    socket.roomId = roomId;
+    
+    // Add to room participants
+    if (!rooms.has(roomId)) {
+      rooms.set(roomId, new Set());
+    }
+    rooms.get(roomId).add(socket.id);
+
+    // Notify others in the room
+    socket.to(roomId).emit('user-joined', { userId: socket.id });
+
+    // Send current participants to the new user
+    const roomParticipants = Array.from(rooms.get(roomId));
+    roomParticipants.forEach(participantId => {
+      if (participantId !== socket.id) {
+        socket.emit('user-joined', { userId: participantId });
+      }
+    });
+
+    console.log(`📊 Room ${roomId} now has ${rooms.get(roomId).size} participants`);
   });
 
-  socket.on('offer', (offer, roomId) => {
-    socket.to(roomId).emit('offer', offer);
+  socket.on('leave-room', (roomId) => {
+    console.log(`👋 User ${socket.id} leaving room: ${roomId}`);
+    
+    socket.leave(roomId);
+    socket.roomId = null;
+    
+    const room = rooms.get(roomId);
+    if (room) {
+      room.delete(socket.id);
+      if (room.size === 0) {
+        rooms.delete(roomId);
+        console.log(`🗑️ Room ${roomId} deleted (empty)`);
+      } else {
+        socket.to(roomId).emit('user-left', { userId: socket.id });
+        console.log(`📊 Room ${roomId} now has ${room.size} participants`);
+      }
+    }
   });
 
-  socket.on('answer', (answer, roomId) => {
-    socket.to(roomId).emit('answer', answer);
+  // Handle WebRTC signaling
+  socket.on('offer', (data) => {
+    console.log(`📤 Offer from ${socket.id} to ${data.userId}`);
+    socket.to(data.userId).emit('offer', {
+      offer: data.offer,
+      userId: socket.id
+    });
   });
 
-  socket.on('ice-candidate', (candidate, roomId) => {
-    socket.to(roomId).emit('ice-candidate', candidate);
+  socket.on('answer', (data) => {
+    console.log(`📤 Answer from ${socket.id} to ${data.userId}`);
+    socket.to(data.userId).emit('answer', {
+      answer: data.answer,
+      userId: socket.id
+    });
   });
 
+  socket.on('ice-candidate', (data) => {
+    console.log(`🧊 ICE candidate from ${socket.id} to ${data.userId}`);
+    socket.to(data.userId).emit('ice-candidate', {
+      candidate: data.candidate,
+      userId: socket.id
+    });
+  });
+
+  // Handle disconnection
   socket.on('disconnect', () => {
     console.log('🔌 Client disconnected:', socket.id);
+    
+    // Clean up room participation
+    if (socket.roomId) {
+      const room = rooms.get(socket.roomId);
+      if (room) {
+        room.delete(socket.id);
+        if (room.size === 0) {
+          rooms.delete(socket.roomId);
+          console.log(`🗑️ Room ${socket.roomId} deleted (empty)`);
+        } else {
+          socket.to(socket.roomId).emit('user-left', { userId: socket.id });
+          console.log(`📊 Room ${socket.roomId} now has ${room.size} participants`);
+        }
+      }
+    }
   });
 });
 
