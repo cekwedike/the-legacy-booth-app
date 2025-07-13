@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const storySchema = new mongoose.Schema({
-  user: {
+  resident: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -96,7 +96,7 @@ const storySchema = new mongoose.Schema({
 });
 
 // Index for efficient queries
-storySchema.index({ user: 1, category: 1 });
+storySchema.index({ resident: 1, category: 1 });
 storySchema.index({ 'transcription.status': 1 });
 storySchema.index({ status: 1 });
 

@@ -5,49 +5,47 @@ import {
   Typography,
   TextField,
   Button,
-  Link,
   Paper,
-  InputAdornment,
-  IconButton,
   Alert,
+  CircularProgress,
+  InputAdornment,
   Divider,
   Fade,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  SelectChangeEvent,
-  CircularProgress
+  IconButton,
+  Link
 } from '@mui/material';
 import {
-  Visibility,
-  VisibilityOff,
   Email,
   Lock,
   Person,
   AutoAwesome,
-  Star
+  Star,
+  Visibility,
+  VisibilityOff
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-
-type UserRole = 'resident' | 'family' | 'caregiver' | 'staff' | 'admin';
+import { RegisterData } from '../../types';
 
 const Register: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterData>({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: '' as UserRole,
+    role: 'resident',
     roomNumber: '',
     dateOfBirth: '',
     emergencyContact: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -58,10 +56,10 @@ const Register: React.FC = () => {
     });
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<UserRole>) => {
+  const handleSelectChange = (e: any) => {
     setFormData({
       ...formData,
-      role: e.target.value as UserRole
+      role: e.target.value
     });
   };
 

@@ -34,19 +34,9 @@ export interface MediaState {
   url: string;
 }
 
-export interface AccessibilitySettings {
-  highContrast: boolean;
-  largeText: boolean;
-  screenReader: boolean;
-  reducedMotion: boolean;
-  fontSize: number;
-  volume: number;
-  autoPlay: boolean;
-}
-
 export interface UserPreferences {
   theme: string;
-  accessibility: AccessibilitySettings;
+  accessibility: Record<string, any>;
 }
 
 interface StoreState {
@@ -75,17 +65,6 @@ export const useAppStore = create<StoreState>((set) => ({
   setCurrentMedia: (media) => set(() => ({ currentMedia: media })),
   clearCurrentMedia: () => set(() => ({ currentMedia: { type: 'audio', blob: null, url: '' } })),
 
-  userPreferences: { 
-    theme: 'dark', 
-    accessibility: {
-      highContrast: false,
-      largeText: false,
-      screenReader: false,
-      reducedMotion: false,
-      fontSize: 16,
-      volume: 50,
-      autoPlay: false
-    }
-  },
+  userPreferences: { theme: 'dark', accessibility: {} },
   setUserPreferences: (prefs) => set((state) => ({ userPreferences: { ...state.userPreferences, ...prefs } })),
 })); 

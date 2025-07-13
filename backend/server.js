@@ -9,23 +9,9 @@ const socketIo = require('socket.io');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
-const { validateEnvironment } = require('./env-config');
 
 // Load environment variables
 dotenv.config();
-
-// Validate environment variables
-try {
-  validateEnvironment();
-  console.log('✅ Environment validation passed');
-} catch (error) {
-  console.error('❌ Environment validation failed:', error.message);
-  if (process.env.NODE_ENV === 'production') {
-    process.exit(1);
-  } else {
-    console.warn('⚠️  Continuing in development mode with warnings');
-  }
-}
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -81,124 +67,33 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/legacy-bo
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ Connected to MongoDB'))
-.catch(err => {
-  console.error('❌ MongoDB connection error:', err);
-  if (process.env.NODE_ENV === 'production') {
-    process.exit(1);
-  }
-});
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Socket.IO connection handling
-const rooms = new Map(); // Store room participants
-
 io.on('connection', (socket) => {
-  console.log('🔌 New client connected:', socket.id);
+  console.log('New client connected:', socket.id);
 
-  // Handle video call room management
+  // Handle video call signaling
   socket.on('join-room', (roomId) => {
-    console.log(`👥 User ${socket.id} joining room: ${roomId}`);
-    
-    // Leave previous room if any
-    if (socket.roomId) {
-      socket.leave(socket.roomId);
-      const room = rooms.get(socket.roomId);
-      if (room) {
-        room.delete(socket.id);
-        if (room.size === 0) {
-          rooms.delete(socket.roomId);
-        } else {
-          socket.to(socket.roomId).emit('user-left', { userId: socket.id });
-        }
-      }
-    }
-
-    // Join new room
     socket.join(roomId);
-    socket.roomId = roomId;
-    
-    // Add to room participants
-    if (!rooms.has(roomId)) {
-      rooms.set(roomId, new Set());
-    }
-    rooms.get(roomId).add(socket.id);
-
-    // Notify others in the room
-    socket.to(roomId).emit('user-joined', { userId: socket.id });
-
-    // Send current participants to the new user
-    const roomParticipants = Array.from(rooms.get(roomId));
-    roomParticipants.forEach(participantId => {
-      if (participantId !== socket.id) {
-        socket.emit('user-joined', { userId: participantId });
-      }
-    });
-
-    console.log(`📊 Room ${roomId} now has ${rooms.get(roomId).size} participants`);
+    socket.to(roomId).emit('user-connected');
   });
 
-  socket.on('leave-room', (roomId) => {
-    console.log(`👋 User ${socket.id} leaving room: ${roomId}`);
-    
-    socket.leave(roomId);
-    socket.roomId = null;
-    
-    const room = rooms.get(roomId);
-    if (room) {
-      room.delete(socket.id);
-      if (room.size === 0) {
-        rooms.delete(roomId);
-        console.log(`🗑️ Room ${roomId} deleted (empty)`);
-      } else {
-        socket.to(roomId).emit('user-left', { userId: socket.id });
-        console.log(`📊 Room ${roomId} now has ${room.size} participants`);
-      }
-    }
+  socket.on('offer', (offer, roomId) => {
+    socket.to(roomId).emit('offer', offer);
   });
 
-  // Handle WebRTC signaling
-  socket.on('offer', (data) => {
-    console.log(`📤 Offer from ${socket.id} to ${data.userId}`);
-    socket.to(data.userId).emit('offer', {
-      offer: data.offer,
-      userId: socket.id
-    });
+  socket.on('answer', (answer, roomId) => {
+    socket.to(roomId).emit('answer', answer);
   });
 
-  socket.on('answer', (data) => {
-    console.log(`📤 Answer from ${socket.id} to ${data.userId}`);
-    socket.to(data.userId).emit('answer', {
-      answer: data.answer,
-      userId: socket.id
-    });
+  socket.on('ice-candidate', (candidate, roomId) => {
+    socket.to(roomId).emit('ice-candidate', candidate);
   });
 
-  socket.on('ice-candidate', (data) => {
-    console.log(`🧊 ICE candidate from ${socket.id} to ${data.userId}`);
-    socket.to(data.userId).emit('ice-candidate', {
-      candidate: data.candidate,
-      userId: socket.id
-    });
-  });
-
-  // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('🔌 Client disconnected:', socket.id);
-    
-    // Clean up room participation
-    if (socket.roomId) {
-      const room = rooms.get(socket.roomId);
-      if (room) {
-        room.delete(socket.id);
-        if (room.size === 0) {
-          rooms.delete(socket.roomId);
-          console.log(`🗑️ Room ${socket.roomId} deleted (empty)`);
-        } else {
-          socket.to(socket.roomId).emit('user-left', { userId: socket.id });
-          console.log(`📊 Room ${socket.roomId} now has ${room.size} participants`);
-        }
-      }
-    }
+    console.log('Client disconnected:', socket.id);
   });
 });
 
@@ -218,14 +113,13 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    environment: process.env.NODE_ENV || 'development'
+    version: '1.0.0'
   });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err.stack);
+  console.error(err.stack);
   res.status(500).json({ 
     error: 'Something went wrong!',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
@@ -243,8 +137,6 @@ server.listen(PORT, () => {
   console.log(`🚀 Legacy Booth Backend running on port ${PORT}`);
   console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
   console.log(`🔗 API URL: http://localhost:${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = { app, io }; 

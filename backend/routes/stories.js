@@ -218,7 +218,7 @@ router.get('/categories', authenticateToken, (req, res) => {
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const { category, status, limit = 20, page = 1 } = req.query;
-    const filter = { user: req.user._id };
+    const filter = { resident: req.user._id };
 
     if (category) filter.category = category;
     if (status) filter.status = status;
@@ -255,7 +255,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     const story = new Story({
-      user: req.user._id,
+      resident: req.user._id,
       title,
       prompt,
       category
@@ -320,7 +320,7 @@ router.post('/:storyId/recording', authenticateToken, upload.single('recording')
     }
 
     // Check ownership
-    if (story.user.toString() !== req.user._id.toString() && !['admin', 'moderator'].includes(req.user.role)) {
+    if (story.resident.toString() !== req.user._id.toString() && !['staff', 'admin'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -362,14 +362,14 @@ router.post('/:storyId/recording', authenticateToken, upload.single('recording')
 router.get('/:storyId', authenticateToken, async (req, res) => {
   try {
     const { storyId } = req.params;
-    const story = await Story.findById(storyId).populate('user', 'name');
+    const story = await Story.findById(storyId).populate('resident', 'name');
 
     if (!story) {
       return res.status(404).json({ error: 'Story not found' });
     }
 
     // Check ownership
-    if (story.user._id.toString() !== req.user._id.toString() && !['admin', 'moderator'].includes(req.user.role)) {
+    if (story.resident._id.toString() !== req.user._id.toString() && !['staff', 'admin'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -392,7 +392,7 @@ router.put('/:storyId', authenticateToken, async (req, res) => {
     }
 
     // Check ownership
-    if (story.user.toString() !== req.user._id.toString() && !['admin', 'moderator'].includes(req.user.role)) {
+    if (story.resident.toString() !== req.user._id.toString() && !['staff', 'admin'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -429,7 +429,7 @@ router.delete('/:storyId', authenticateToken, async (req, res) => {
     }
 
     // Check ownership
-    if (story.user.toString() !== req.user._id.toString() && !['admin', 'moderator'].includes(req.user.role)) {
+    if (story.resident.toString() !== req.user._id.toString() && !['staff', 'admin'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 

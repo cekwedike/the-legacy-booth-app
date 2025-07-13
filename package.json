@@ -27,6 +27,7 @@
   "author": "Legacy Booth Team",
   "license": "MIT",
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "zustand": "^5.0.6"
   }
 }

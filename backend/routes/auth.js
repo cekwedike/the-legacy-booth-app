@@ -1,7 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
 const { authenticateToken, generateToken, requireRole } = require('../middleware/auth');
-const { validateRegistration, validateLogin, sanitizeHtml } = require('../middleware/validation');
 const router = express.Router();
 
 /**
@@ -30,7 +29,7 @@ const router = express.Router();
  *                 type: string
  *               role:
  *                 type: string
- *                 enum: [user, admin, moderator]
+ *                 enum: [resident, family, caregiver, staff, admin]
  *               roomNumber:
  *                 type: string
  *               dateOfBirth:
@@ -47,52 +46,42 @@ const router = express.Router();
  *         description: Registration failed
  */
 // Register new user (public)
-router.post('/register', sanitizeHtml, validateRegistration, async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role = 'user' } = req.body;
+    const { name, email, password, role, roomNumber, dateOfBirth, emergencyContact } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ 
-        error: 'User already exists with this email',
-        details: 'Please use a different email address or try logging in'
-      });
+      return res.status(400).json({ error: 'User already exists with this email' });
+    }
+
+    // Validate required fields based on role
+    if (role === 'resident') {
+      if (!roomNumber || !dateOfBirth) {
+        return res.status(400).json({ error: 'Room number and date of birth required for residents' });
+      }
     }
 
     const user = new User({
       name,
       email,
       password,
-      role
+      role,
+      roomNumber,
+      dateOfBirth,
+      emergencyContact
     });
 
     await user.save();
 
-    // Generate token for immediate login
-    const token = generateToken(user._id);
-
     res.status(201).json({
       message: 'User created successfully',
-      token,
       user: user.toJSON()
     });
   } catch (error) {
     console.error('Registration error:', error);
-    
-    // Handle specific validation errors
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({ 
-        error: 'Validation failed',
-        details: validationErrors
-      });
-    }
-    
-    res.status(500).json({ 
-      error: 'Registration failed',
-      details: 'Please try again later'
-    });
+    res.status(500).json({ error: 'Registration failed' });
   }
 });
 
@@ -127,25 +116,17 @@ router.post('/register', sanitizeHtml, validateRegistration, async (req, res) =>
  *         description: Login failed
  */
 // Login
-router.post('/login', sanitizeHtml, validateLogin, async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user || user.status !== 'active') {
-      return res.status(401).json({ 
-        error: 'Invalid credentials',
-        details: 'Please check your email and password'
-      });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
     }
 
-    // Verify password
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ 
-        error: 'Invalid credentials',
-        details: 'Please check your email and password'
-      });
+    const user = await User.findOne({ email });
+    if (!user || !user.isActive) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Update last login
@@ -161,10 +142,7 @@ router.post('/login', sanitizeHtml, validateLogin, async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ 
-      error: 'Login failed',
-      details: 'Please try again later'
-    });
+    res.status(500).json({ error: 'Login failed' });
   }
 });
 
@@ -213,19 +191,10 @@ router.post('/login', sanitizeHtml, validateLogin, async (req, res) => {
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).json({ 
-        error: 'User not found',
-        details: 'User profile could not be located'
-      });
-    }
     res.json({ user: user.toJSON() });
   } catch (error) {
     console.error('Profile fetch error:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch profile',
-      details: 'Please try again later'
-    });
+    res.status(500).json({ error: 'Failed to fetch profile' });
   }
 });
 

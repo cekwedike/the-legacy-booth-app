@@ -21,13 +21,16 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin', 'moderator'],
-    default: 'user'
+    enum: ['resident', 'staff', 'admin'],
+    default: 'resident'
   },
-  status: {
+  roomNumber: {
     type: String,
-    enum: ['active', 'suspended', 'pending'],
-    default: 'active'
+    required: function() { return this.role === 'resident'; }
+  },
+  dateOfBirth: {
+    type: Date,
+    required: function() { return this.role === 'resident'; }
   },
   emergencyContact: {
     name: String,
@@ -51,7 +54,10 @@ const userSchema = new mongoose.Schema({
       default: true
     }
   },
-
+  isActive: {
+    type: Boolean,
+    default: true
+  },
   lastLogin: {
     type: Date,
     default: Date.now

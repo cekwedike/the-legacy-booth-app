@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const legacyBookSchema = new mongoose.Schema({
-  user: {
+  resident: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -9,57 +9,35 @@ const legacyBookSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    trim: true,
-    maxlength: 100
+    trim: true
   },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-    maxlength: 500
-  },
-  theme: {
-    type: String,
-    enum: ['classic', 'modern', 'vintage', 'minimal'],
-    default: 'classic'
-  },
-  isPublic: {
-    type: Boolean,
-    default: false
-  },
-  isFavorite: {
-    type: Boolean,
-    default: false
-  },
-  dedication: {
-    type: String,
-    trim: true,
-    maxlength: 1000
-  },
-  acknowledgments: {
-    type: String,
-    trim: true,
-    maxlength: 1000
-  },
+  subtitle: String,
+  dedication: String,
   coverImage: {
     url: String,
     altText: String
   },
   stories: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Story'
+    story: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Story',
+      required: true
+    },
+    order: {
+      type: Number,
+      required: true
+    },
+    pageNumber: Number,
+    chapter: String
   }],
   messages: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Message'
+    message: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message'
+    },
+    order: Number,
+    pageNumber: Number
   }],
-  status: {
-    type: String,
-    enum: ['draft', 'published', 'archived'],
-    default: 'draft'
-  },
-  publishedAt: Date,
-  archivedAt: Date,
   content: {
     introduction: String,
     tableOfContents: [{
@@ -70,9 +48,23 @@ const legacyBookSchema = new mongoose.Schema({
         enum: ['story', 'message', 'chapter']
       }
     }],
-    conclusion: String
+    chapters: [{
+      title: String,
+      stories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Story'
+      }],
+      order: Number
+    }],
+    conclusion: String,
+    acknowledgments: String
   },
   design: {
+    theme: {
+      type: String,
+      enum: ['classic', 'modern', 'vintage', 'elegant', 'simple'],
+      default: 'classic'
+    },
     colorScheme: {
       primary: String,
       secondary: String,
@@ -94,6 +86,11 @@ const legacyBookSchema = new mongoose.Schema({
     }
   },
   format: {
+    type: {
+      type: String,
+      enum: ['digital', 'print', 'both'],
+      default: 'both'
+    },
     pageCount: Number,
     wordCount: Number,
     estimatedReadingTime: Number, // in minutes
@@ -103,8 +100,16 @@ const legacyBookSchema = new mongoose.Schema({
     }
   },
   files: {
-    pdf: String,
-    epub: String,
+    digital: {
+      pdf: String,
+      epub: String,
+      mobi: String
+    },
+    print: {
+      cover: String,
+      interior: String,
+      printReady: String
+    },
     preview: {
       thumbnail: String,
       samplePages: [String]
@@ -132,33 +137,57 @@ const legacyBookSchema = new mongoose.Schema({
     deliveredAt: Date,
     viewedAt: Date
   }],
+  status: {
+    type: String,
+    enum: ['draft', 'in-progress', 'review', 'approved', 'published', 'delivered'],
+    default: 'draft'
+  },
+  publishing: {
+    printQuantity: {
+      type: Number,
+      default: 1
+    },
+    printCost: Number,
+    shippingCost: Number,
+    totalCost: Number,
+    printProvider: String,
+    orderId: String,
+    estimatedDelivery: Date,
+    trackingNumber: String
+  },
   metadata: {
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    lastModified: {
+      type: Date,
+      default: Date.now
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
     tags: [String],
-    notes: String,
-    lastGenerated: Date
+    notes: String
   }
 }, {
   timestamps: true
 });
 
 // Indexes for efficient queries
-legacyBookSchema.index({ user: 1, status: 1 });
-legacyBookSchema.index({ user: 1, isFavorite: 1 });
-legacyBookSchema.index({ status: 1, isPublic: 1 });
+legacyBookSchema.index({ resident: 1, status: 1 });
 legacyBookSchema.index({ 'recipients.email': 1 });
+legacyBookSchema.index({ status: 1, 'publishing.estimatedDelivery': 1 });
 
 // Virtual for book completion percentage
 legacyBookSchema.virtual('completionPercentage').get(function() {
-  if (this.status === 'published') return 100;
-  if (this.status === 'draft') {
-    const totalItems = this.stories.length + this.messages.length;
-    if (totalItems === 0) return 0;
-    if (totalItems >= 5) return 80;
-    if (totalItems >= 3) return 60;
-    if (totalItems >= 1) return 40;
-    return 20;
-  }
-  return 0;
+  if (this.status === 'delivered') return 100;
+  if (this.status === 'published') return 90;
+  if (this.status === 'approved') return 80;
+  if (this.status === 'review') return 60;
+  if (this.status === 'in-progress') return 40;
+  return 20;
 });
 
 // Virtual for total word count
@@ -166,53 +195,26 @@ legacyBookSchema.virtual('totalWordCount').get(function() {
   return this.format.wordCount || 0;
 });
 
-// Virtual for estimated reading time
-legacyBookSchema.virtual('estimatedReadingTime').get(function() {
-  return this.format.estimatedReadingTime || 0;
-});
-
 // Method to add story to book
-legacyBookSchema.methods.addStory = function(storyId) {
-  if (!this.stories.includes(storyId)) {
-    this.stories.push(storyId);
+legacyBookSchema.methods.addStory = function(storyId, order = 0) {
+  const existingStory = this.stories.find(s => s.story.toString() === storyId.toString());
+  if (!existingStory) {
+    this.stories.push({ story: storyId, order });
+    this.stories.sort((a, b) => a.order - b.order);
   }
   return this.save();
 };
 
 // Method to remove story from book
 legacyBookSchema.methods.removeStory = function(storyId) {
-  this.stories = this.stories.filter(id => id.toString() !== storyId.toString());
-  return this.save();
-};
-
-// Method to add message to book
-legacyBookSchema.methods.addMessage = function(messageId) {
-  if (!this.messages.includes(messageId)) {
-    this.messages.push(messageId);
-  }
-  return this.save();
-};
-
-// Method to remove message from book
-legacyBookSchema.methods.removeMessage = function(messageId) {
-  this.messages = this.messages.filter(id => id.toString() !== messageId.toString());
+  this.stories = this.stories.filter(s => s.story.toString() !== storyId.toString());
   return this.save();
 };
 
 // Method to update book status
 legacyBookSchema.methods.updateStatus = function(newStatus) {
   this.status = newStatus;
-  if (newStatus === 'published') {
-    this.publishedAt = new Date();
-  } else if (newStatus === 'archived') {
-    this.archivedAt = new Date();
-  }
-  return this.save();
-};
-
-// Method to toggle favorite status
-legacyBookSchema.methods.toggleFavorite = function() {
-  this.isFavorite = !this.isFavorite;
+  this.metadata.lastModified = new Date();
   return this.save();
 };
 
@@ -221,22 +223,5 @@ legacyBookSchema.methods.addRecipient = function(recipientData) {
   this.recipients.push(recipientData);
   return this.save();
 };
-
-// Method to remove recipient
-legacyBookSchema.methods.removeRecipient = function(recipientId) {
-  this.recipients = this.recipients.filter(r => r._id.toString() !== recipientId.toString());
-  return this.save();
-};
-
-// Pre-save middleware to update word count
-legacyBookSchema.pre('save', function(next) {
-  // Calculate estimated word count based on stories and messages
-  const storyCount = this.stories.length;
-  const messageCount = this.messages.length;
-  const estimatedWords = (storyCount * 500) + (messageCount * 200); // Rough estimates
-  this.format.wordCount = estimatedWords;
-  this.format.estimatedReadingTime = Math.ceil(estimatedWords / 200); // Average reading speed
-  next();
-});
 
 module.exports = mongoose.model('LegacyBook', legacyBookSchema); 
