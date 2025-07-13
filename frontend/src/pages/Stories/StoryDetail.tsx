@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Typography,
@@ -9,7 +9,6 @@ import {
   Chip,
   IconButton,
   Alert,
-  CircularProgress,
   Divider
 } from '@mui/material';
 import {
@@ -23,15 +22,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppStore, Story } from '../../store';
 
 const StoryDetail: React.FC = () => {
-  const [error, setError] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const navigate = useNavigate();
   const { storyId } = useParams<{ storyId: string }>();
 
   // Zustand store
-  const stories = useAppStore(s => s.stories);
-  const removeStory = useAppStore(s => s.removeStory);
-  const story = stories.find(s => s.id === storyId);
+  const stories = useAppStore((s: any) => s.stories);
+  const removeStory = useAppStore((s: any) => s.removeStory);
+  const story = stories.find((s: Story) => s.id === storyId);
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
@@ -45,7 +43,7 @@ const StoryDetail: React.FC = () => {
     navigate('/stories/library');
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'success' | 'info' | 'warning' | 'default' => {
     switch (status) {
       case 'published':
         return 'success';
@@ -58,6 +56,13 @@ const StoryDetail: React.FC = () => {
       default:
         return 'default';
     }
+  };
+
+  const formatDuration = (duration?: number): string => {
+    if (!duration) return '0:00';
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
   if (!story) {
@@ -82,12 +87,6 @@ const StoryDetail: React.FC = () => {
           </Typography>
         </Box>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
@@ -96,7 +95,7 @@ const StoryDetail: React.FC = () => {
               </Typography>
               <Chip
                 label={story.status}
-                color={getStatusColor(story.status) as any}
+                color={getStatusColor(story.status)}
               />
             </Box>
 
@@ -111,7 +110,7 @@ const StoryDetail: React.FC = () => {
                 Category: {story.category}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
-                Created: {story.createdAt ? new Date(story.createdAt).toLocaleDateString() : 'Unknown'}
+                Created: {story.createdAt ? new Date(story.createdAt).toLocaleDateString() : story.date}
               </Typography>
             </Box>
 
@@ -129,10 +128,10 @@ const StoryDetail: React.FC = () => {
                     {isPlaying ? <Pause /> : <PlayArrow />}
                   </IconButton>
                   <Typography variant="body2" color="text.secondary">
-                    Duration: {story.recording?.duration !== undefined ? `${Math.floor(story.recording.duration / 60)}:${(story.recording.duration % 60).toString().padStart(2, '0')}` : 'N/A'}
+                    Duration: {formatDuration(story.recording.duration)}
                   </Typography>
                 </Box>
-                {story.recording?.audioUrl && (
+                {story.recording.audioUrl && (
                   <audio
                     src={story.recording.audioUrl}
                     onEnded={() => setIsPlaying(false)}
@@ -142,7 +141,7 @@ const StoryDetail: React.FC = () => {
               </Box>
             )}
 
-            {story.transcription?.text && (
+            {story.transcription && story.transcription.text && (
               <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   Transcription
@@ -153,7 +152,7 @@ const StoryDetail: React.FC = () => {
               </Box>
             )}
 
-            {story.content?.summary && (
+            {story.content && story.content.summary && (
               <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   Summary
