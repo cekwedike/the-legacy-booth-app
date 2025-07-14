@@ -128,7 +128,7 @@ const StoryLibrary: React.FC = () => {
           <Box>
             <Typography variant="h4" sx={{ 
               fontWeight: 700,
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
@@ -144,9 +144,9 @@ const StoryLibrary: React.FC = () => {
             aria-label="add story"
             onClick={() => navigate('/stories/record')}
             sx={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
                 transform: 'scale(1.1)',
               },
               transition: 'all 0.2s ease-in-out'
@@ -159,9 +159,9 @@ const StoryLibrary: React.FC = () => {
         {/* Search and Filters */}
         <Card sx={{ 
           mb: 4,
-          background: 'linear-gradient(135deg, #181826 0%, #23234a 100%)',
-          border: '1.5px solid rgba(99,102,241,0.18)',
-          boxShadow: '0 4px 24px 0 rgba(99,102,241,0.10)',
+          background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+          border: '1.5px solid rgba(16,185,129,0.18)',
+          boxShadow: '0 4px 24px 0 rgba(16,185,129,0.10)',
           color: '#fff',
           backdropFilter: 'blur(12px)',
         }}>
@@ -226,11 +226,11 @@ const StoryLibrary: React.FC = () => {
                 cursor: 'pointer',
                 '&:hover': {
                   transform: 'translateY(-8px)',
-                  boxShadow: '0 25px 50px -12px rgba(99,102,241,0.18)',
+                  boxShadow: '0 25px 50px -12px rgba(16,185,129,0.18)',
                 },
                 transition: 'all 0.3s ease-in-out',
-                background: 'linear-gradient(135deg, #23234a 0%, #181826 100%)',
-                border: '1.5px solid rgba(99,102,241,0.18)',
+                background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+                border: '1.5px solid rgba(16,185,129,0.18)',
                 color: '#fff',
                 backdropFilter: 'blur(10px)',
               }}>
@@ -245,8 +245,8 @@ const StoryLibrary: React.FC = () => {
                         label={story.category} 
                         size="small" 
                         sx={{ 
-                          background: 'rgba(99, 102, 241, 0.1)', 
-                          color: '#6366f1',
+                          background: 'rgba(16, 185, 129, 0.1)', 
+                          color: '#10b981',
                           fontSize: '0.7rem',
                           fontWeight: 600
                         }}
@@ -295,7 +295,7 @@ const StoryLibrary: React.FC = () => {
                         sx={{ 
                           fontSize: '0.6rem', 
                           height: 20,
-                          borderColor: 'rgba(99, 102, 241, 0.3)',
+                          borderColor: 'rgba(16, 185, 129, 0.3)',
                           color: 'text.secondary'
                         }}
                       />
@@ -324,10 +324,10 @@ const StoryLibrary: React.FC = () => {
                     <IconButton
                       onClick={() => navigate(`/stories/${story.id}`)}
                       sx={{
-                        border: '1px solid rgba(99, 102, 241, 0.3)',
-                        color: '#6366f1',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        color: '#10b981',
                         '&:hover': {
-                          background: 'rgba(99, 102, 241, 0.1)',
+                          background: 'rgba(16, 185, 129, 0.1)',
                         }
                       }}
                     >
@@ -357,8 +357,8 @@ const StoryLibrary: React.FC = () => {
           <Card sx={{ 
             textAlign: 'center', 
             py: 8,
-            background: 'linear-gradient(135deg, #181826 0%, #23234a 100%)',
-            border: '1.5px solid rgba(99,102,241,0.18)',
+            background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+            border: '1.5px solid rgba(16,185,129,0.18)',
             color: '#fff',
             backdropFilter: 'blur(10px)',
           }}>
@@ -370,8 +370,8 @@ const StoryLibrary: React.FC = () => {
                 width: 80,
                 height: 80,
                 borderRadius: '50%',
-                background: 'rgba(99, 102, 241, 0.1)',
-                color: '#6366f1',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
                 mb: 3
               }}>
                 <Book sx={{ fontSize: 40 }} />
@@ -391,9 +391,9 @@ const StoryLibrary: React.FC = () => {
                   startIcon={<Mic />}
                   onClick={() => navigate('/stories/record')}
                   sx={{
-                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                      background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
                     }
                   }}
                 >

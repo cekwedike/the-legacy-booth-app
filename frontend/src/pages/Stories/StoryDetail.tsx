@@ -82,12 +82,23 @@ const StoryDetail: React.FC = () => {
           <IconButton onClick={() => navigate('/stories/library')} sx={{ mr: 2 }}>
             <ArrowBack />
           </IconButton>
-          <Typography variant="h4" component="h1">
+          <Typography variant="h4" component="h1" sx={{ 
+            fontWeight: 700,
+            background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
             {story.title}
           </Typography>
         </Box>
 
-        <Card>
+        <Card sx={{ 
+          background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+          border: '1.5px solid rgba(16,185,129,0.18)',
+          color: '#fff',
+          backdropFilter: 'blur(10px)',
+        }}>
           <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
               <Typography variant="h5" component="h2">
@@ -146,7 +157,7 @@ const StoryDetail: React.FC = () => {
                 <Typography variant="h6" gutterBottom>
                   Transcription
                 </Typography>
-                <Typography variant="body2" sx={{ backgroundColor: 'grey.50', p: 2, borderRadius: 1 }}>
+                <Typography variant="body2" sx={{ backgroundColor: 'rgba(16,185,129,0.05)', p: 2, borderRadius: 1, border: '1px solid rgba(16,185,129,0.1)' }}>
                   {story.transcription.text}
                 </Typography>
               </Box>
