@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
         description: 'Share your life experiences and memories',
         icon: <Mic sx={{ fontSize: 32 }} />,
         path: '/stories/record',
-        color: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+        color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
         stats: '12 stories recorded'
       },
       {
@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
         description: 'Leave personal messages for loved ones',
         icon: <Message sx={{ fontSize: 32 }} />,
         path: '/messages/record',
-        color: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+        color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
         stats: '8 messages created'
       },
       {
@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
         description: 'Compile your stories into a book',
         icon: <Book sx={{ fontSize: 32 }} />,
         path: '/legacy-books',
-        color: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+        color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
         stats: '2 books created'
       }
     ];
@@ -96,10 +96,10 @@ const Dashboard: React.FC = () => {
     ];
 
     const stats = [
-      { label: 'Total Stories', value: '24', icon: <Book />, color: '#6366f1' },
-      { label: 'Messages Sent', value: '18', icon: <Message />, color: '#f59e0b' },
+      { label: 'Total Stories', value: '24', icon: <Book />, color: '#059669' },
+      { label: 'Messages Sent', value: '18', icon: <Message />, color: '#16a34a' },
       { label: 'Video Calls', value: '12', icon: <VideoCall />, color: '#10b981' },
-      { label: 'Legacy Books', value: '3', icon: <Star />, color: '#3b82f6' }
+      { label: 'Legacy Books', value: '3', icon: <Star />, color: '#047857' }
     ];
 
     return (
@@ -109,7 +109,7 @@ const Dashboard: React.FC = () => {
           <Box sx={{ mb: 4 }}>
             <Typography variant="h3" sx={{ 
               fontWeight: 700, 
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Card sx={{ 
                   height: '100%',
-                  background: 'linear-gradient(135deg, #181826 0%, #23234a 100%)',
+                  background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
                   border: `2px solid ${stat.color}`,
                   boxShadow: `0 4px 24px 0 ${stat.color}33`,
                   color: stat.color,
@@ -257,11 +257,11 @@ const Dashboard: React.FC = () => {
                           p: 2,
                           mb: 2,
                           borderRadius: 2,
-                          background: 'rgba(99, 102, 241, 0.05)',
-                          border: '1px solid rgba(99, 102, 241, 0.1)',
+                          background: 'rgba(16, 185, 129, 0.05)',
+                          border: '1px solid rgba(16, 185, 129, 0.1)',
                           cursor: 'pointer',
                           '&:hover': {
-                            background: 'rgba(99, 102, 241, 0.1)',
+                            background: 'rgba(16, 185, 129, 0.1)',
                             transform: 'translateX(4px)',
                           },
                           transition: 'all 0.2s ease-in-out'
@@ -270,7 +270,7 @@ const Dashboard: React.FC = () => {
                       >
                         <Avatar sx={{ 
                           mr: 2, 
-                          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                           width: 48,
                           height: 48
                         }}>
@@ -285,8 +285,8 @@ const Dashboard: React.FC = () => {
                               label={story.category} 
                               size="small" 
                               sx={{ 
-                                background: 'rgba(99, 102, 241, 0.1)', 
-                                color: '#6366f1',
+                                background: 'rgba(16, 185, 129, 0.1)', 
+                                color: '#10b981',
                                 fontSize: '0.7rem'
                               }}
                             />
@@ -333,9 +333,9 @@ const Dashboard: React.FC = () => {
                       sx={{ 
                         height: 8, 
                         borderRadius: 4,
-                        background: 'rgba(99, 102, 241, 0.1)',
+                        background: 'rgba(16, 185, 129, 0.1)',
                         '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                           borderRadius: 4,
                         }
                       }}
@@ -396,9 +396,9 @@ const Dashboard: React.FC = () => {
                     startIcon={<Add />}
                     onClick={() => navigate('/stories/record')}
                     sx={{
-                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                        background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
                       }
                     }}
                   >
@@ -419,7 +419,7 @@ const Dashboard: React.FC = () => {
       <Container maxWidth="xl">
         <Box sx={{ mt: 2, mb: 4 }}>
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+            <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
               Welcome, {user.name?.split(' ')[0] || 'Family'}!
             </Typography>
             <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
@@ -428,7 +428,7 @@ const Dashboard: React.FC = () => {
           </Box>
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)', color: 'white' }}>
+              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)', color: 'white' }}>
                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                   <Message sx={{ fontSize: 40, mb: 2 }} />
                   <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Messages</Typography>
@@ -448,7 +448,7 @@ const Dashboard: React.FC = () => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', color: 'white' }}>
+              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #047857 0%, #065f46 100%)', color: 'white' }}>
                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                   <Book sx={{ fontSize: 40, mb: 2 }} />
                   <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Legacy Books</Typography>
@@ -469,7 +469,7 @@ const Dashboard: React.FC = () => {
       <Container maxWidth="xl">
         <Box sx={{ mt: 2, mb: 4 }}>
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+            <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
               Welcome, {user.name?.split(' ')[0] || 'Caregiver'}!
             </Typography>
             <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
@@ -478,7 +478,7 @@ const Dashboard: React.FC = () => {
           </Box>
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', color: 'white' }}>
+              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', color: 'white' }}>
                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                   <Book sx={{ fontSize: 40, mb: 2 }} />
                   <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Resident Stories</Typography>
@@ -488,7 +488,7 @@ const Dashboard: React.FC = () => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)', color: 'white' }}>
+              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)', color: 'white' }}>
                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                   <Message sx={{ fontSize: 40, mb: 2 }} />
                   <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Resident Messages</Typography>
