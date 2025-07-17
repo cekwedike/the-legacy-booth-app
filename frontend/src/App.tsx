@@ -41,7 +41,9 @@ const theme = createTheme({
       main: '#ef4444',
     },
     warning: {
-      main: '#f59e0b',
+      main: '#16a34a', // Forest green
+      light: '#22c55e',
+      dark: '#15803d',
     },
     info: {
       main: '#06b6d4',
@@ -51,7 +53,7 @@ const theme = createTheme({
     },
     text: {
       primary: '#ffffff',
-      secondary: '#a1a1aa',
+      secondary: '#ffffff',
     },
   },
   typography: {
@@ -205,7 +207,7 @@ const theme = createTheme({
             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
           },
           '&.MuiChip-colorWarning': {
-            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
           },
           '&.MuiChip-colorError': {
             background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',

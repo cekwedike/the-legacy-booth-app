@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
             }}>
               Welcome back, {user?.name?.split(' ')[0] || 'Friend'}! 👋
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
+            <Typography variant="h6" sx={{ fontWeight: 400, color: '#ffffff' }}>
               Ready to preserve more memories today?
             </Typography>
           </Box>
@@ -158,7 +158,7 @@ const Dashboard: React.FC = () => {
                     <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: '#fff' }}>
                       {stat.value}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+                    <Typography variant="body2" sx={{ color: '#ffffff' }}>
                       {stat.label}
                     </Typography>
                   </CardContent>
@@ -177,9 +177,13 @@ const Dashboard: React.FC = () => {
                 <Card sx={{ 
                   height: '100%',
                   cursor: 'pointer',
+                  background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+                  border: '1.5px solid rgba(16,185,129,0.18)',
+                  color: '#fff',
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
                     transform: 'translateY(-8px)',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    boxShadow: '0 25px 50px -12px rgba(16,185,129,0.25)',
                   },
                   transition: 'all 0.3s ease-in-out'
                 }}>
@@ -200,10 +204,10 @@ const Dashboard: React.FC = () => {
                     <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
                       {action.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    <Typography variant="body2" sx={{ mb: 2, color: '#ffffff' }}>
                       {action.description}
                     </Typography>
-                    <Typography variant="caption" color="primary" sx={{ fontWeight: 600 }}>
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#10b981' }}>
                       {action.stats}
                     </Typography>
                   </CardContent>
@@ -232,7 +236,12 @@ const Dashboard: React.FC = () => {
           {/* Recent Activity */}
           <Grid container spacing={3}>
             <Grid item xs={12} lg={8}>
-              <Card>
+              <Card sx={{ 
+                background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+                border: '1.5px solid rgba(16,185,129,0.18)',
+                color: '#fff',
+                backdropFilter: 'blur(10px)',
+              }}>
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -290,10 +299,10 @@ const Dashboard: React.FC = () => {
                                 fontSize: '0.7rem'
                               }}
                             />
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: '#ffffff' }}>
                               {story.duration}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: '#ffffff' }}>
                               {story.date}
                             </Typography>
                           </Box>
@@ -312,7 +321,12 @@ const Dashboard: React.FC = () => {
             </Grid>
 
             <Grid item xs={12} lg={4}>
-              <Card>
+              <Card sx={{ 
+                background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+                border: '1.5px solid rgba(16,185,129,0.18)',
+                color: '#fff',
+                backdropFilter: 'blur(10px)',
+              }}>
                 <CardContent sx={{ p: 3 }}>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
                     Progress Overview
@@ -323,7 +337,7 @@ const Dashboard: React.FC = () => {
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         Stories Goal
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" sx={{ color: '#ffffff' }}>
                         24/30
                       </Typography>
                     </Box>
@@ -347,7 +361,7 @@ const Dashboard: React.FC = () => {
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         Messages Goal
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" sx={{ color: '#ffffff' }}>
                         18/25
                       </Typography>
                     </Box>
@@ -357,9 +371,9 @@ const Dashboard: React.FC = () => {
                       sx={{ 
                         height: 8, 
                         borderRadius: 4,
-                        background: 'rgba(245, 158, 11, 0.1)',
+                        background: 'rgba(22, 196, 94, 0.1)',
                         '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+                          background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
                           borderRadius: 4,
                         }
                       }}
@@ -371,7 +385,7 @@ const Dashboard: React.FC = () => {
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         Legacy Books
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" sx={{ color: '#ffffff' }}>
                         3/5
                       </Typography>
                     </Box>
@@ -381,9 +395,9 @@ const Dashboard: React.FC = () => {
                       sx={{ 
                         height: 8, 
                         borderRadius: 4,
-                        background: 'rgba(59, 130, 246, 0.1)',
+                        background: 'rgba(5, 150, 105, 0.1)',
                         '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                          background: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
                           borderRadius: 4,
                         }
                       }}
@@ -422,7 +436,7 @@ const Dashboard: React.FC = () => {
             <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
               Welcome, {user.name?.split(' ')[0] || 'Family'}!
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
+            <Typography variant="h6" sx={{ fontWeight: 400, color: '#ffffff' }}>
               View your loved one's legacy and send messages.
             </Typography>
           </Box>
@@ -472,7 +486,7 @@ const Dashboard: React.FC = () => {
             <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
               Welcome, {user.name?.split(' ')[0] || 'Caregiver'}!
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
+            <Typography variant="h6" sx={{ fontWeight: 400, color: '#ffffff' }}>
               Manage residents and assist with their legacy.
             </Typography>
           </Box>

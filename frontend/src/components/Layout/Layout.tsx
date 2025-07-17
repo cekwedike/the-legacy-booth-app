@@ -139,7 +139,7 @@ const Layout: React.FC = () => {
       {/* Header */}
       <Box sx={{ 
         p: 3, 
-        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+        background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
         color: 'white',
         textAlign: 'center'
       }}>
@@ -158,7 +158,7 @@ const Layout: React.FC = () => {
             sx={{ 
               width: 48, 
               height: 48,
-              background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+              background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
               fontSize: '1.2rem',
               fontWeight: 600
             }}
@@ -200,23 +200,23 @@ const Layout: React.FC = () => {
                 maxWidth: 300,
                 alignSelf: 'center',
                 '&.Mui-selected': {
-                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                   color: 'white',
-                  boxShadow: '0 4px 16px rgba(99,102,241,0.10)',
+                  boxShadow: '0 4px 16px rgba(16,185,129,0.10)',
                   pl: 3,
                   pr: 2.5,
                   width: '85%',
                   maxWidth: 300,
                   alignSelf: 'center',
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                    background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
                   },
                   '& .MuiListItemIcon-root': {
                     color: 'white',
                   },
                 },
                 '&:hover': {
-                  background: 'rgba(99, 102, 241, 0.1)',
+                  background: 'rgba(16, 185, 129, 0.1)',
                   transform: 'translateX(4px)',
                 },
                 transition: 'all 0.2s ease-in-out',
@@ -250,7 +250,7 @@ const Layout: React.FC = () => {
         {user?.role === 'admin' && (
           <>
             <Divider sx={{ mx: 2, my: 2 }} />
-            <Typography variant="overline" sx={{ px: 3, py: 1, color: 'text.secondary', fontWeight: 600 }}>
+            <Typography variant="overline" sx={{ px: 3, py: 1, color: '#ffffff', fontWeight: 600 }}>
               Admin Tools
             </Typography>
             <List>
@@ -264,17 +264,17 @@ const Layout: React.FC = () => {
                     mb: 1,
                     borderRadius: 3,
                     '&.Mui-selected': {
-                      background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+                      background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
                       color: 'white',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #d97706 0%, #ea580c 100%)',
+                        background: 'linear-gradient(135deg, #15803d 0%, #16a34a 100%)',
                       },
                       '& .MuiListItemIcon-root': {
                         color: 'white',
                       },
                     },
                     '&:hover': {
-                      background: 'rgba(245, 158, 11, 0.1)',
+                      background: 'rgba(22, 196, 94, 0.1)',
                       transform: 'translateX(4px)',
                     },
                     transition: 'all 0.2s ease-in-out',
@@ -300,13 +300,13 @@ const Layout: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #064e3b 50%, #065f46 100%)' }}>
       <AppBar
         position="fixed"
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -348,7 +348,7 @@ const Layout: React.FC = () => {
                 sx={{ 
                   width: 36, 
                   height: 36,
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+                  background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
                   fontSize: '1rem',
                   fontWeight: 600
                 }}
@@ -376,7 +376,7 @@ const Layout: React.FC = () => {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              background: 'linear-gradient(180deg, #181826 0%, #23234a 100%)',
+              background: 'linear-gradient(180deg, #064e3b 0%, #065f46 100%)',
             },
           }}
         >
@@ -389,7 +389,7 @@ const Layout: React.FC = () => {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              background: 'linear-gradient(180deg, #181826 0%, #23234a 100%)',
+              background: 'linear-gradient(180deg, #064e3b 0%, #065f46 100%)',
               borderRight: 'none',
             },
           }}

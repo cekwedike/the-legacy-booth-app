@@ -135,7 +135,7 @@ const StoryLibrary: React.FC = () => {
             }}>
               Your Stories
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" sx={{ color: '#ffffff' }}>
               {sortedStories.length} stories • {stories.filter(s => s.favorite).length} favorites
             </Typography>
           </Box>
@@ -258,7 +258,7 @@ const StoryLibrary: React.FC = () => {
                   </Box>
 
                   {/* Description */}
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.5 }}>
+                  <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.5, color: '#ffffff' }}>
                     {story.description}
                   </Typography>
 
@@ -266,13 +266,13 @@ const StoryLibrary: React.FC = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Timer sx={{ fontSize: 16, color: 'text.secondary' }} />
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" sx={{ color: '#ffffff' }}>
                         {story.duration}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Timer sx={{ fontSize: 16, color: 'text.secondary' }} />
-                      <Typography variant="caption" color="text.secondary">
+                      <Timer sx={{ fontSize: 16, color: '#ffffff' }} />
+                      <Typography variant="caption" sx={{ color: '#ffffff' }}>
                         {formatDate(story.date)}
                       </Typography>
                     </Box>
@@ -296,7 +296,7 @@ const StoryLibrary: React.FC = () => {
                           fontSize: '0.6rem', 
                           height: 20,
                           borderColor: 'rgba(16, 185, 129, 0.3)',
-                          color: 'text.secondary'
+                          color: '#ffffff'
                         }}
                       />
                     ))}
@@ -379,7 +379,7 @@ const StoryLibrary: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
                 No stories found
               </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography variant="body1" sx={{ mb: 3, color: '#ffffff' }}>
                 {searchTerm || selectedCategory !== 'all' 
                   ? 'Try adjusting your search or filters'
                   : 'Start recording your first story to preserve your memories'

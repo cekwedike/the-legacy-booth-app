@@ -14,15 +14,15 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#6366f1', // Indigo
-      light: '#818cf8',
-      dark: '#4f46e5',
+      main: '#059669', // Emerald green
+      light: '#10b981',
+      dark: '#047857',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#f59e0b', // Amber
-      light: '#fbbf24',
-      dark: '#d97706',
+      main: '#16a34a', // Forest green
+      light: '#22c55e',
+      dark: '#15803d',
       contrastText: '#ffffff',
     },
     background: {
@@ -30,8 +30,8 @@ const theme = createTheme({
       paper: '#ffffff',
     },
     text: {
-      primary: '#1e293b',
-      secondary: '#64748b',
+      primary: '#ffffff',
+      secondary: '#ffffff',
     },
     success: {
       main: '#10b981',
@@ -44,14 +44,14 @@ const theme = createTheme({
       dark: '#dc2626',
     },
     warning: {
-      main: '#f59e0b',
-      light: '#fbbf24',
-      dark: '#d97706',
+      main: '#16a34a', // Forest green
+      light: '#22c55e',
+      dark: '#15803d',
     },
     info: {
-      main: '#3b82f6',
-      light: '#60a5fa',
-      dark: '#2563eb',
+      main: '#10b981', // Emerald green
+      light: '#34d399',
+      dark: '#059669',
     },
   },
   typography: {
@@ -114,9 +114,9 @@ const theme = createTheme({
           transition: 'all 0.2s ease-in-out',
         },
         contained: {
-          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
           '&:hover': {
-            background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+            background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
           },
         },
         outlined: {
@@ -156,11 +156,24 @@ const theme = createTheme({
           '& .MuiOutlinedInput-root': {
             borderRadius: 12,
             '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#6366f1',
+              borderColor: '#059669',
             },
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#6366f1',
+              borderColor: '#059669',
               borderWidth: 2,
+            },
+            '& input': {
+              color: '#ffffff',
+              '&::placeholder': {
+                color: '#ffffff',
+                opacity: 0.7,
+              },
+            },
+          },
+          '& .MuiInputLabel-root': {
+            color: '#ffffff',
+            '&.Mui-focused': {
+              color: '#059669',
             },
           },
         },
@@ -169,7 +182,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         },
       },
@@ -189,7 +202,7 @@ const theme = createTheme({
           borderRadius: 20,
           fontWeight: 600,
           '&.MuiChip-colorPrimary': {
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
             color: '#ffffff',
           },
         },

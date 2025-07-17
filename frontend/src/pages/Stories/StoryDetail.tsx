@@ -117,10 +117,10 @@ const StoryDetail: React.FC = () => {
             )}
 
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography variant="subtitle2" sx={{ color: '#ffffff' }}>
                 Category: {story.category}
               </Typography>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography variant="subtitle2" sx={{ color: '#ffffff' }}>
                 Created: {story.createdAt ? new Date(story.createdAt).toLocaleDateString() : story.date}
               </Typography>
             </Box>
@@ -138,7 +138,7 @@ const StoryDetail: React.FC = () => {
                   >
                     {isPlaying ? <Pause /> : <PlayArrow />}
                   </IconButton>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{ color: '#ffffff' }}>
                     Duration: {formatDuration(story.recording.duration)}
                   </Typography>
                 </Box>
