@@ -56,6 +56,30 @@ export interface DashboardConfig {
     viewAllButton: string;
     recordNewButton: string;
   };
+  layout: {
+    quickActionsGrid: {
+      xs: number;
+      sm: number;
+      md: number;
+      lg: number;
+    };
+    cardHeight: string;
+    iconSize: number;
+    iconBorderRadius: string;
+    cardBackground: string;
+    cardBorderRadius: number;
+    cardPadding: number;
+    hoverEffect: {
+      transform: string;
+      boxShadow: string;
+      borderColor: string;
+    };
+    typography: {
+      titleColor: string;
+      descriptionColor: string;
+      statsColor: string;
+    };
+  };
 }
 
 export const dashboardConfig: Record<string, DashboardConfig> = {
@@ -143,6 +167,30 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
       progressOverview: 'Progress Overview',
       viewAllButton: 'View All',
       recordNewButton: 'Record New'
+    },
+    layout: {
+      quickActionsGrid: {
+        xs: 12,
+        sm: 6,
+        md: 4,
+        lg: 3,
+      },
+      cardHeight: '150px',
+      iconSize: 40,
+      iconBorderRadius: '8px',
+      cardBackground: 'transparent',
+      cardBorderRadius: 0,
+      cardPadding: 0,
+      hoverEffect: {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+        borderColor: 'transparent',
+      },
+      typography: {
+        titleColor: '#333',
+        descriptionColor: '#666',
+        statsColor: '#059669',
+      },
     }
   },
   family: {
@@ -191,6 +239,30 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
       progressOverview: 'Progress Overview',
       viewAllButton: 'View All',
       recordNewButton: 'Record New'
+    },
+    layout: {
+      quickActionsGrid: {
+        xs: 12,
+        sm: 6,
+        md: 4,
+        lg: 3,
+      },
+      cardHeight: '150px',
+      iconSize: 40,
+      iconBorderRadius: '8px',
+      cardBackground: 'transparent',
+      cardBorderRadius: 0,
+      cardPadding: 0,
+      hoverEffect: {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+        borderColor: 'transparent',
+      },
+      typography: {
+        titleColor: '#333',
+        descriptionColor: '#666',
+        statsColor: '#16a34a',
+      },
     }
   },
   caregiver: {
@@ -239,6 +311,30 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
       progressOverview: 'Progress Overview',
       viewAllButton: 'View All',
       recordNewButton: 'Record New'
+    },
+    layout: {
+      quickActionsGrid: {
+        xs: 12,
+        sm: 6,
+        md: 4,
+        lg: 3,
+      },
+      cardHeight: '150px',
+      iconSize: 40,
+      iconBorderRadius: '8px',
+      cardBackground: 'transparent',
+      cardBorderRadius: 0,
+      cardPadding: 0,
+      hoverEffect: {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+        borderColor: 'transparent',
+      },
+      typography: {
+        titleColor: '#333',
+        descriptionColor: '#666',
+        statsColor: '#10b981',
+      },
     }
   }
 };
