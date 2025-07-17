@@ -12,18 +12,11 @@ import {
   Chip,
   LinearProgress
 } from '@mui/material';
-import {
-  Book,
-  Message,
-  VideoCall,
-  Mic,
-  PlayArrow,
-  Star,
-  Add,
-  ArrowForward
-} from '@mui/icons-material';
+import { ArrowForward, Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { getDashboardConfig } from '../../config/dashboardConfig';
+import { getIcon } from '../../utils/iconUtils';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -31,100 +24,55 @@ const Dashboard: React.FC = () => {
 
   if (!user) return null;
 
+  const config = getDashboardConfig(user.role);
+  const firstName = user?.name?.split(' ')[0] || 'Friend';
+  const welcomeMessage = config.welcomeMessage.replace('{name}', firstName);
+
   // Resident Dashboard
   if (user.role === 'resident') {
-    const quickActions = [
-      {
-        title: 'Record a Story',
-        description: 'Share your life experiences and memories',
-        icon: <Mic sx={{ fontSize: 32 }} />,
-        path: '/stories/record',
-        color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        stats: '12 stories recorded'
-      },
-      {
-        title: 'Create Message',
-        description: 'Leave personal messages for loved ones',
-        icon: <Message sx={{ fontSize: 32 }} />,
-        path: '/messages/record',
-        color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '8 messages created'
-      },
-      {
-        title: 'Video Call',
-        description: 'Connect with family and friends',
-        icon: <VideoCall sx={{ fontSize: 32 }} />,
-        path: '/video-call',
-        color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        stats: '3 calls this week'
-      },
-      {
-        title: 'Legacy Book',
-        description: 'Compile your stories into a book',
-        icon: <Book sx={{ fontSize: 32 }} />,
-        path: '/legacy-books',
-        color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '2 books created'
-      }
-    ];
-
-    const recentStories = [
-      {
-        id: 1,
-        title: 'My First Job',
-        category: 'Career & Work',
-        duration: '5:32',
-        date: '2 days ago',
-        status: 'published'
-      },
-      {
-        id: 2,
-        title: 'Family Vacation to Europe',
-        category: 'Travel Adventures',
-        duration: '8:15',
-        date: '1 week ago',
-        status: 'transcribed'
-      },
-      {
-        id: 3,
-        title: 'Meeting My Spouse',
-        category: 'Love & Relationships',
-        duration: '6:48',
-        date: '2 weeks ago',
-        status: 'published'
-      }
-    ];
-
-    const stats = [
-      { label: 'Total Stories', value: '24', icon: <Book />, color: '#059669' },
-      { label: 'Messages Sent', value: '18', icon: <Message />, color: '#16a34a' },
-      { label: 'Video Calls', value: '12', icon: <VideoCall />, color: '#10b981' },
-      { label: 'Legacy Books', value: '3', icon: <Star />, color: '#047857' }
-    ];
-
     return (
       <Container maxWidth="xl">
         <Box sx={{ mt: 2, mb: 4 }}>
           {/* Welcome Header */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ 
-              fontWeight: 700, 
-              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+          <Box sx={{ 
+            mb: 4, 
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, rgba(6, 78, 59, 0.8) 0%, rgba(6, 95, 70, 0.6) 100%)',
+            borderRadius: 4,
+            p: 4,
+            border: '2px solid rgba(16, 185, 129, 0.2)',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.15)'
+          }}>
+            <Typography variant="h2" sx={{ 
+              fontWeight: 800, 
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              mb: 1
+              mb: 2,
+              fontSize: { xs: '2.5rem', md: '3.5rem' },
+              textShadow: '0 4px 8px rgba(16, 185, 129, 0.3)',
+              letterSpacing: '-0.02em'
             }}>
-              Welcome back, {user?.name?.split(' ')[0] || 'Friend'}! 👋
+              {welcomeMessage}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 400, color: '#ffffff' }}>
-              Ready to preserve more memories today?
+            <Typography variant="h5" sx={{ 
+              fontWeight: 400, 
+              color: '#e5e7eb',
+              opacity: 0.9,
+              fontSize: { xs: '1.1rem', md: '1.3rem' },
+              maxWidth: '600px',
+              mx: 'auto',
+              lineHeight: 1.6
+            }}>
+              {config.subtitle}
             </Typography>
           </Box>
 
           {/* Stats Cards */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            {stats.map((stat, index) => (
+            {config.stats.map((stat, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Card sx={{ 
                   height: '100%',
@@ -153,7 +101,7 @@ const Dashboard: React.FC = () => {
                       mb: 2,
                       boxShadow: `0 2px 8px 0 ${stat.color}33`,
                     }}>
-                      {stat.icon}
+                      {getIcon(stat.iconName)}
                     </Box>
                     <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: '#fff' }}>
                       {stat.value}
@@ -169,10 +117,10 @@ const Dashboard: React.FC = () => {
 
           {/* Quick Actions */}
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
-            Quick Actions
+            {config.sections.quickActions}
           </Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            {quickActions.map((action, index) => (
+            {config.quickActions.map((action, index) => (
               <Grid item xs={12} sm={6} lg={3} key={index}>
                 <Card sx={{ 
                   height: '100%',
@@ -199,7 +147,7 @@ const Dashboard: React.FC = () => {
                       color: 'white',
                       mb: 3
                     }}>
-                      {action.icon}
+                      {getIcon(action.iconName, { sx: { fontSize: 32 } })}
                     </Box>
                     <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
                       {action.title}
@@ -245,7 +193,7 @@ const Dashboard: React.FC = () => {
                 <CardContent sx={{ p: 3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Recent Stories
+                      {config.sections.recentStories}
                     </Typography>
                     <Button
                       variant="text"
@@ -253,11 +201,11 @@ const Dashboard: React.FC = () => {
                       onClick={() => navigate('/stories/library')}
                       sx={{ fontWeight: 600 }}
                     >
-                      View All
+                      {config.sections.viewAllButton}
                     </Button>
                   </Box>
                   <Box>
-                    {recentStories.map((story, _index) => (
+                    {config.recentStories.map((story, _index) => (
                       <Box
                         key={story.id}
                         sx={{
@@ -283,7 +231,7 @@ const Dashboard: React.FC = () => {
                           width: 48,
                           height: 48
                         }}>
-                          <PlayArrow />
+                          {getIcon('PlayArrow')}
                         </Avatar>
                         <Box sx={{ flex: 1 }}>
                           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5 }}>
@@ -332,77 +280,31 @@ const Dashboard: React.FC = () => {
                     Progress Overview
                   </Typography>
                   
-                  <Box sx={{ mb: 3 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        Stories Goal
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#ffffff' }}>
-                        24/30
-                      </Typography>
-                    </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={80} 
-                      sx={{ 
-                        height: 8, 
-                        borderRadius: 4,
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                  {config.progressGoals.map((goal, index) => (
+                    <Box key={index} sx={{ mb: 3 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {goal.label}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#ffffff' }}>
+                          {goal.current}/{goal.target}
+                        </Typography>
+                      </Box>
+                      <LinearProgress 
+                        variant="determinate" 
+                        value={(goal.current / goal.target) * 100} 
+                        sx={{ 
+                          height: 8, 
                           borderRadius: 4,
-                        }
-                      }}
-                    />
-                  </Box>
-
-                  <Box sx={{ mb: 3 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        Messages Goal
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#ffffff' }}>
-                        18/25
-                      </Typography>
+                          background: `${goal.color}1a`,
+                          '& .MuiLinearProgress-bar': {
+                            background: `linear-gradient(135deg, ${goal.color} 0%, ${goal.color}dd 100%)`,
+                            borderRadius: 4,
+                          }
+                        }}
+                      />
                     </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={72} 
-                      sx={{ 
-                        height: 8, 
-                        borderRadius: 4,
-                        background: 'rgba(22, 196, 94, 0.1)',
-                        '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-                          borderRadius: 4,
-                        }
-                      }}
-                    />
-                  </Box>
-
-                  <Box sx={{ mb: 3 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        Legacy Books
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#ffffff' }}>
-                        3/5
-                      </Typography>
-                    </Box>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={60} 
-                      sx={{ 
-                        height: 8, 
-                        borderRadius: 4,
-                        background: 'rgba(5, 150, 105, 0.1)',
-                        '& .MuiLinearProgress-bar': {
-                          background: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-                          borderRadius: 4,
-                        }
-                      }}
-                    />
-                  </Box>
+                  ))}
 
                   <Button
                     fullWidth
@@ -427,116 +329,87 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // Family Dashboard
-  if (user.role === 'family') {
-    return (
-      <Container maxWidth="xl">
-        <Box sx={{ mt: 2, mb: 4 }}>
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
-              Welcome, {user.name?.split(' ')[0] || 'Family'}!
-            </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 400, color: '#ffffff' }}>
-              View your loved one's legacy and send messages.
-            </Typography>
-          </Box>
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)', color: 'white' }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <Message sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Messages</Typography>
-                  <Typography variant="body2">Send and receive messages with your resident.</Typography>
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/messages/library')}>View Messages</Button>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <VideoCall sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Video Calls</Typography>
-                  <Typography variant="body2">Connect with your loved one via video call.</Typography>
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/video-call')}>Start Call</Button>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #047857 0%, #065f46 100%)', color: 'white' }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <Book sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Legacy Books</Typography>
-                  <Typography variant="body2">Read your resident's legacy books.</Typography>
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/legacy-books')}>View Books</Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-      </Container>
-    );
-  }
-
-  // Caregiver Dashboard
-  if (user.role === 'caregiver') {
-    return (
-      <Container maxWidth="xl">
-        <Box sx={{ mt: 2, mb: 4 }}>
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ fontWeight: 700, background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
-              Welcome, {user.name?.split(' ')[0] || 'Caregiver'}!
-            </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 400, color: '#ffffff' }}>
-              Manage residents and assist with their legacy.
-            </Typography>
-          </Box>
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', color: 'white' }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <Book sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Resident Stories</Typography>
-                  <Typography variant="body2">Help residents record and manage their stories.</Typography>
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/stories/library')}>Manage Stories</Button>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)', color: 'white' }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <Message sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Resident Messages</Typography>
-                  <Typography variant="body2">Assist with sending and managing messages.</Typography>
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/messages/library')}>Manage Messages</Button>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Card sx={{ height: '100%', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <VideoCall sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Resident Activity</Typography>
-                  <Typography variant="body2">Monitor and support resident engagement.</Typography>
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/video-call')}>View Activity</Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-      </Container>
-    );
-  }
-
-  // Fallback for unknown roles
+  // Family and Caregiver Dashboards
   return (
-    <Container maxWidth="md">
-      <Box sx={{ mt: 8, textAlign: 'center' }}>
-        <Typography variant="h4" color="error" gutterBottom>
-          Unknown Role
-        </Typography>
-        <Typography variant="body1">
-          Your account does not have a recognized role. Please contact support.
-        </Typography>
+    <Container maxWidth="xl">
+      <Box sx={{ mt: 2, mb: 4 }}>
+        {/* Welcome Header */}
+        <Box sx={{ 
+          mb: 4, 
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, rgba(6, 78, 59, 0.8) 0%, rgba(6, 95, 70, 0.6) 100%)',
+          borderRadius: 4,
+          p: 4,
+          border: '2px solid rgba(16, 185, 129, 0.2)',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 8px 32px rgba(16, 185, 129, 0.15)'
+        }}>
+          <Typography variant="h2" sx={{ 
+            fontWeight: 800, 
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 2,
+            fontSize: { xs: '2.5rem', md: '3.5rem' },
+            textShadow: '0 4px 8px rgba(16, 185, 129, 0.3)',
+            letterSpacing: '-0.02em'
+          }}>
+            {welcomeMessage}
+          </Typography>
+          <Typography variant="h5" sx={{ 
+            fontWeight: 400, 
+            color: '#e5e7eb',
+            opacity: 0.9,
+            fontSize: { xs: '1.1rem', md: '1.3rem' },
+            maxWidth: '600px',
+            mx: 'auto',
+            lineHeight: 1.6
+          }}>
+            {config.subtitle}
+          </Typography>
+        </Box>
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {config.quickActions.map((action, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card sx={{ 
+                height: '100%', 
+                background: action.color, 
+                color: 'white',
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                }
+              }}>
+                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                  <Box sx={{ mb: 2 }}>
+                    {getIcon(action.iconName, { sx: { fontSize: 40 } })}
+                  </Box>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+                    {action.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 2 }}>
+                    {action.description}
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    sx={{ 
+                      mt: 2,
+                      background: 'rgba(255,255,255,0.2)',
+                      '&:hover': {
+                        background: 'rgba(255,255,255,0.3)',
+                      }
+                    }} 
+                    onClick={() => navigate(action.path)}
+                  >
+                    {action.title.includes('View') ? 'View' : action.title.includes('Manage') ? 'Manage' : action.title.includes('Start') ? 'Start' : action.title.includes('Read') ? 'Read' : action.title.includes('Browse') ? 'Browse' : 'Open'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </Container>
   );
