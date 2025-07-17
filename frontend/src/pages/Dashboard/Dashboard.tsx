@@ -46,13 +46,10 @@ const Dashboard: React.FC = () => {
           }}>
             <Typography variant="h2" sx={{ 
               fontWeight: 800, 
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: '#ffffff',
               mb: 2,
               fontSize: { xs: '2.5rem', md: '3.5rem' },
-              textShadow: '0 4px 8px rgba(16, 185, 129, 0.3)',
+              textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
               letterSpacing: '-0.02em'
             }}>
               {welcomeMessage}
@@ -61,7 +58,7 @@ const Dashboard: React.FC = () => {
               fontWeight: 400, 
               color: '#e5e7eb',
               opacity: 0.9,
-              fontSize: { xs: '1.1rem', md: '1.3rem' },
+              fontSize: { xs: '1.3rem', md: '1.5rem' },
               maxWidth: '600px',
               mx: 'auto',
               lineHeight: 1.6
@@ -173,7 +170,7 @@ const Dashboard: React.FC = () => {
                         transition: 'all 0.2s ease-in-out'
                       }}
                     >
-                      Get Started
+                      {action.buttonText || 'Get Started'}
                     </Button>
                   </CardActions>
                 </Card>
@@ -277,7 +274,7 @@ const Dashboard: React.FC = () => {
               }}>
                 <CardContent sx={{ p: 3 }}>
                   <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-                    Progress Overview
+                    {config.sections.progressOverview}
                   </Typography>
                   
                   {config.progressGoals.map((goal, index) => (
@@ -318,7 +315,7 @@ const Dashboard: React.FC = () => {
                       }
                     }}
                   >
-                    Record New Story
+                    {config.sections.recordNewButton} Story
                   </Button>
                 </CardContent>
               </Card>
@@ -346,13 +343,10 @@ const Dashboard: React.FC = () => {
         }}>
           <Typography variant="h2" sx={{ 
             fontWeight: 800, 
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: '#ffffff',
             mb: 2,
             fontSize: { xs: '2.5rem', md: '3.5rem' },
-            textShadow: '0 4px 8px rgba(16, 185, 129, 0.3)',
+            textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
             letterSpacing: '-0.02em'
           }}>
             {welcomeMessage}

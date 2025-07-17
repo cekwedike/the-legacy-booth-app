@@ -67,7 +67,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Mic',
         path: '/stories/record',
         color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        stats: '15 stories shared'
+        stats: '15 stories shared',
+        buttonText: 'Start Recording'
       },
       {
         title: 'Send Love Notes',
@@ -75,7 +76,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Message',
         path: '/messages/record',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '23 messages sent'
+        stats: '23 messages sent',
+        buttonText: 'Send Message'
       },
       {
         title: 'Family Connect',
@@ -83,7 +85,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'VideoCall',
         path: '/video-call',
         color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '7 calls this month'
+        stats: '7 calls this month',
+        buttonText: 'Start Call'
       },
       {
         title: 'Create Legacy Book',
@@ -91,7 +94,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Book',
         path: '/legacy-books',
         color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '4 books created'
+        stats: '4 books created',
+        buttonText: 'Create Book'
       }
     ],
     stats: [
@@ -131,8 +135,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
       { label: 'Messages Goal', current: 28, target: 40, color: '#16a34a' },
       { label: 'Legacy Books', current: 4, target: 8, color: '#047857' }
     ],
-    welcomeMessage: 'Hello {name}! Ready to share more memories? 🌟',
-    subtitle: 'Your legacy is being beautifully preserved today.',
+    welcomeMessage: 'Hello {name}! Ready To Share More Memories?',
+    subtitle: 'Your Legacy Is Being Beautifully Preserved Today.',
     sections: {
       quickActions: 'Quick Actions',
       recentStories: 'Recent Stories',
@@ -149,7 +153,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Message',
         path: '/messages/library',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '28 messages waiting'
+        stats: '28 messages waiting',
+        buttonText: 'Read Messages'
       },
       {
         title: 'Start Video Call',
@@ -157,7 +162,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'VideoCall',
         path: '/video-call',
         color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        stats: 'Last call: 2 days ago'
+        stats: 'Last call: 2 days ago',
+        buttonText: 'Start Call'
       },
       {
         title: 'Browse Legacy Books',
@@ -165,7 +171,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Book',
         path: '/legacy-books',
         color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '4 books available'
+        stats: '4 books available',
+        buttonText: 'Browse Books'
       }
     ],
     stats: [
@@ -176,8 +183,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
     ],
     recentStories: [],
     progressGoals: [],
-    welcomeMessage: 'Welcome back, {name}! 💕',
-    subtitle: 'Your loved one has been busy creating memories for you.',
+    welcomeMessage: 'Welcome Back, {name}!',
+    subtitle: 'Your Loved One Has Been Busy Creating Memories For You.',
     sections: {
       quickActions: 'Quick Actions',
       recentStories: 'Recent Stories',
@@ -194,7 +201,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Book',
         path: '/stories/library',
         color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        stats: '12 residents active'
+        stats: '12 residents active',
+        buttonText: 'Assist Stories'
       },
       {
         title: 'Message Support',
@@ -202,7 +210,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Message',
         path: '/messages/library',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '18 messages pending'
+        stats: '18 messages pending',
+        buttonText: 'Support Messages'
       },
       {
         title: 'Activity Monitor',
@@ -210,7 +219,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'VideoCall',
         path: '/video-call',
         color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        stats: '8 calls today'
+        stats: '8 calls today',
+        buttonText: 'Monitor Activity'
       }
     ],
     stats: [
@@ -221,8 +231,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
     ],
     recentStories: [],
     progressGoals: [],
-    welcomeMessage: 'Good morning, {name}! 🌅',
-    subtitle: 'You\'re helping create beautiful legacies today.',
+    welcomeMessage: 'Good Morning, {name}!',
+    subtitle: 'You\'re Helping Create Beautiful Legacies Today.',
     sections: {
       quickActions: 'Quick Actions',
       recentStories: 'Recent Stories',
