@@ -49,10 +49,15 @@ const globalStyles = `
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.05); opacity: 0.8; }
   }
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateX(10px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
 `;
 
-const drawerWidth = 280;
-const collapsedDrawerWidth = 70;
+const drawerWidth = 320;
+const collapsedDrawerWidth = 80;
 
 interface MenuItem {
   text: string;
@@ -178,12 +183,12 @@ const Layout: React.FC = () => {
           onClick={() => navigate(item.path)}
           selected={isSelected}
           sx={{
-            mx: isCollapsed ? 0.5 : 1,
-            mb: 1,
+            mx: isCollapsed ? 0.5 : 1.5,
+            mb: 1.5,
             borderRadius: isCollapsed ? '12px' : '16px',
-            p: isCollapsed ? 1.5 : 2,
-            width: isCollapsed ? 'auto' : '90%',
-            minHeight: isCollapsed ? 48 : 56,
+            p: isCollapsed ? 1.5 : 2.5,
+            width: isCollapsed ? 'auto' : '92%',
+            minHeight: isCollapsed ? 48 : 64,
             justifyContent: isCollapsed ? 'center' : 'flex-start',
             background: isSelected 
               ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)' 
@@ -218,24 +223,24 @@ const Layout: React.FC = () => {
             },
             '& .MuiListItemIcon-root': {
               color: isSelected ? 'white' : '#10b981',
-              minWidth: isCollapsed ? 'auto' : 40,
-              marginRight: isCollapsed ? 0 : 2,
+              minWidth: isCollapsed ? 'auto' : 44,
+              marginRight: isCollapsed ? 0 : 3,
             },
             '& .MuiListItemText-root': {
               margin: 0,
             },
             '& .MuiListItemText-primary': {
               fontWeight: 600,
-              fontSize: '0.9rem',
+              fontSize: '0.95rem',
             },
             '& .MuiListItemText-secondary': {
-              fontSize: '0.75rem',
+              fontSize: '0.8rem',
               opacity: 0.8,
             },
           }}
         >
           <ListItemIcon sx={{ 
-            minWidth: isCollapsed ? 'auto' : 40,
+            minWidth: isCollapsed ? 'auto' : 44,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -280,31 +285,82 @@ const Layout: React.FC = () => {
       position: 'relative'
     }}>
       {/* Collapse Toggle Button */}
-      <IconButton
-        onClick={handleSidebarToggle}
-        sx={{
+      <Tooltip title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'} placement="left" arrow>
+        <IconButton
+          onClick={handleSidebarToggle}
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: -16,
+            background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+            color: 'white',
+            width: 32,
+            height: 32,
+            zIndex: 10,
+            border: '2px solid rgba(255,255,255,0.2)',
+            boxShadow: '0 4px 12px rgba(16,185,129,0.3)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
+              transform: 'scale(1.1)',
+              boxShadow: '0 6px 16px rgba(16,185,129,0.4)',
+            },
+            transition: 'all 0.3s ease',
+            display: { xs: 'none', md: 'flex' }
+          }}
+        >
+          {sidebarCollapsed ? <ChevronRight /> : <ChevronLeft />}
+        </IconButton>
+      </Tooltip>
+
+      {/* Collapse Toggle Text */}
+      {!sidebarCollapsed && (
+        <Box sx={{
           position: 'absolute',
-          top: 16,
-          right: -12,
-          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+          top: 52,
+          right: -8,
+          background: 'rgba(16,185,129,0.9)',
           color: 'white',
-          width: 24,
-          height: 24,
+          px: 1.5,
+          py: 0.5,
+          borderRadius: '12px',
+          fontSize: '0.7rem',
+          fontWeight: 600,
           zIndex: 10,
-          '&:hover': {
-            background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
-            transform: 'scale(1.1)',
-          },
-          transition: 'all 0.3s ease',
-          display: { xs: 'none', md: 'flex' }
-        }}
-      >
-        {sidebarCollapsed ? <ChevronRight /> : <ChevronLeft />}
-      </IconButton>
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          whiteSpace: 'nowrap',
+          animation: 'fadeIn 0.3s ease-in-out'
+        }}>
+          Collapse
+        </Box>
+      )}
+      
+      {/* Expand Toggle Text */}
+      {sidebarCollapsed && (
+        <Box sx={{
+          position: 'absolute',
+          top: 52,
+          right: -8,
+          background: 'rgba(16,185,129,0.9)',
+          color: 'white',
+          px: 1.5,
+          py: 0.5,
+          borderRadius: '12px',
+          fontSize: '0.7rem',
+          fontWeight: 600,
+          zIndex: 10,
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          whiteSpace: 'nowrap',
+          animation: 'fadeIn 0.3s ease-in-out'
+        }}>
+          Expand
+        </Box>
+      )}
 
       {/* Header */}
       <Box sx={{ 
-        p: sidebarCollapsed ? 2 : 3, 
+        p: sidebarCollapsed ? 2.5 : 4, 
         background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
         color: 'white',
         textAlign: 'center',
@@ -399,7 +455,7 @@ const Layout: React.FC = () => {
 
       {/* User Info */}
       <Box sx={{ 
-        p: sidebarCollapsed ? 1.5 : 2, 
+        p: sidebarCollapsed ? 2 : 3, 
         borderBottom: '1px solid rgba(255,255,255,0.1)',
         background: 'rgba(255,255,255,0.05)',
         backdropFilter: 'blur(10px)'
@@ -448,8 +504,8 @@ const Layout: React.FC = () => {
       </Box>
 
       {/* Navigation */}
-      <Box sx={{ flex: 1, overflow: 'auto', py: 1 }}>
-        <List sx={{ pt: 0 }}>
+      <Box sx={{ flex: 1, overflow: 'auto', py: 2 }}>
+        <List sx={{ pt: 0, px: 1 }}>
           {menuItems.map((item) => renderMenuItem(item))}
         </List>
 
@@ -457,8 +513,8 @@ const Layout: React.FC = () => {
           <>
             {!sidebarCollapsed && (
               <Divider sx={{ 
-                mx: 2, 
-                my: 2,
+                mx: 3, 
+                my: 3,
                 borderColor: 'rgba(255,255,255,0.1)',
                 '&::before': {
                   borderTopColor: 'rgba(255,255,255,0.1)',
@@ -467,8 +523,8 @@ const Layout: React.FC = () => {
             )}
             {!sidebarCollapsed && (
               <Typography variant="overline" sx={{ 
-                px: 3, 
-                py: 1, 
+                px: 4, 
+                py: 1.5, 
                 color: '#10b981', 
                 fontWeight: 700,
                 fontSize: '0.7rem',
@@ -477,7 +533,7 @@ const Layout: React.FC = () => {
                 Admin Tools
               </Typography>
             )}
-            <List sx={{ pt: 0 }}>
+            <List sx={{ pt: 0, px: 1 }}>
               {adminMenuItems.map((item) => renderMenuItem(item, true))}
             </List>
           </>
