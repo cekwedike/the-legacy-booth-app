@@ -15,7 +15,7 @@ export interface QuickAction {
   iconName: string;
   path: string;
   color: string;
-  stats: string;
+  stats?: string; // Made optional since it will be populated from actual data
   buttonText?: string;
 }
 
@@ -80,6 +80,12 @@ export interface DashboardConfig {
       statsColor: string;
     };
   };
+  features: {
+    showRecentStories: boolean;
+    showProgressOverview: boolean;
+    showStats: boolean;
+    showQuickActions: boolean;
+  };
 }
 
 export const dashboardConfig: Record<string, DashboardConfig> = {
@@ -91,7 +97,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Mic',
         path: '/stories/record',
         color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        stats: '15 stories shared',
         buttonText: 'Start Recording'
       },
       {
@@ -100,7 +105,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Message',
         path: '/messages/record',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '23 messages sent',
         buttonText: 'Send Message'
       },
       {
@@ -109,7 +113,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'VideoCall',
         path: '/video-call',
         color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '7 calls this month',
         buttonText: 'Start Call'
       },
       {
@@ -118,47 +121,12 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Book',
         path: '/legacy-books',
         color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '4 books created',
         buttonText: 'Create Book'
       }
     ],
-    stats: [
-      { label: 'Stories Shared', value: '32', iconName: 'Book', color: '#059669' },
-      { label: 'Love Notes', value: '28', iconName: 'Message', color: '#16a34a' },
-      { label: 'Family Calls', value: '18', iconName: 'VideoCall', color: '#10b981' },
-      { label: 'Legacy Books', value: '4', iconName: 'Star', color: '#047857' }
-    ],
-    recentStories: [
-      {
-        id: 1,
-        title: 'My Wedding Day',
-        category: 'Love & Family',
-        duration: '12:45',
-        date: 'Yesterday',
-        status: 'published'
-      },
-      {
-        id: 2,
-        title: 'First Car Purchase',
-        category: 'Life Milestones',
-        duration: '7:22',
-        date: '3 days ago',
-        status: 'transcribed'
-      },
-      {
-        id: 3,
-        title: 'College Graduation',
-        category: 'Education & Growth',
-        duration: '9:18',
-        date: '1 week ago',
-        status: 'published'
-      }
-    ],
-    progressGoals: [
-      { label: 'Stories Goal', current: 32, target: 50, color: '#059669' },
-      { label: 'Messages Goal', current: 28, target: 40, color: '#16a34a' },
-      { label: 'Legacy Books', current: 4, target: 8, color: '#047857' }
-    ],
+    stats: [], // Will be populated from actual data
+    recentStories: [], // Will be populated from actual data
+    progressGoals: [], // Will be populated from actual data
     welcomeMessage: 'Hello {name}! Ready To Share More Memories?',
     subtitle: 'Your Legacy Is Being Beautifully Preserved Today.',
     sections: {
@@ -191,6 +159,12 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         descriptionColor: '#666',
         statsColor: '#059669',
       },
+    },
+    features: {
+      showRecentStories: true,
+      showProgressOverview: true,
+      showStats: true,
+      showQuickActions: true,
     }
   },
   family: {
@@ -201,7 +175,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Message',
         path: '/messages/library',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '28 messages waiting',
         buttonText: 'Read Messages'
       },
       {
@@ -210,7 +183,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'VideoCall',
         path: '/video-call',
         color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        stats: 'Last call: 2 days ago',
         buttonText: 'Start Call'
       },
       {
@@ -219,18 +191,12 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Book',
         path: '/legacy-books',
         color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        stats: '4 books available',
         buttonText: 'Browse Books'
       }
     ],
-    stats: [
-      { label: 'Messages Received', value: '28', iconName: 'Message', color: '#16a34a' },
-      { label: 'Video Calls', value: '12', iconName: 'VideoCall', color: '#10b981' },
-      { label: 'Legacy Books', value: '4', iconName: 'Book', color: '#047857' },
-      { label: 'Stories Read', value: '32', iconName: 'Star', color: '#059669' }
-    ],
-    recentStories: [],
-    progressGoals: [],
+    stats: [], // Will be populated from actual data
+    recentStories: [], // Will be populated from actual data
+    progressGoals: [], // Will be populated from actual data
     welcomeMessage: 'Welcome Back, {name}!',
     subtitle: 'Your Loved One Has Been Busy Creating Memories For You.',
     sections: {
@@ -263,6 +229,12 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         descriptionColor: '#666',
         statsColor: '#16a34a',
       },
+    },
+    features: {
+      showRecentStories: false, // Family doesn't need recent stories
+      showProgressOverview: false, // Family doesn't need progress
+      showStats: true,
+      showQuickActions: true,
     }
   },
   caregiver: {
@@ -273,7 +245,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Book',
         path: '/stories/library',
         color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        stats: '12 residents active',
         buttonText: 'Assist Stories'
       },
       {
@@ -282,7 +253,6 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'Message',
         path: '/messages/library',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        stats: '18 messages pending',
         buttonText: 'Support Messages'
       },
       {
@@ -291,18 +261,12 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         iconName: 'VideoCall',
         path: '/video-call',
         color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        stats: '8 calls today',
         buttonText: 'Monitor Activity'
       }
     ],
-    stats: [
-      { label: 'Active Residents', value: '12', iconName: 'Book', color: '#059669' },
-      { label: 'Pending Messages', value: '18', iconName: 'Message', color: '#16a34a' },
-      { label: 'Today\'s Calls', value: '8', iconName: 'VideoCall', color: '#10b981' },
-      { label: 'Stories Recorded', value: '67', iconName: 'Star', color: '#047857' }
-    ],
-    recentStories: [],
-    progressGoals: [],
+    stats: [], // Will be populated from actual data
+    recentStories: [], // Will be populated from actual data
+    progressGoals: [], // Will be populated from actual data
     welcomeMessage: 'Good Morning, {name}!',
     subtitle: 'You\'re Helping Create Beautiful Legacies Today.',
     sections: {
@@ -335,6 +299,12 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
         descriptionColor: '#666',
         statsColor: '#10b981',
       },
+    },
+    features: {
+      showRecentStories: true,
+      showProgressOverview: true,
+      showStats: true,
+      showQuickActions: true,
     }
   }
 };
