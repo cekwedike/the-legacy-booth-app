@@ -20,7 +20,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  useTheme
 } from '@mui/material';
 import {
   Search,
@@ -38,6 +39,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore, Story } from '../../store';
 
 const StoryLibrary: React.FC = () => {
+  const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('date');
@@ -135,7 +137,7 @@ const StoryLibrary: React.FC = () => {
             }}>
               Your Stories
             </Typography>
-            <Typography variant="body1" sx={{ color: '#ffffff' }}>
+            <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
               {sortedStories.length} stories • {stories.filter(s => s.favorite).length} favorites
             </Typography>
           </Box>
@@ -170,9 +172,11 @@ const StoryLibrary: React.FC = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
+                  label="Search Stories"
                   placeholder="Search your stories..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  variant="outlined"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

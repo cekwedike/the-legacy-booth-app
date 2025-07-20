@@ -594,9 +594,11 @@ const Layout: React.FC = () => {
             sx: {
               mt: 1,
               minWidth: { xs: 180, sm: 200 },
-              background: '#ffffff',
-              border: '1px solid #e5e7eb',
-              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              background: muiTheme.palette.background.paper,
+              border: `1px solid ${muiTheme.palette.divider}`,
+              boxShadow: muiTheme.palette.mode === 'dark' 
+                ? '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2)'
+                : '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
             },
           }}
         >

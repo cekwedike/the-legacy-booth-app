@@ -103,9 +103,10 @@ const MessageLibrary: React.FC = () => {
 
         <TextField
           fullWidth
-          label="Search messages"
+          label="Search Messages"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          variant="outlined"
           sx={{ mb: 3 }}
         />
 

@@ -300,6 +300,7 @@ const Register: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                variant="outlined"
                 sx={{ mb: { xs: 2, sm: 3 } }}
                 InputProps={{
                   startAdornment: (
@@ -318,6 +319,7 @@ const Register: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                variant="outlined"
                 sx={{ mb: { xs: 2, sm: 3 } }}
                 InputProps={{
                   startAdornment: (
@@ -336,6 +338,7 @@ const Register: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                variant="outlined"
                 sx={{ mb: { xs: 2, sm: 3 } }}
                 InputProps={{
                   startAdornment: (
@@ -364,6 +367,7 @@ const Register: React.FC = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                variant="outlined"
                 sx={{ mb: { xs: 2, sm: 3 } }}
                 InputProps={{
                   startAdornment: (
@@ -417,6 +421,7 @@ const Register: React.FC = () => {
                     value={formData.roomNumber}
                     onChange={handleChange}
                     required
+                    variant="outlined"
                     sx={{ mb: { xs: 2, sm: 3 } }}
                   />
 
@@ -428,6 +433,7 @@ const Register: React.FC = () => {
                     value={formData.dateOfBirth}
                     onChange={handleChange}
                     required
+                    variant="outlined"
                     sx={{ mb: { xs: 2, sm: 3 } }}
                     InputLabelProps={{
                       shrink: true,
@@ -441,6 +447,7 @@ const Register: React.FC = () => {
                     value={formData.emergencyContact}
                     onChange={handleChange}
                     required
+                    variant="outlined"
                     sx={{ mb: { xs: 2, sm: 3 } }}
                   />
                 </>

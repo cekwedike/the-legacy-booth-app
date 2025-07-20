@@ -263,6 +263,7 @@ const Login: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                variant="outlined"
                 sx={{ mb: { xs: 2, sm: 3 } }}
                 InputProps={{
                   startAdornment: (
@@ -281,6 +282,7 @@ const Login: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                variant="outlined"
                 sx={{ mb: { xs: 3, sm: 4 } }}
                 InputProps={{
                   startAdornment: (

@@ -613,10 +613,12 @@ const StoryRecording: React.FC = () => {
                   }}
                 >
                   <TextField
+                    label="Custom Category"
                     value={newCategory}
                     onChange={e => setNewCategory(e.target.value)}
                     placeholder="Add custom category"
                     size="small"
+                    variant="outlined"
                     sx={{
                       flex: 1,
                       background: 'rgba(6,78,59,0.7)',
@@ -784,11 +786,13 @@ const StoryRecording: React.FC = () => {
         <DialogTitle id="custom-prompt-dialog-title">Add Custom Prompt</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           <TextField
+            label="Custom Prompt"
             value={newPrompt}
             onChange={e => setNewPrompt(e.target.value)}
             placeholder="Enter your custom prompt"
             size="small"
             fullWidth
+            variant="outlined"
             autoFocus
           />
           <FormControl size="small" fullWidth>

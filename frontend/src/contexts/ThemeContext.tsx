@@ -199,7 +199,7 @@ export const AppThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => 
         styleOverrides: {
           root: {
             '& .MuiSelect-select': {
-              color: isDarkMode ? '#f1f5f9' : '#ffffff',
+              color: isDarkMode ? '#f1f5f9' : '#1f2937',
               fontWeight: 600,
               fontSize: '0.95rem',
             },
