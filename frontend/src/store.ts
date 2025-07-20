@@ -43,6 +43,19 @@ export interface Message {
   updatedAt: string;
 }
 
+export interface LegacyBook {
+  _id: string;
+  title: string;
+  description?: string;
+  coverImage?: string;
+  storiesCount: number;
+  messagesCount: number;
+  status: 'draft' | 'published';
+  theme: 'classic' | 'modern' | 'vintage' | 'elegant';
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface MediaState {
   type: MediaType;
   blob: Blob | null;
@@ -64,6 +77,11 @@ interface StoreState {
   addMessage: (message: Message) => void;
   updateMessage: (id: string, message: Partial<Message>) => void;
   removeMessage: (id: string) => void;
+
+  legacyBooks: LegacyBook[];
+  addLegacyBook: (book: LegacyBook) => void;
+  updateLegacyBook: (id: string, book: Partial<LegacyBook>) => void;
+  removeLegacyBook: (id: string) => void;
 
   currentMedia: MediaState;
   setCurrentMedia: (media: MediaState) => void;
@@ -144,6 +162,62 @@ export const useAppStore = create<StoreState>((set) => ({
     messages: state.messages.map((m) => (m._id === id ? { ...m, ...message } : m)),
   })),
   removeMessage: (id) => set((state) => ({ messages: state.messages.filter((m) => m._id !== id) })),
+
+  legacyBooks: [
+    {
+      _id: '1',
+      title: 'My Life Story',
+      description: 'A collection of my most cherished memories and life lessons for my family.',
+      coverImage: '/mock-cover-1.jpg',
+      storiesCount: 12,
+      messagesCount: 8,
+      status: 'published',
+      theme: 'classic',
+      createdAt: '2024-01-20T10:00:00Z',
+      updatedAt: '2024-01-20T10:00:00Z'
+    },
+    {
+      _id: '2',
+      title: 'Family Wisdom',
+      description: 'Advice and wisdom I want to pass down to future generations.',
+      coverImage: '/mock-cover-2.jpg',
+      storiesCount: 6,
+      messagesCount: 15,
+      status: 'published',
+      theme: 'elegant',
+      createdAt: '2024-01-15T14:30:00Z',
+      updatedAt: '2024-01-15T14:30:00Z'
+    },
+    {
+      _id: '3',
+      title: 'Childhood Memories',
+      description: 'Stories from my childhood and early years that shaped who I am today.',
+      coverImage: '/mock-cover-3.jpg',
+      storiesCount: 8,
+      messagesCount: 4,
+      status: 'draft',
+      theme: 'vintage',
+      createdAt: '2024-01-10T09:15:00Z',
+      updatedAt: '2024-01-10T09:15:00Z'
+    },
+    {
+      _id: '4',
+      title: 'Career Journey',
+      description: 'My professional journey, achievements, and the lessons learned along the way.',
+      coverImage: '/mock-cover-4.jpg',
+      storiesCount: 10,
+      messagesCount: 6,
+      status: 'published',
+      theme: 'modern',
+      createdAt: '2024-01-05T16:45:00Z',
+      updatedAt: '2024-01-05T16:45:00Z'
+    }
+  ],
+  addLegacyBook: (book) => set((state) => ({ legacyBooks: [book, ...state.legacyBooks] })),
+  updateLegacyBook: (id, book) => set((state) => ({
+    legacyBooks: state.legacyBooks.map((b) => (b._id === id ? { ...b, ...book } : b)),
+  })),
+  removeLegacyBook: (id) => set((state) => ({ legacyBooks: state.legacyBooks.filter((b) => b._id !== id) })),
 
   currentMedia: { type: 'audio', blob: null, url: '' },
   setCurrentMedia: (media) => set(() => ({ currentMedia: media })),
