@@ -17,7 +17,7 @@ import {
 import { ArrowForward, Add, Star } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { getDashboardConfig } from '../../config/dashboardConfig';
+import { getDashboardConfig, Stat, QuickAction } from '../../config/dashboardConfig';
 import { getIcon } from '../../utils/iconUtils';
 
 const Dashboard: React.FC = () => {
@@ -120,7 +120,7 @@ const Dashboard: React.FC = () => {
           {/* Stats Cards - Only show if enabled and has data */}
           {config.features.showStats && config.stats.length > 0 && (
             <Grid container spacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mb: { xs: 2, sm: 4 } }}>
-              {config.stats.map((stat, index) => (
+              {config.stats.map((stat: Stat, index: number) => (
                 <Grid item xs={6} sm={6} md={3} key={index}>
                   <Card sx={{ 
                     height: '100%',
@@ -186,7 +186,7 @@ const Dashboard: React.FC = () => {
                 {config.sections.quickActions}
               </Typography>
               <Box sx={{ mb: { xs: 2, sm: 4 } }}>
-                {config.quickActions.map((action, index) => (
+                {config.quickActions.map((action: QuickAction, index: number) => (
                   <Card 
                     key={index}
                     sx={{ 
@@ -301,7 +301,7 @@ const Dashboard: React.FC = () => {
 
           {/* Quick Actions */}
           <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
-            {config.quickActions.map((action, index) => (
+            {config.quickActions.map((action: QuickAction, index: number) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card sx={{ 
                   height: '100%',
@@ -409,7 +409,7 @@ const Dashboard: React.FC = () => {
         </Typography>
         
         <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
-          {config.quickActions.map((action, index) => (
+          {config.quickActions.map((action: QuickAction, index: number) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card sx={{ 
                 height: '100%',
