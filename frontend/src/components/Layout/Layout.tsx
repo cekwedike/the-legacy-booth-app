@@ -60,7 +60,7 @@ const globalStyles = `
 `;
 
 const drawerWidth = 280;
-const collapsedDrawerWidth = 70;
+const collapsedDrawerWidth = 120;
 
 interface MenuItem {
   text: string;
@@ -339,10 +339,16 @@ const Layout: React.FC = () => {
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center', 
-          justifyContent: 'space-between',
+          justifyContent: sidebarCollapsed ? 'center' : 'space-between',
           mb: { xs: 1.5, sm: 2 },
+          gap: sidebarCollapsed ? 3 : 0,
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5, md: 2 } }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: { xs: 1, sm: 1.5, md: 2 },
+            justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
+          }}>
             <Box sx={{ 
               display: 'flex', 
               alignItems: 'center', 
@@ -389,10 +395,13 @@ const Layout: React.FC = () => {
         </Box>
         {!sidebarCollapsed && (
           <Typography variant="body2" sx={{ 
-            color: '#6b7280',
-            fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' }
+            color: '#059669',
+            fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+            fontWeight: 600,
+            textTransform: 'capitalize',
+            letterSpacing: '0.025em'
           }}>
-            Welcome back, {user?.name || 'User'}
+            Welcome Back, {user?.name || 'User'}
           </Typography>
         )}
       </Box>
