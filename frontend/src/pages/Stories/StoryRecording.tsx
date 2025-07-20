@@ -23,6 +23,7 @@ import {
   DialogActions,
   Switch,
   FormControlLabel,
+  useTheme,
 } from '@mui/material';
 import {
   Mic,
@@ -40,6 +41,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore, MediaType } from '../../store';
 
 const StoryRecording: React.FC = () => {
+  const theme = useTheme();
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -120,6 +122,21 @@ const StoryRecording: React.FC = () => {
       }
     };
   }, []);
+
+  // Handle video mode switching
+  useEffect(() => {
+    if (recordMode === 'video') {
+      startVideoPreview();
+    } else {
+      stopVideoPreview();
+    }
+
+    return () => {
+      if (recordMode === 'video') {
+        stopVideoPreview();
+      }
+    };
+  }, [recordMode]);
 
   const startRecording = async () => {
     try {
@@ -237,6 +254,12 @@ const StoryRecording: React.FC = () => {
   const startVideoRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      
+      // Set the live stream to the video element for preview
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      
       const recorder = new MediaRecorder(stream);
       const chunks: Blob[] = [];
       recorder.ondataavailable = (event) => {
@@ -276,6 +299,27 @@ const StoryRecording: React.FC = () => {
     setVideoUrl('');
     clearCurrentMedia();
     setRecordingTime(0);
+  };
+
+  // Start video preview when switching to video mode
+  const startVideoPreview = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch {
+      setError('Unable to access webcam for preview. Please check permissions.');
+    }
+  };
+
+  // Stop video preview
+  const stopVideoPreview = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
   };
 
   return (
@@ -323,6 +367,13 @@ const StoryRecording: React.FC = () => {
                       />
                     }
                     label={recordMode === 'video' ? 'Video Mode' : 'Audio Mode'}
+                    sx={{
+                      '& .MuiFormControlLabel-label': {
+                        fontWeight: theme.palette.mode === 'light' ? 700 : 600,
+                        fontSize: '1rem',
+                        color: theme.palette.mode === 'light' ? '#ffffff' : '#f1f5f9',
+                      }
+                    }}
                   />
                 </Box>
 
@@ -458,7 +509,20 @@ const StoryRecording: React.FC = () => {
                 ) : (
                   <Box sx={{ textAlign: 'center', mb: 4 }}>
                     <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 180, height: 120, borderRadius: 4, background: 'rgba(6,78,59,0.7)', color: 'white', mb: 3, boxShadow: '0 10px 25px -5px rgba(5, 150, 105, 0.3)', animation: isRecording ? 'pulse 2s infinite' : 'none', cursor: 'pointer', transition: 'all 0.3s ease-in-out', '&:hover': { transform: 'scale(1.05)' } }}>
-                      <video ref={videoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', borderRadius: 4, objectFit: 'cover', background: '#065f46' }} src={videoUrl || undefined} />
+                      <video 
+                        ref={videoRef} 
+                        autoPlay 
+                        muted 
+                        playsInline 
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          borderRadius: 4, 
+                          objectFit: 'cover', 
+                          background: '#065f46' 
+                        }} 
+                        src={videoUrl || undefined}
+                      />
                     </Box>
                     <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
                       {isRecording ? 'Recording Video...' : 'Ready to Record Video'}
@@ -691,8 +755,7 @@ const StoryRecording: React.FC = () => {
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                  <Lightbulb sx={{ color: '#fbbf24', mr: 1 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#fff' }}>
                     Story Prompts
                   </Typography>
                 </Box>
