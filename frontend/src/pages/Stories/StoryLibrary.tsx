@@ -161,10 +161,16 @@ const StoryLibrary: React.FC = () => {
         {/* Search and Filters */}
         <Card sx={{ 
           mb: 4,
-          background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-          border: '1.5px solid rgba(16,185,129,0.18)',
-          boxShadow: '0 4px 24px 0 rgba(16,185,129,0.10)',
-          color: '#fff',
+          background: theme.palette.mode === 'dark'
+            ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+            : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+          border: theme.palette.mode === 'dark'
+            ? '1.5px solid rgba(16,185,129,0.3)'
+            : '1.5px solid rgba(16,185,129,0.18)',
+          boxShadow: theme.palette.mode === 'dark'
+            ? '0 4px 24px 0 rgba(16,185,129,0.2)'
+            : '0 4px 24px 0 rgba(16,185,129,0.10)',
+          color: theme.palette.text.primary,
           backdropFilter: 'blur(12px)',
         }}>
           <CardContent sx={{ p: 3 }}>
@@ -234,12 +240,18 @@ const StoryLibrary: React.FC = () => {
                 cursor: 'pointer',
                 '&:hover': {
                   transform: 'translateY(-8px)',
-                  boxShadow: '0 25px 50px -12px rgba(16,185,129,0.18)',
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? '0 25px 50px -12px rgba(16,185,129,0.3)'
+                    : '0 25px 50px -12px rgba(16,185,129,0.18)',
                 },
                 transition: 'all 0.3s ease-in-out',
-                background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-                border: '1.5px solid rgba(16,185,129,0.18)',
-                color: '#fff',
+                background: theme.palette.mode === 'dark'
+                  ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                  : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+                border: theme.palette.mode === 'dark'
+                  ? '1.5px solid rgba(16,185,129,0.3)'
+                  : '1.5px solid rgba(16,185,129,0.18)',
+                color: theme.palette.text.primary,
                 backdropFilter: 'blur(10px)',
               }}>
                 <CardContent sx={{ p: 3 }}>
@@ -266,7 +278,7 @@ const StoryLibrary: React.FC = () => {
                   </Box>
 
                   {/* Description */}
-                  <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.5, color: '#ffffff' }}>
+                  <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.5, color: theme.palette.text.secondary }}>
                     {story.description}
                   </Typography>
 
@@ -274,13 +286,13 @@ const StoryLibrary: React.FC = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Timer sx={{ fontSize: 16, color: 'text.secondary' }} />
-                      <Typography variant="caption" sx={{ color: '#ffffff' }}>
+                      <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                         {story.duration}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Timer sx={{ fontSize: 16, color: '#ffffff' }} />
-                      <Typography variant="caption" sx={{ color: '#ffffff' }}>
+                      <Timer sx={{ fontSize: 16, color: theme.palette.text.secondary }} />
+                      <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                         {formatDate(story.date)}
                       </Typography>
                     </Box>
@@ -304,7 +316,7 @@ const StoryLibrary: React.FC = () => {
                           fontSize: '0.6rem', 
                           height: 20,
                           borderColor: 'rgba(16, 185, 129, 0.3)',
-                          color: '#ffffff'
+                          color: theme.palette.text.secondary
                         }}
                       />
                     ))}
@@ -365,9 +377,13 @@ const StoryLibrary: React.FC = () => {
           <Card sx={{ 
             textAlign: 'center', 
             py: 8,
-            background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-            border: '1.5px solid rgba(16,185,129,0.18)',
-            color: '#fff',
+            background: theme.palette.mode === 'dark'
+              ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+              : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+            border: theme.palette.mode === 'dark'
+              ? '1.5px solid rgba(16,185,129,0.3)'
+              : '1.5px solid rgba(16,185,129,0.18)',
+            color: theme.palette.text.primary,
             backdropFilter: 'blur(10px)',
           }}>
             <CardContent>
@@ -387,7 +403,7 @@ const StoryLibrary: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
                 No stories found
               </Typography>
-              <Typography variant="body1" sx={{ mb: 3, color: '#ffffff' }}>
+              <Typography variant="body1" sx={{ mb: 3, color: theme.palette.text.secondary }}>
                 {searchTerm || selectedCategory !== 'all' 
                   ? 'Try adjusting your search or filters'
                   : 'Start recording your first story to preserve your memories'

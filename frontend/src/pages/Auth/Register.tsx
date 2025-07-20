@@ -293,7 +293,7 @@ const Register: React.FC = () => {
 
             {/* Registration Form */}
             <Box component="form" onSubmit={handleSubmit} sx={{ position: 'relative', zIndex: 1 }}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                 Full Name
               </Typography>
               <TextField
@@ -313,7 +313,7 @@ const Register: React.FC = () => {
                 }}
               />
 
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                 Email Address
               </Typography>
               <TextField
@@ -334,7 +334,7 @@ const Register: React.FC = () => {
                 }}
               />
 
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                 Password
               </Typography>
               <TextField
@@ -365,7 +365,7 @@ const Register: React.FC = () => {
                 }}
               />
 
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                 Confirm Password
               </Typography>
               <TextField
@@ -396,7 +396,7 @@ const Register: React.FC = () => {
                 }}
               />
 
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                 Role
               </Typography>
               <FormControl fullWidth sx={{ mb: { xs: 2, sm: 3 } }}>
@@ -423,7 +423,7 @@ const Register: React.FC = () => {
 
               {formData.role === 'resident' && (
                 <>
-                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                     Room Number
                   </Typography>
                   <TextField
@@ -436,7 +436,7 @@ const Register: React.FC = () => {
                     sx={{ mb: { xs: 2, sm: 3 } }}
                   />
 
-                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                     Date of Birth
                   </Typography>
                   <TextField
@@ -453,7 +453,7 @@ const Register: React.FC = () => {
                     }}
                   />
 
-                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#1f2937' }}>
                     Emergency Contact
                   </Typography>
                   <TextField

@@ -35,7 +35,9 @@ import {
   ArrowBack,
   Lightbulb,
   Category,
-  Title
+  Title,
+  Fullscreen,
+  FullscreenExit
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore, MediaType } from '../../store';
@@ -351,9 +353,13 @@ const StoryRecording: React.FC = () => {
           <Grid item xs={12} lg={8}>
             <Card sx={{ 
               height: 'fit-content',
-              background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-              border: '1.5px solid rgba(16,185,129,0.18)',
-              color: '#fff',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+              border: theme.palette.mode === 'dark'
+                ? '1.5px solid rgba(16,185,129,0.3)'
+                : '1.5px solid rgba(16,185,129,0.18)',
+              color: theme.palette.text.primary,
               backdropFilter: 'blur(10px)',
             }}>
               <CardContent sx={{ p: 4 }}>
@@ -508,7 +514,28 @@ const StoryRecording: React.FC = () => {
                   </Box>
                 ) : (
                   <Box sx={{ textAlign: 'center', mb: 4 }}>
-                    <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 180, height: 120, borderRadius: 4, background: 'rgba(6,78,59,0.7)', color: 'white', mb: 3, boxShadow: '0 10px 25px -5px rgba(5, 150, 105, 0.3)', animation: isRecording ? 'pulse 2s infinite' : 'none', cursor: 'pointer', transition: 'all 0.3s ease-in-out', '&:hover': { transform: 'scale(1.05)' } }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      width: '100%', 
+                      height: { xs: 300, sm: 400, md: 500, lg: 600 }, 
+                      borderRadius: 3, 
+                      background: 'rgba(6,78,59,0.7)', 
+                      color: 'white', 
+                      mb: 3, 
+                      boxShadow: '0 20px 40px -10px rgba(5, 150, 105, 0.4)', 
+                      animation: isRecording ? 'pulse 2s infinite' : 'none', 
+                      cursor: 'pointer', 
+                      transition: 'all 0.3s ease-in-out',
+                      border: '2px solid rgba(16,185,129,0.3)',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      '&:hover': { 
+                        transform: 'scale(1.02)',
+                        boxShadow: '0 25px 50px -12px rgba(5, 150, 105, 0.5)'
+                      }
+                    }}>
                       <video 
                         ref={videoRef} 
                         autoPlay 
@@ -517,30 +544,110 @@ const StoryRecording: React.FC = () => {
                         style={{ 
                           width: '100%', 
                           height: '100%', 
-                          borderRadius: 4, 
+                          borderRadius: 8, 
                           objectFit: 'cover', 
-                          background: '#065f46' 
+                          background: '#065f46',
+                          minHeight: '100%'
                         }} 
                         src={videoUrl || undefined}
                       />
+                      {/* Recording indicator overlay */}
+                      {isRecording && (
+                        <Box sx={{
+                          position: 'absolute',
+                          top: 16,
+                          right: 16,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          background: 'rgba(220, 38, 38, 0.9)',
+                          color: 'white',
+                          px: 2,
+                          py: 1,
+                          borderRadius: 2,
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          backdropFilter: 'blur(10px)'
+                        }}>
+                          <Box sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            background: '#ffffff',
+                            animation: 'pulse 1s infinite'
+                          }} />
+                          REC
+                        </Box>
+                      )}
+                      
+                      {/* Fullscreen toggle button */}
+                      <IconButton
+                        onClick={() => {
+                          if (videoRef.current) {
+                            if (document.fullscreenElement) {
+                              document.exitFullscreen();
+                            } else {
+                              videoRef.current.requestFullscreen();
+                            }
+                          }
+                        }}
+                        sx={{
+                          position: 'absolute',
+                          top: 16,
+                          left: 16,
+                          background: 'rgba(0, 0, 0, 0.6)',
+                          color: 'white',
+                          '&:hover': {
+                            background: 'rgba(0, 0, 0, 0.8)',
+                          },
+                          backdropFilter: 'blur(10px)'
+                        }}
+                      >
+                        {document.fullscreenElement ? <FullscreenExit /> : <Fullscreen />}
+                      </IconButton>
                     </Box>
                     <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-                      {isRecording ? 'Recording Video...' : 'Ready to Record Video'}
+                      {isRecording ? 'Recording Video...' : videoBlob ? 'Video Recorded' : 'Ready to Record Video'}
                     </Typography>
+                    {!isRecording && !videoBlob && (
+                      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', mb: 2 }}>
+                        Click "Start Video Recording" to begin capturing your story
+                      </Typography>
+                    )}
                     {isRecording && (
                       <Typography variant="h4" sx={{ fontWeight: 700, color: '#dc2626' }}>
                         {formatTime(recordingTime)}
                       </Typography>
                     )}
                     {/* Video Recording Controls */}
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      gap: 3, 
+                      mt: 3,
+                      flexWrap: 'wrap'
+                    }}>
                       {!isRecording && !videoBlob && (
                         <Button
                           variant="contained"
                           size="large"
                           startIcon={<Mic />}
                           onClick={startVideoRecording}
-                          sx={{ background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', '&:hover': { background: 'linear-gradient(135deg, #047857 0%, #059669 100%)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                          sx={{ 
+                            background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', 
+                            '&:hover': { 
+                              background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 10px 25px -5px rgba(5, 150, 105, 0.4)'
+                            }, 
+                            px: 6, 
+                            py: 2, 
+                            borderRadius: 3, 
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            transition: 'all 0.3s ease-in-out',
+                            boxShadow: '0 8px 20px -5px rgba(5, 150, 105, 0.3)'
+                          }}
                         >
                           Start Video Recording
                         </Button>
@@ -551,7 +658,21 @@ const StoryRecording: React.FC = () => {
                           size="large"
                           startIcon={<Stop />}
                           onClick={stopVideoRecording}
-                          sx={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', '&:hover': { background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                          sx={{ 
+                            background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', 
+                            '&:hover': { 
+                              background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 10px 25px -5px rgba(220, 38, 38, 0.4)'
+                            }, 
+                            px: 6, 
+                            py: 2, 
+                            borderRadius: 3, 
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            transition: 'all 0.3s ease-in-out',
+                            boxShadow: '0 8px 20px -5px rgba(220, 38, 38, 0.3)'
+                          }}
                         >
                           Stop Recording
                         </Button>
@@ -563,18 +684,48 @@ const StoryRecording: React.FC = () => {
                             size="large"
                             startIcon={<PlayArrow />}
                             onClick={() => videoRef.current && videoRef.current.play()}
-                            sx={{ background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)', '&:hover': { background: 'linear-gradient(135deg, #15803d 0%, #16a34a 100%)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                            sx={{ 
+                              background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)', 
+                              '&:hover': { 
+                                background: 'linear-gradient(135deg, #15803d 0%, #16a34a 100%)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 10px 25px -5px rgba(22, 197, 94, 0.4)'
+                              }, 
+                              px: 6, 
+                              py: 2, 
+                              borderRadius: 3, 
+                              fontWeight: 700,
+                              fontSize: '1.1rem',
+                              transition: 'all 0.3s ease-in-out',
+                              boxShadow: '0 8px 20px -5px rgba(22, 197, 94, 0.3)'
+                            }}
                           >
-                            Play
+                            Play Recording
                           </Button>
                           <Button
                             variant="outlined"
                             size="large"
                             startIcon={<Delete />}
                             onClick={deleteVideoRecording}
-                            sx={{ borderColor: '#dc2626', color: '#dc2626', '&:hover': { borderColor: '#b91c1c', background: 'rgba(220, 38, 38, 0.1)' }, px: 4, py: 1.5, borderRadius: 3, fontWeight: 600 }}
+                            sx={{ 
+                              borderColor: '#dc2626', 
+                              color: '#dc2626', 
+                              borderWidth: 2,
+                              '&:hover': { 
+                                borderColor: '#b91c1c', 
+                                background: 'rgba(220, 38, 38, 0.1)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 10px 25px -5px rgba(220, 38, 38, 0.2)'
+                              }, 
+                              px: 6, 
+                              py: 2, 
+                              borderRadius: 3, 
+                              fontWeight: 700,
+                              fontSize: '1.1rem',
+                              transition: 'all 0.3s ease-in-out'
+                            }}
                           >
-                            Delete
+                            Delete Recording
                           </Button>
                         </>
                       )}
@@ -623,9 +774,13 @@ const StoryRecording: React.FC = () => {
           <Grid item xs={12} lg={4}>
             <Card sx={{ 
               height: 'fit-content',
-              background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-              border: '1.5px solid rgba(16,185,129,0.18)',
-              color: '#fff',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+              border: theme.palette.mode === 'dark'
+                ? '1.5px solid rgba(16,185,129,0.3)'
+                : '1.5px solid rgba(16,185,129,0.18)',
+              color: theme.palette.text.primary,
               backdropFilter: 'blur(10px)',
             }}>
               <CardContent sx={{ p: 4 }}>
@@ -633,7 +788,7 @@ const StoryRecording: React.FC = () => {
                   Story Details
                 </Typography>
 
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
                   Story Title
                 </Typography>
                 <TextField
@@ -648,7 +803,7 @@ const StoryRecording: React.FC = () => {
                   }}
                 />
 
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
                   Category
                 </Typography>
                 <FormControl fullWidth sx={{ mb: 3 }}>
@@ -670,7 +825,7 @@ const StoryRecording: React.FC = () => {
                   </Select>
                 </FormControl>
 
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
                   Custom Category
                 </Typography>
                 <Box
@@ -690,13 +845,15 @@ const StoryRecording: React.FC = () => {
                     variant="outlined"
                     sx={{
                       flex: 1,
-                      background: 'rgba(6,78,59,0.7)',
+                      background: theme.palette.mode === 'dark' 
+                        ? 'rgba(30, 41, 59, 0.7)'
+                        : 'rgba(240, 253, 244, 0.7)',
                       borderRadius: 2,
-                      input: { color: '#fff' },
+                      input: { color: theme.palette.text.primary },
                       minWidth: 0,
                     }}
                     InputProps={{
-                      sx: { color: '#fff' },
+                      sx: { color: theme.palette.text.primary },
                     }}
                   />
                   <Button
@@ -709,7 +866,7 @@ const StoryRecording: React.FC = () => {
                   </Button>
                 </Box>
 
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
                   Description (Optional)
                 </Typography>
                 <TextField
@@ -748,9 +905,13 @@ const StoryRecording: React.FC = () => {
             {/* Recording Prompts */}
             <Card sx={{ 
               mt: 3,
-              background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-              border: '1.5px solid rgba(16,185,129,0.18)',
-              color: '#fff',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+              border: theme.palette.mode === 'dark'
+                ? '1.5px solid rgba(16,185,129,0.3)'
+                : '1.5px solid rgba(16,185,129,0.18)',
+              color: theme.palette.text.primary,
               backdropFilter: 'blur(10px)',
             }}>
               <CardContent sx={{ p: 4 }}>

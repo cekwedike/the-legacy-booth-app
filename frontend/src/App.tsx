@@ -31,12 +31,8 @@ const App: React.FC = () => {
       <AuthProvider>
         <AccessibilityProvider>
           <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            {/* Protected Routes */}
-            <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+            {/* Development Mode - Bypass Authentication */}
+            <Route path="/" element={<Layout />}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               
@@ -69,8 +65,8 @@ const App: React.FC = () => {
               </Route>
             </Route>
             
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminRoute><Layout /></AdminRoute>}>
+            {/* Admin Routes - Also bypassed for development */}
+            <Route path="/admin" element={<Layout />}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<ResidentManagement />} />

@@ -8,8 +8,17 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Development Mode - Mock user to bypass authentication
+  const [user, setUser] = useState<User | null>({
+    _id: 'dev-user-id',
+    name: 'Development User',
+    email: 'dev@legacybooth.com',
+    role: 'resident',
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  });
+  const [loading, setLoading] = useState(false);
 
   // Inactivity timeout (15 minutes)
   const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes in ms

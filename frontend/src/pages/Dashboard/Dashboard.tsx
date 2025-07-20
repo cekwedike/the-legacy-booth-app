@@ -42,11 +42,17 @@ const Dashboard: React.FC = () => {
           <Box sx={{ 
             mb: { xs: 2, sm: 4 }, 
             textAlign: 'center',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
+            background: theme.palette.mode === 'dark' 
+              ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+              : 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
             borderRadius: { xs: 2, sm: 4 },
             p: { xs: 2, sm: 3, md: 4 },
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            border: theme.palette.mode === 'dark' 
+              ? '1px solid #334155'
+              : '1px solid #e5e7eb',
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+              : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
             position: 'relative',
             overflow: 'hidden'
           }}>
@@ -69,22 +75,22 @@ const Dashboard: React.FC = () => {
                 justifyContent: 'center',
                 mb: { xs: 1, sm: 2 }
               }}>
-                <Typography variant="h3" sx={{ 
-                  fontWeight: 900,
-                  color: '#1f2937',
-                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                  letterSpacing: '-0.02em',
-                  background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  Legacy Booth
-                </Typography>
+                              <Typography variant="h3" sx={{ 
+                fontWeight: 900,
+                color: theme.palette.text.primary,
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                letterSpacing: '-0.02em',
+                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                Legacy Booth
+              </Typography>
               </Box>
               <Typography variant="h6" sx={{ 
                 fontWeight: 400, 
-                color: '#6b7280',
+                color: theme.palette.text.secondary,
                 fontSize: { xs: '0.875rem', sm: '1rem', md: '1.2rem' },
                 fontStyle: 'italic',
                 letterSpacing: '0.05em'
@@ -97,7 +103,7 @@ const Dashboard: React.FC = () => {
             <Box sx={{ position: 'relative', zIndex: 1 }}>
               <Typography variant="h2" sx={{ 
                 fontWeight: 800, 
-                color: '#1f2937',
+                color: theme.palette.text.primary,
                 mb: { xs: 1, sm: 2 },
                 fontSize: { xs: '1.5rem', sm: '2rem', md: '2.8rem' },
                 letterSpacing: '-0.02em'
@@ -106,7 +112,7 @@ const Dashboard: React.FC = () => {
               </Typography>
               <Typography variant="h5" sx={{ 
                 fontWeight: 400, 
-                color: '#6b7280',
+                color: theme.palette.text.secondary,
                 fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem' },
                 maxWidth: '600px',
                 mx: 'auto',
@@ -124,13 +130,19 @@ const Dashboard: React.FC = () => {
                 <Grid item xs={6} sm={6} md={3} key={index}>
                   <Card sx={{ 
                     height: '100%',
-                    background: '#ffffff',
-                    border: '1px solid #e5e7eb',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    background: theme.palette.background.paper,
+                    border: theme.palette.mode === 'dark' 
+                      ? '1px solid #334155'
+                      : '1px solid #e5e7eb',
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+                      : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                     borderRadius: { xs: 2, sm: 4 },
                     transition: 'all 0.3s',
                     '&:hover': {
-                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                      boxShadow: theme.palette.mode === 'dark'
+                        ? '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)'
+                        : '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                       borderColor: '#10b981',
                       transform: 'translateY(-2px)',
                     },
@@ -156,13 +168,13 @@ const Dashboard: React.FC = () => {
                       <Typography variant="h4" sx={{ 
                         fontWeight: 700, 
                         mb: { xs: 0.5, sm: 1 }, 
-                        color: '#1f2937',
+                        color: theme.palette.text.primary,
                         fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
                       }}>
                         {stat.value}
                       </Typography>
                       <Typography variant="body2" sx={{ 
-                        color: '#6b7280',
+                        color: theme.palette.text.secondary,
                         fontSize: { xs: '0.75rem', sm: '0.875rem' }
                       }}>
                         {stat.label}
@@ -180,7 +192,7 @@ const Dashboard: React.FC = () => {
               <Typography variant="h5" sx={{ 
                 fontWeight: 600, 
                 mb: { xs: 2, sm: 3 }, 
-                color: '#1f2937',
+                color: theme.palette.text.primary,
                 fontSize: { xs: '1.25rem', sm: '1.5rem' }
               }}>
                 {config.sections.quickActions}
@@ -192,14 +204,18 @@ const Dashboard: React.FC = () => {
                     sx={{ 
                       mb: { xs: 1, sm: 2 },
                       cursor: 'pointer',
-                      background: '#ffffff',
-                      border: '1px solid #e5e7eb',
-                      color: '#1f2937',
+                      background: theme.palette.background.paper,
+                      border: theme.palette.mode === 'dark' 
+                        ? '1px solid #334155'
+                        : '1px solid #e5e7eb',
+                      color: theme.palette.text.primary,
                       borderRadius: { xs: 2, sm: 3 },
                       overflow: 'hidden',
                       '&:hover': {
                         transform: 'translateX(8px)',
-                        boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
+                        boxShadow: theme.palette.mode === 'dark'
+                          ? '0 10px 15px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.1)'
+                          : '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
                         borderColor: '#10b981',
                       },
                       transition: 'all 0.3s ease'
@@ -210,7 +226,9 @@ const Dashboard: React.FC = () => {
                       display: 'flex', 
                       alignItems: 'center', 
                       p: { xs: 2, sm: 3 },
-                      background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+                      background: theme.palette.mode === 'dark'
+                        ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+                        : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
                     }}>
                       <Box sx={{ 
                         display: 'flex', 
@@ -230,14 +248,14 @@ const Dashboard: React.FC = () => {
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography variant="h6" sx={{ 
                           fontWeight: 600, 
-                          color: '#1f2937', 
+                          color: theme.palette.text.primary, 
                           mb: { xs: 0.25, sm: 0.5 },
                           fontSize: { xs: '1rem', sm: '1.25rem' }
                         }}>
                           {action.title}
                         </Typography>
                         <Typography variant="body2" sx={{ 
-                          color: '#6b7280',
+                          color: theme.palette.text.secondary,
                           fontSize: { xs: '0.875rem', sm: '1rem' }
                         }}>
                           {action.description}
@@ -270,15 +288,21 @@ const Dashboard: React.FC = () => {
           <Box sx={{ 
             mb: { xs: 2, sm: 4 }, 
             textAlign: 'center',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
+            background: theme.palette.mode === 'dark' 
+              ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+              : 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
             borderRadius: { xs: 2, sm: 4 },
             p: { xs: 2, sm: 3, md: 4 },
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            border: theme.palette.mode === 'dark' 
+              ? '1px solid #334155'
+              : '1px solid #e5e7eb',
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+              : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           }}>
             <Typography variant="h2" sx={{ 
               fontWeight: 800, 
-              color: '#1f2937',
+              color: theme.palette.text.primary,
               mb: { xs: 1, sm: 2 },
               fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
               background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
@@ -290,7 +314,7 @@ const Dashboard: React.FC = () => {
             </Typography>
             <Typography variant="h5" sx={{ 
               fontWeight: 400, 
-              color: '#6b7280',
+              color: theme.palette.text.secondary,
               maxWidth: '600px',
               mx: 'auto',
               fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' }
@@ -306,11 +330,15 @@ const Dashboard: React.FC = () => {
                 <Card sx={{ 
                   height: '100%',
                   cursor: 'pointer',
-                  background: '#ffffff',
-                  border: '1px solid #e5e7eb',
+                  background: theme.palette.background.paper,
+                  border: theme.palette.mode === 'dark' 
+                    ? '1px solid #334155'
+                    : '1px solid #e5e7eb',
                   borderRadius: { xs: 2, sm: 3 },
                   '&:hover': {
-                    boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? '0 10px 15px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.1)'
+                      : '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
                     borderColor: '#10b981',
                     transform: 'translateY(-2px)',
                   },
@@ -344,14 +372,14 @@ const Dashboard: React.FC = () => {
                       </Box>
                       <Typography variant="h6" sx={{ 
                         fontWeight: 600, 
-                        color: '#1f2937', 
+                        color: theme.palette.text.primary, 
                         mb: { xs: 0.5, sm: 1 },
                         fontSize: { xs: '1rem', sm: '1.25rem' }
                       }}>
                         {action.title}
                       </Typography>
                       <Typography variant="body2" sx={{ 
-                        color: '#6b7280', 
+                        color: theme.palette.text.secondary, 
                         mb: { xs: 1.5, sm: 2 },
                         fontSize: { xs: '0.875rem', sm: '1rem' }
                       }}>
@@ -390,7 +418,7 @@ const Dashboard: React.FC = () => {
       <Box sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 2, sm: 4 } }}>
         <Typography variant="h2" sx={{ 
           fontWeight: 800, 
-          color: '#1f2937',
+          color: theme.palette.text.primary,
           mb: { xs: 1, sm: 2 },
           fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
           background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
@@ -401,7 +429,7 @@ const Dashboard: React.FC = () => {
           {welcomeMessage}
         </Typography>
         <Typography variant="h5" sx={{ 
-          color: '#6b7280', 
+          color: theme.palette.text.secondary, 
           mb: { xs: 2, sm: 4 },
           fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' }
         }}>
@@ -414,11 +442,15 @@ const Dashboard: React.FC = () => {
               <Card sx={{ 
                 height: '100%',
                 cursor: 'pointer',
-                background: '#ffffff',
-                border: '1px solid #e5e7eb',
+                background: theme.palette.background.paper,
+                border: theme.palette.mode === 'dark' 
+                  ? '1px solid #334155'
+                  : '1px solid #e5e7eb',
                 borderRadius: { xs: 2, sm: 3 },
                 '&:hover': {
-                  boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? '0 10px 15px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.1)'
+                    : '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
                   borderColor: '#10b981',
                   transform: 'translateY(-2px)',
                 },
@@ -452,14 +484,14 @@ const Dashboard: React.FC = () => {
                     </Box>
                     <Typography variant="h6" sx={{ 
                       fontWeight: 600, 
-                      color: '#1f2937', 
+                      color: theme.palette.text.primary, 
                       mb: { xs: 0.5, sm: 1 },
                       fontSize: { xs: '1rem', sm: '1.25rem' }
                     }}>
                       {action.title}
                     </Typography>
                     <Typography variant="body2" sx={{ 
-                      color: '#6b7280', 
+                      color: theme.palette.text.secondary, 
                       mb: { xs: 1.5, sm: 2 },
                       fontSize: { xs: '0.875rem', sm: '1rem' }
                     }}>
