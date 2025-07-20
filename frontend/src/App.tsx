@@ -178,7 +178,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            background: '#e2e8f0 !important',
+            background: '#f0fdf4 !important',
             borderRadius: 12,
             '& fieldset': {
               borderColor: '#e5e7eb',
@@ -197,8 +197,8 @@ const theme = createTheme({
               padding: '16px 14px',
               background: 'transparent',
               '&::placeholder': {
-                color: '#9ca3af',
-                opacity: 1,
+                color: '#059669',
+                opacity: 0.7,
               },
             },
             '& textarea': {
@@ -206,8 +206,8 @@ const theme = createTheme({
               padding: '16px 14px',
               background: 'transparent',
               '&::placeholder': {
-                color: '#9ca3af',
-                opacity: 1,
+                color: '#059669',
+                opacity: 0.7,
               },
             },
           },
@@ -353,12 +353,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&.MuiOutlinedInput-root': {
-            background: '#e2e8f0 !important',
+            background: '#f0fdf4 !important',
             '&:hover': {
-              background: '#e2e8f0 !important',
+              background: '#f0fdf4 !important',
             },
             '&.Mui-focused': {
-              background: '#e2e8f0 !important',
+              background: '#f0fdf4 !important',
             },
           },
         },
