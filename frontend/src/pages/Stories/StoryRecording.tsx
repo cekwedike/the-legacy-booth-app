@@ -569,9 +569,11 @@ const StoryRecording: React.FC = () => {
                   Story Details
                 </Typography>
 
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                  Story Title
+                </Typography>
                 <TextField
                   fullWidth
-                  label="Story Title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   sx={{ mb: 3 }}
@@ -582,11 +584,12 @@ const StoryRecording: React.FC = () => {
                   }}
                 />
 
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                  Category
+                </Typography>
                 <FormControl fullWidth sx={{ mb: 3 }}>
-                  <InputLabel>Category</InputLabel>
                   <Select
                     value={category}
-                    label="Category"
                     onChange={(e) => setCategory(e.target.value)}
                     startAdornment={<Category sx={{ color: 'text.secondary', mr: 1 }} />}
                   >
@@ -603,6 +606,9 @@ const StoryRecording: React.FC = () => {
                   </Select>
                 </FormControl>
 
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                  Custom Category
+                </Typography>
                 <Box
                   sx={{
                     display: 'flex',
@@ -613,7 +619,6 @@ const StoryRecording: React.FC = () => {
                   }}
                 >
                   <TextField
-                    label="Custom Category"
                     value={newCategory}
                     onChange={e => setNewCategory(e.target.value)}
                     placeholder="Add custom category"
@@ -640,9 +645,11 @@ const StoryRecording: React.FC = () => {
                   </Button>
                 </Box>
 
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: '#fff' }}>
+                  Description (Optional)
+                </Typography>
                 <TextField
                   fullWidth
-                  label="Description (Optional)"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   multiline
@@ -785,8 +792,10 @@ const StoryRecording: React.FC = () => {
       >
         <DialogTitle id="custom-prompt-dialog-title">Add Custom Prompt</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+            Custom Prompt
+          </Typography>
           <TextField
-            label="Custom Prompt"
             value={newPrompt}
             onChange={e => setNewPrompt(e.target.value)}
             placeholder="Enter your custom prompt"
@@ -795,11 +804,12 @@ const StoryRecording: React.FC = () => {
             variant="outlined"
             autoFocus
           />
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+            Category
+          </Typography>
           <FormControl size="small" fullWidth>
-            <InputLabel>Category</InputLabel>
             <Select
               value={newPromptCategory}
-              label="Category"
               onChange={e => setNewPromptCategory(e.target.value as string)}
             >
               {categories.map((cat) => (

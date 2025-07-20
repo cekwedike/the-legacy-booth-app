@@ -170,9 +170,11 @@ const StoryLibrary: React.FC = () => {
           <CardContent sx={{ p: 3 }}>
             <Grid container spacing={3} alignItems="center">
               <Grid item xs={12} md={6}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                  Search Stories
+                </Typography>
                 <TextField
                   fullWidth
-                  label="Search Stories"
                   placeholder="Search your stories..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -187,11 +189,12 @@ const StoryLibrary: React.FC = () => {
                 />
               </Grid>
               <Grid item xs={12} md={3}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                  Category
+                </Typography>
                 <FormControl fullWidth>
-                  <InputLabel>Category</InputLabel>
                   <Select
                     value={selectedCategory}
-                    label="Category"
                     onChange={(e) => setSelectedCategory(e.target.value)}
                   >
                     {categories.map((category) => (
@@ -203,11 +206,12 @@ const StoryLibrary: React.FC = () => {
                 </FormControl>
               </Grid>
               <Grid item xs={12} md={3}>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                  Sort By
+                </Typography>
                 <FormControl fullWidth>
-                  <InputLabel>Sort By</InputLabel>
                   <Select
                     value={sortBy}
-                    label="Sort By"
                     onChange={(e) => setSortBy(e.target.value)}
                   >
                     <MenuItem value="date">Date</MenuItem>

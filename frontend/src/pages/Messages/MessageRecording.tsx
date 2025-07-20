@@ -181,9 +181,11 @@ const MessageRecording: React.FC = () => {
         <Card>
           <CardContent>
             <Box component="form" onSubmit={handleSubmit}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+                Recipient Name
+              </Typography>
               <TextField
                 fullWidth
-                label="Recipient Name"
                 name="recipientName"
                 value={formData.recipientName}
                 onChange={handleInputChange}
@@ -192,12 +194,13 @@ const MessageRecording: React.FC = () => {
                 variant="outlined"
               />
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+                Message Type
+              </Typography>
               <FormControl fullWidth margin="normal">
-                <InputLabel>Message Type</InputLabel>
                 <Select
                   name="messageType"
                   value={formData.messageType}
-                  label="Message Type"
                   onChange={handleSelectChange}
                 >
                   {messageTypes.map((type) => (
@@ -208,9 +211,11 @@ const MessageRecording: React.FC = () => {
                 </Select>
               </FormControl>
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+                Description (Optional)
+              </Typography>
               <TextField
                 fullWidth
-                label="Description (Optional)"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}

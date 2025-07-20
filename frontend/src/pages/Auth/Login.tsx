@@ -255,9 +255,11 @@ const Login: React.FC = () => {
 
             {/* Login Form */}
             <Box component="form" onSubmit={handleSubmit} sx={{ position: 'relative', zIndex: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Email Address
+              </Typography>
               <TextField
                 fullWidth
-                label="Email Address"
                 name="email"
                 type="email"
                 value={formData.email}
@@ -274,9 +276,11 @@ const Login: React.FC = () => {
                 }}
               />
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Password
+              </Typography>
               <TextField
                 fullWidth
-                label="Password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}

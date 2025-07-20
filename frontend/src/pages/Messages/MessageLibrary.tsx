@@ -101,9 +101,11 @@ const MessageLibrary: React.FC = () => {
           </Alert>
         )}
 
+        <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+          Search Messages
+        </Typography>
         <TextField
           fullWidth
-          label="Search Messages"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           variant="outlined"

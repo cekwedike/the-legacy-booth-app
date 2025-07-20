@@ -293,9 +293,11 @@ const Register: React.FC = () => {
 
             {/* Registration Form */}
             <Box component="form" onSubmit={handleSubmit} sx={{ position: 'relative', zIndex: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Full Name
+              </Typography>
               <TextField
                 fullWidth
-                label="Full Name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -311,9 +313,11 @@ const Register: React.FC = () => {
                 }}
               />
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Email Address
+              </Typography>
               <TextField
                 fullWidth
-                label="Email Address"
                 name="email"
                 type="email"
                 value={formData.email}
@@ -330,9 +334,11 @@ const Register: React.FC = () => {
                 }}
               />
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Password
+              </Typography>
               <TextField
                 fullWidth
-                label="Password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
@@ -359,9 +365,11 @@ const Register: React.FC = () => {
                 }}
               />
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Confirm Password
+              </Typography>
               <TextField
                 fullWidth
-                label="Confirm Password"
                 name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={formData.confirmPassword}
@@ -388,11 +396,12 @@ const Register: React.FC = () => {
                 }}
               />
 
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                Role
+              </Typography>
               <FormControl fullWidth sx={{ mb: { xs: 2, sm: 3 } }}>
-                <InputLabel sx={{ color: '#6b7280' }}>Role</InputLabel>
                 <Select
                   value={formData.role}
-                  label="Role"
                   onChange={handleSelectChange}
                   sx={{
                     '& .MuiOutlinedInput-notchedOutline': {
@@ -414,9 +423,11 @@ const Register: React.FC = () => {
 
               {formData.role === 'resident' && (
                 <>
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                    Room Number
+                  </Typography>
                   <TextField
                     fullWidth
-                    label="Room Number"
                     name="roomNumber"
                     value={formData.roomNumber}
                     onChange={handleChange}
@@ -425,9 +436,11 @@ const Register: React.FC = () => {
                     sx={{ mb: { xs: 2, sm: 3 } }}
                   />
 
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                    Date of Birth
+                  </Typography>
                   <TextField
                     fullWidth
-                    label="Date of Birth"
                     name="dateOfBirth"
                     type="date"
                     value={formData.dateOfBirth}
@@ -440,9 +453,11 @@ const Register: React.FC = () => {
                     }}
                   />
 
+                  <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: theme.palette.text.primary }}>
+                    Emergency Contact
+                  </Typography>
                   <TextField
                     fullWidth
-                    label="Emergency Contact"
                     name="emergencyContact"
                     value={formData.emergencyContact}
                     onChange={handleChange}
