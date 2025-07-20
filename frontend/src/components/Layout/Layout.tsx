@@ -59,8 +59,8 @@ const globalStyles = `
   }
 `;
 
-const drawerWidth = 320;
-const collapsedDrawerWidth = 80;
+const drawerWidth = 280;
+const collapsedDrawerWidth = 70;
 
 interface MenuItem {
   text: string;
@@ -193,11 +193,11 @@ const Layout: React.FC = () => {
           selected={isSelected}
           sx={{
             mx: isCollapsed ? 0.5 : { xs: 0.5, sm: 1, md: 1.5 },
-            mb: { xs: 1, sm: 1.5 },
+            mb: { xs: 0.5, sm: 1 },
             borderRadius: isCollapsed ? '12px' : { xs: '12px', sm: '16px' },
-            p: isCollapsed ? 1.5 : { xs: 2, sm: 2.5 },
+            p: isCollapsed ? 1.5 : { xs: 1.5, sm: 2, md: 2.5 },
             width: isCollapsed ? 'auto' : { xs: '100%', sm: '92%' },
-            minHeight: isCollapsed ? 48 : { xs: 56, sm: 64 },
+            minHeight: isCollapsed ? 48 : { xs: 48, sm: 56, md: 64 },
             justifyContent: isCollapsed ? 'center' : 'flex-start',
             background: isSelected 
               ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)' 
@@ -217,20 +217,20 @@ const Layout: React.FC = () => {
             cursor: 'pointer',
             '& .MuiListItemIcon-root': {
               color: isSelected ? 'white' : '#059669',
-              minWidth: isCollapsed ? 'auto' : { xs: 36, sm: 40 },
+              minWidth: isCollapsed ? 'auto' : { xs: 32, sm: 36, md: 40 },
             },
             '& .MuiListItemText-primary': {
               fontWeight: isSelected ? 600 : 500,
-              fontSize: { xs: '0.9rem', sm: '0.95rem' },
+              fontSize: { xs: '0.875rem', sm: '0.9rem', md: '0.95rem' },
             },
             '& .MuiListItemText-secondary': {
               color: isSelected ? 'rgba(255, 255, 255, 0.8)' : '#9ca3af',
-              fontSize: { xs: '0.75rem', sm: '0.8rem' },
+              fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
               display: isCollapsed ? 'none' : 'block',
             },
           }}
         >
-          <ListItemIcon sx={{ mr: isCollapsed ? 0 : { xs: 1.5, sm: 2 } }}>
+          <ListItemIcon sx={{ mr: isCollapsed ? 0 : { xs: 1, sm: 1.5, md: 2 } }}>
             {item.icon}
           </ListItemIcon>
           {!isCollapsed && (
@@ -261,7 +261,7 @@ const Layout: React.FC = () => {
     }}>
       {/* Header */}
       <Box sx={{ 
-        p: { xs: 2, sm: 3 }, 
+        p: { xs: 1.5, sm: 2, md: 3 }, 
         borderBottom: '1px solid #e5e7eb',
         background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
       }}>
@@ -269,27 +269,27 @@ const Layout: React.FC = () => {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
-          mb: 2,
+          mb: { xs: 1.5, sm: 2 },
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5, md: 2 } }}>
             <Box sx={{ 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              width: { xs: 40, sm: 50 },
-              height: { xs: 40, sm: 50 },
+              width: { xs: 32, sm: 36, md: 40 },
+              height: { xs: 32, sm: 36, md: 40 },
               borderRadius: '50%',
               background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
               color: 'white',
               boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
             }}>
-              <Star sx={{ fontSize: { xs: 20, sm: 24 } }} />
+              <Star sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }} />
             </Box>
             {!sidebarCollapsed && (
               <Typography variant="h6" sx={{ 
                 fontWeight: 700,
                 color: '#1f2937',
-                fontSize: { xs: '1rem', sm: '1.25rem' },
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.25rem' },
                 background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
@@ -305,6 +305,8 @@ const Layout: React.FC = () => {
               sx={{ 
                 color: '#059669',
                 background: 'rgba(16, 185, 129, 0.05)',
+                width: { xs: 28, sm: 32 },
+                height: { xs: 28, sm: 32 },
                 '&:hover': {
                   background: 'rgba(16, 185, 129, 0.1)',
                 },
@@ -317,7 +319,7 @@ const Layout: React.FC = () => {
         {!sidebarCollapsed && (
           <Typography variant="body2" sx={{ 
             color: '#6b7280',
-            fontSize: { xs: '0.8rem', sm: '0.875rem' }
+            fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' }
           }}>
             Welcome back, {user?.name || 'User'}
           </Typography>
@@ -337,20 +339,20 @@ const Layout: React.FC = () => {
 
       {/* Footer */}
       <Box sx={{ 
-        p: { xs: 1.5, sm: 2 }, 
+        p: { xs: 1, sm: 1.5, md: 2 }, 
         borderTop: '1px solid #e5e7eb',
         background: '#f9fafb',
       }}>
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center', 
-          gap: { xs: 1.5, sm: 2 },
-          mb: 2,
+          gap: { xs: 1, sm: 1.5, md: 2 },
+          mb: { xs: 1, sm: 1.5, md: 2 },
         }}>
           <Avatar 
             sx={{ 
-              width: { xs: 36, sm: 40 }, 
-              height: { xs: 36, sm: 40 },
+              width: { xs: 28, sm: 32, md: 36 }, 
+              height: { xs: 28, sm: 32, md: 36 },
               background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
             }}
           >
@@ -361,13 +363,13 @@ const Layout: React.FC = () => {
               <Typography variant="body2" sx={{ 
                 fontWeight: 600, 
                 color: '#1f2937',
-                fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' }
               }}>
                 {user?.name || 'User'}
               </Typography>
               <Typography variant="caption" sx={{ 
                 color: '#6b7280',
-                fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' }
               }}>
                 {user?.role || 'User'}
               </Typography>
@@ -383,8 +385,8 @@ const Layout: React.FC = () => {
             sx={{
               borderColor: '#e5e7eb',
               color: '#6b7280',
-              fontSize: { xs: '0.8rem', sm: '0.875rem' },
-              py: { xs: 0.75, sm: 1 },
+              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+              py: { xs: 0.5, sm: 0.75, md: 1 },
               '&:hover': {
                 borderColor: '#ef4444',
                 color: '#ef4444',
@@ -403,174 +405,187 @@ const Layout: React.FC = () => {
     <>
       <style>{globalStyles}</style>
       
-      {/* App Bar */}
-      <AppBar 
-        position="fixed" 
-        sx={{ 
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: '#ffffff',
-          borderBottom: '1px solid #e5e7eb',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        }}
-      >
-        <Toolbar sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ 
-              mr: { xs: 1, sm: 2 }, 
-              display: { md: 'none' },
-              color: '#059669',
+      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        {/* App Bar */}
+        <AppBar 
+          position="fixed" 
+          sx={{ 
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            background: '#ffffff',
+            borderBottom: '1px solid #e5e7eb',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+            width: { 
+              xs: '100%', 
+              md: `calc(100% - ${sidebarCollapsed ? collapsedDrawerWidth : drawerWidth}px)` 
+            },
+            left: { xs: 0, md: sidebarCollapsed ? collapsedDrawerWidth : drawerWidth },
+          }}
+        >
+          <Toolbar sx={{ px: { xs: 1, sm: 2, md: 3 }, minHeight: { xs: 56, sm: 64 } }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ 
+                mr: { xs: 1, sm: 2 }, 
+                display: { md: 'none' },
+                color: '#059669',
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            
+            <Typography variant="h6" sx={{ 
+              flexGrow: 1, 
+              color: '#1f2937',
+              fontWeight: 600,
+              fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+              display: { xs: 'block', sm: 'block' }
+            }}>
+              {getPageTitle()}
+            </Typography>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
+              <IconButton sx={{ 
+                color: '#059669',
+                display: { xs: 'none', sm: 'flex' }
+              }}>
+                <Search />
+              </IconButton>
+              <IconButton sx={{ color: '#059669' }}>
+                <Badge badgeContent={3} color="error">
+                  <Notifications />
+                </Badge>
+              </IconButton>
+              <IconButton
+                onClick={handleProfileMenuOpen}
+                sx={{ color: '#059669' }}
+              >
+                <Avatar 
+                  sx={{ 
+                    width: { xs: 28, sm: 32 }, 
+                    height: { xs: 28, sm: 32 },
+                    background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                  }}
+                >
+                  {user?.name?.charAt(0) || 'U'}
+                </Avatar>
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        {/* Profile Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleProfileMenuClose}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: { xs: 180, sm: 200 },
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            },
+          }}
+        >
+          <MenuItem onClick={() => { navigate('/settings/profile'); handleProfileMenuClose(); }}>
+            <ListItemIcon>
+              <Person sx={{ color: '#059669' }} />
+            </ListItemIcon>
+            Profile
+          </MenuItem>
+          <MenuItem onClick={() => { navigate('/settings/accessibility'); handleProfileMenuClose(); }}>
+            <ListItemIcon>
+              <Settings sx={{ color: '#059669' }} />
+            </ListItemIcon>
+            Settings
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={handleLogout} sx={{ color: '#ef4444' }}>
+            <ListItemIcon>
+              <Logout sx={{ color: '#ef4444' }} />
+            </ListItemIcon>
+            Sign Out
+          </MenuItem>
+        </Menu>
+
+        {/* Drawer */}
+        <Box
+          component="nav"
+          sx={{ 
+            width: { 
+              md: sidebarCollapsed ? collapsedDrawerWidth : drawerWidth 
+            }, 
+            flexShrink: { md: 0 } 
+          }}
+        >
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true,
+            }}
+            sx={{
+              display: { xs: 'block', md: 'none' },
+              '& .MuiDrawer-paper': { 
+                width: { xs: '100%', sm: drawerWidth },
+                background: '#ffffff',
+                borderRight: '1px solid #e5e7eb',
+                boxSizing: 'border-box',
+              },
             }}
           >
-            <MenuIcon />
-          </IconButton>
-          
-          <Typography variant="h6" sx={{ 
-            flexGrow: 1, 
-            color: '#1f2937',
-            fontWeight: 600,
-            fontSize: { xs: '1rem', sm: '1.25rem' },
-            display: { xs: 'none', sm: 'block' }
+            {drawer}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              '& .MuiDrawer-paper': { 
+                width: sidebarCollapsed ? collapsedDrawerWidth : drawerWidth,
+                background: '#ffffff',
+                borderRight: '1px solid #e5e7eb',
+                transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxSizing: 'border-box',
+              },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+
+        {/* Main Content */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            width: { 
+              xs: '100%', 
+              md: `calc(100% - ${sidebarCollapsed ? collapsedDrawerWidth : drawerWidth}px)` 
+            },
+            background: '#f9fafb',
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }} />
+          <Box sx={{ 
+            flex: 1,
+            p: { xs: 1, sm: 2, md: 3 },
+            animation: 'fadeIn 0.5s ease-out',
+            '@keyframes fadeIn': {
+              '0%': { opacity: 0, transform: 'translateY(10px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
           }}>
-            {getPageTitle()}
-          </Typography>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
-            <IconButton sx={{ 
-              color: '#059669',
-              display: { xs: 'none', sm: 'flex' }
-            }}>
-              <Search />
-            </IconButton>
-            <IconButton sx={{ color: '#059669' }}>
-              <Badge badgeContent={3} color="error">
-                <Notifications />
-              </Badge>
-            </IconButton>
-            <IconButton
-              onClick={handleProfileMenuOpen}
-              sx={{ color: '#059669' }}
-            >
-              <Avatar 
-                sx={{ 
-                  width: { xs: 28, sm: 32 }, 
-                  height: { xs: 28, sm: 32 },
-                  background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                }}
-              >
-                {user?.name?.charAt(0) || 'U'}
-              </Avatar>
-            </IconButton>
+            <Outlet />
           </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Profile Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleProfileMenuClose}
-        PaperProps={{
-          sx: {
-            mt: 1,
-            minWidth: { xs: 180, sm: 200 },
-            background: '#ffffff',
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-          },
-        }}
-      >
-        <MenuItem onClick={() => { navigate('/settings/profile'); handleProfileMenuClose(); }}>
-          <ListItemIcon>
-            <Person sx={{ color: '#059669' }} />
-          </ListItemIcon>
-          Profile
-        </MenuItem>
-        <MenuItem onClick={() => { navigate('/settings/accessibility'); handleProfileMenuClose(); }}>
-          <ListItemIcon>
-            <Settings sx={{ color: '#059669' }} />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleLogout} sx={{ color: '#ef4444' }}>
-          <ListItemIcon>
-            <Logout sx={{ color: '#ef4444' }} />
-          </ListItemIcon>
-          Sign Out
-        </MenuItem>
-      </Menu>
-
-      {/* Drawer */}
-      <Box
-        component="nav"
-        sx={{ 
-          width: { 
-            md: sidebarCollapsed ? collapsedDrawerWidth : drawerWidth 
-          }, 
-          flexShrink: { md: 0 } 
-        }}
-      >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { 
-              width: { xs: '100%', sm: drawerWidth },
-              background: '#ffffff',
-              borderRight: '1px solid #e5e7eb',
-            },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': { 
-              width: sidebarCollapsed ? collapsedDrawerWidth : drawerWidth,
-              background: '#ffffff',
-              borderRight: '1px solid #e5e7eb',
-              transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-
-      {/* Main Content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: { xs: 1, sm: 2, md: 3 },
-          width: { 
-            md: `calc(100% - ${sidebarCollapsed ? collapsedDrawerWidth : drawerWidth}px)` 
-          },
-          background: '#f9fafb',
-          minHeight: '100vh',
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ 
-          animation: 'fadeIn 0.5s ease-out',
-          '@keyframes fadeIn': {
-            '0%': { opacity: 0, transform: 'translateY(10px)' },
-            '100%': { opacity: 1, transform: 'translateY(0)' },
-          },
-        }}>
-          <Outlet />
         </Box>
       </Box>
     </>
