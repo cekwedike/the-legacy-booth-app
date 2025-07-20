@@ -755,7 +755,10 @@ const StoryRecording: React.FC = () => {
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#fff' }}>
+                  <Typography variant="h6" sx={{ 
+                    fontWeight: 600,
+                    color: theme.palette.mode === 'light' ? '#ffffff' : '#f1f5f9'
+                  }}>
                     Story Prompts
                   </Typography>
                 </Box>
