@@ -108,6 +108,25 @@ app.use('/api/admin', authenticateToken, adminRoutes);
 // Swagger API docs
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to Legacy Booth API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      docs: '/api/docs',
+      auth: '/api/auth',
+      recordings: '/api/recordings',
+      stories: '/api/stories',
+      messages: '/api/messages',
+      legacyBooks: '/api/legacy-books',
+      admin: '/api/admin'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 

@@ -11,7 +11,9 @@ import {
   IconButton,
   Alert,
   Divider,
-  Fade
+  Fade,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Visibility,
@@ -34,6 +36,8 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -61,11 +65,11 @@ const Login: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0a0a0f 0%, #064e3b 50%, #065f46 100%)',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #ecfdf5 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        p: 2,
+        p: { xs: 1, sm: 2 },
         position: 'relative',
         overflow: 'hidden',
         '&::before': {
@@ -76,86 +80,89 @@ const Login: React.FC = () => {
           right: 0,
           bottom: 0,
           background: `
-            radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(5, 150, 105, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(22, 196, 94, 0.1) 0%, transparent 50%)
+            radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(5, 150, 105, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(22, 196, 94, 0.05) 0%, transparent 50%)
           `,
           animation: 'pulse 4s ease-in-out infinite alternate',
         },
         '@keyframes pulse': {
-          '0%': { opacity: 0.5 },
-          '100%': { opacity: 1 },
+          '0%': { opacity: 0.3 },
+          '100%': { opacity: 0.6 },
         },
       }}
     >
-      {/* Floating Elements */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '10%',
-          left: '10%',
-          animation: 'float 6s ease-in-out infinite',
-          '@keyframes float': {
-            '0%, 100%': { transform: 'translateY(0px)' },
-            '50%': { transform: 'translateY(-20px)' },
-          },
-        }}
-      >
-        <AutoAwesome sx={{ fontSize: 40, color: 'rgba(16, 185, 129, 0.3)' }} />
-      </Box>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '20%',
-          right: '15%',
-          animation: 'float 8s ease-in-out infinite reverse',
-        }}
-      >
-        <Star sx={{ fontSize: 30, color: 'rgba(5, 150, 105, 0.3)' }} />
-      </Box>
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '15%',
-          left: '20%',
-          animation: 'float 7s ease-in-out infinite',
-        }}
-      >
-        <AutoAwesome sx={{ fontSize: 35, color: 'rgba(22, 196, 94, 0.3)' }} />
-      </Box>
-      {/* More stars for magical effect */}
-      <Box sx={{ position: 'absolute', top: '5%', left: '50%', animation: 'float 10s ease-in-out infinite', zIndex: 0 }}>
-        <Star sx={{ fontSize: 22, color: 'rgba(255,255,255,0.18)' }} />
-      </Box>
-      <Box sx={{ position: 'absolute', top: '30%', left: '80%', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0 }}>
-        <Star sx={{ fontSize: 18, color: 'rgba(5, 150, 105, 0.22)' }} />
-      </Box>
-      <Box sx={{ position: 'absolute', top: '60%', left: '70%', animation: 'float 9s ease-in-out infinite', zIndex: 0 }}>
-        <Star sx={{ fontSize: 26, color: 'rgba(16, 185, 129, 0.18)' }} />
-      </Box>
-      <Box sx={{ position: 'absolute', top: '80%', left: '10%', animation: 'float 11s ease-in-out infinite reverse', zIndex: 0 }}>
-        <Star sx={{ fontSize: 20, color: 'rgba(255,255,255,0.13)' }} />
-      </Box>
-      <Box sx={{ position: 'absolute', top: '70%', left: '60%', animation: 'float 13s ease-in-out infinite', zIndex: 0 }}>
-        <Star sx={{ fontSize: 16, color: 'rgba(5, 150, 105, 0.18)' }} />
-      </Box>
-      <Box sx={{ position: 'absolute', top: '40%', left: '30%', animation: 'float 14s ease-in-out infinite reverse', zIndex: 0 }}>
-        <Star sx={{ fontSize: 24, color: 'rgba(16, 185, 129, 0.15)' }} />
-      </Box>
+      {/* Floating Elements - Hide on mobile for better performance */}
+      {!isMobile && (
+        <>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '10%',
+              left: '10%',
+              animation: 'float 6s ease-in-out infinite',
+              '@keyframes float': {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+            }}
+          >
+            <AutoAwesome sx={{ fontSize: 40, color: 'rgba(16, 185, 129, 0.4)' }} />
+          </Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '20%',
+              right: '15%',
+              animation: 'float 8s ease-in-out infinite reverse',
+            }}
+          >
+            <Star sx={{ fontSize: 30, color: 'rgba(5, 150, 105, 0.4)' }} />
+          </Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: '15%',
+              left: '20%',
+              animation: 'float 7s ease-in-out infinite',
+            }}
+          >
+            <AutoAwesome sx={{ fontSize: 35, color: 'rgba(22, 196, 94, 0.4)' }} />
+          </Box>
+          {/* More stars for magical effect */}
+          <Box sx={{ position: 'absolute', top: '5%', left: '50%', animation: 'float 10s ease-in-out infinite', zIndex: 0 }}>
+            <Star sx={{ fontSize: 22, color: 'rgba(16, 185, 129, 0.3)' }} />
+          </Box>
+          <Box sx={{ position: 'absolute', top: '30%', left: '80%', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0 }}>
+            <Star sx={{ fontSize: 18, color: 'rgba(5, 150, 105, 0.3)' }} />
+          </Box>
+          <Box sx={{ position: 'absolute', top: '60%', left: '70%', animation: 'float 9s ease-in-out infinite', zIndex: 0 }}>
+            <Star sx={{ fontSize: 26, color: 'rgba(16, 185, 129, 0.3)' }} />
+          </Box>
+          <Box sx={{ position: 'absolute', top: '80%', left: '10%', animation: 'float 11s ease-in-out infinite reverse', zIndex: 0 }}>
+            <Star sx={{ fontSize: 20, color: 'rgba(22, 196, 94, 0.3)' }} />
+          </Box>
+          <Box sx={{ position: 'absolute', top: '70%', left: '60%', animation: 'float 13s ease-in-out infinite', zIndex: 0 }}>
+            <Star sx={{ fontSize: 16, color: 'rgba(5, 150, 105, 0.3)' }} />
+          </Box>
+          <Box sx={{ position: 'absolute', top: '40%', left: '30%', animation: 'float 14s ease-in-out infinite reverse', zIndex: 0 }}>
+            <Star sx={{ fontSize: 24, color: 'rgba(16, 185, 129, 0.3)' }} />
+          </Box>
+        </>
+      )}
 
-      <Container maxWidth="sm">
+      <Container maxWidth="sm" sx={{ px: { xs: 1, sm: 2 } }}>
         <Fade in timeout={800}>
           <Paper
             elevation={0}
             sx={{
-              p: 5,
-              borderRadius: 4,
-              background: 'rgba(6, 78, 59, 0.8)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(16, 185, 129, 0.1)',
+              p: { xs: 3, sm: 4, md: 5 },
+              borderRadius: { xs: 2, sm: 4 },
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -172,7 +179,7 @@ const Login: React.FC = () => {
                 left: '50%',
                 width: '200%',
                 height: '200%',
-                background: 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
                 transform: 'translate(-50%, -50%)',
                 animation: 'rotate 20s linear infinite',
                 '@keyframes rotate': {
@@ -183,26 +190,26 @@ const Login: React.FC = () => {
             }}
           >
             {/* Header */}
-            <Box sx={{ textAlign: 'center', mb: 5, position: 'relative', zIndex: 1 }}>
+            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4, md: 5 }, position: 'relative', zIndex: 1 }}>
               <Box sx={{ 
                 display: 'inline-flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                width: 100,
-                height: 100,
+                width: { xs: 80, sm: 100 },
+                height: { xs: 80, sm: 100 },
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                 color: 'white',
-                mb: 3,
-                boxShadow: '0 20px 40px -10px rgba(16, 185, 129, 0.5)',
+                mb: { xs: 2, sm: 3 },
+                boxShadow: '0 20px 40px -10px rgba(16, 185, 129, 0.3)',
                 position: 'relative',
                 '&::before': {
                   content: '""',
                   position: 'absolute',
-                  top: -2,
-                  left: -2,
-                  right: -2,
-                  bottom: -2,
+                  top: '-2px',
+                  left: '-2px',
+                  right: '-2px',
+                  bottom: '-2px',
                   borderRadius: '50%',
                   background: 'linear-gradient(135deg, #059669, #10b981, #16a34a)',
                   zIndex: -1,
@@ -213,48 +220,41 @@ const Login: React.FC = () => {
                   },
                 },
               }}>
-                <AutoAwesome sx={{ fontSize: 40 }} />
+                <AutoAwesome sx={{ fontSize: { xs: 32, sm: 40 } }} />
               </Box>
-              <Typography variant="h3" sx={{ 
+              <Typography variant="h3" component="h1" sx={{ 
                 fontWeight: 700, 
-                mb: 2,
+                color: '#1f2937',
+                mb: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '1.75rem', sm: '2.125rem', md: '2.5rem' },
                 background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
               }}>
                 Welcome Back
               </Typography>
-              <Typography variant="h6" sx={{ 
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontWeight: 400,
-                letterSpacing: '0.5px',
+              <Typography variant="body1" sx={{ 
+                color: '#6b7280', 
+                fontSize: { xs: '1rem', sm: '1.1rem' }
               }}>
-                Sign in to continue preserving your legacy
+                Sign in to your Legacy Booth account
               </Typography>
             </Box>
 
             {/* Error Alert */}
             {error && (
-              <Fade in timeout={300}>
-                <Alert 
-                  severity="error" 
-                  sx={{ 
-                    mb: 4, 
-                    borderRadius: 2,
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    color: '#ef4444',
-                  }}
-                >
-                  {error}
-                </Alert>
-              </Fade>
+              <Alert severity="error" sx={{ 
+                mb: { xs: 2, sm: 3 }, 
+                borderRadius: { xs: 1, sm: 2 },
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }}>
+                {error}
+              </Alert>
             )}
 
             {/* Login Form */}
-            <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4, position: 'relative', zIndex: 1 }}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ position: 'relative', zIndex: 1 }}>
               <TextField
                 fullWidth
                 label="Email Address"
@@ -263,15 +263,16 @@ const Login: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                sx={{ mb: 3 }}
+                sx={{ mb: { xs: 2, sm: 3 } }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email sx={{ color: 'rgba(255, 255, 255, 0.6)' }} />
+                      <Email sx={{ color: '#059669' }} />
                     </InputAdornment>
                   ),
                 }}
               />
+
               <TextField
                 fullWidth
                 label="Password"
@@ -280,11 +281,11 @@ const Login: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                sx={{ mb: 4 }}
+                sx={{ mb: { xs: 3, sm: 4 } }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock sx={{ color: 'rgba(255, 255, 255, 0.6)' }} />
+                      <Lock sx={{ color: '#059669' }} />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -292,13 +293,7 @@ const Login: React.FC = () => {
                       <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         edge="end"
-                        sx={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          '&:hover': {
-                            color: '#059669',
-                            background: 'rgba(16, 185, 129, 0.1)',
-                          },
-                        }}
+                        sx={{ color: '#059669' }}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -306,69 +301,63 @@ const Login: React.FC = () => {
                   ),
                 }}
               />
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 disabled={loading}
                 sx={{
-                  py: 2,
+                  py: { xs: 1.25, sm: 1.5 },
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  fontWeight: 600,
+                  mb: { xs: 2, sm: 3 },
                   background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                   '&:hover': {
                     background: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 15px 30px -5px rgba(16, 185, 129, 0.5)',
                   },
-                  '&:disabled': {
-                    background: 'rgba(16, 185, 129, 0.3)',
-                    transform: 'none',
-                  },
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
-                  borderRadius: 3,
-                  fontWeight: 600,
-                  fontSize: '1.1rem',
-                  textTransform: 'none',
-                  letterSpacing: '0.5px',
                 }}
               >
                 {loading ? 'Signing In...' : 'Sign In'}
               </Button>
-            </Box>
 
-            {/* Divider */}
-            <Divider sx={{ my: 3, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.5)', px: 2 }}>
-                or
-              </Typography>
-            </Divider>
+              <Divider sx={{ 
+                my: { xs: 2, sm: 3 }, 
+                '&::before, &::after': { borderColor: '#e5e7eb' } 
+              }}>
+                <Typography variant="body2" sx={{ 
+                  color: '#6b7280', 
+                  px: 2,
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                }}>
+                  or
+                </Typography>
+              </Divider>
 
-            {/* Register Link */}
-            <Box sx={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
-              <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>
-                Don't have an account?
-              </Typography>
-              <Link
-                component={RouterLink}
-                to="/register"
-                sx={{
-                  color: '#059669',
-                  textDecoration: 'none',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'inline-block',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    color: '#10b981',
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    textDecoration: 'none',
-                  },
-                }}
-              >
-                Create an account
-              </Link>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2" sx={{ 
+                  color: '#6b7280', 
+                  mb: 1,
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                }}>
+                  Don't have an account?{' '}
+                  <Link
+                    component={RouterLink}
+                    to="/register"
+                    sx={{
+                      color: '#059669',
+                      textDecoration: 'none',
+                      fontWeight: 600,
+                      '&:hover': {
+                        color: '#047857',
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  >
+                    Sign up here
+                  </Link>
+                </Typography>
+              </Box>
             </Box>
           </Paper>
         </Fade>
