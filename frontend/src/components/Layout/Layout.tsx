@@ -175,7 +175,66 @@ const Layout: React.FC = () => {
   };
 
   const renderMenuItem = (item: MenuItem, isAdmin: boolean = false) => {
-    const isSelected = location.pathname === item.path;
+    // Improved selection logic to handle sub-routes and different path structures
+    const isSelected = (() => {
+      const currentPath = location.pathname;
+      const itemPath = item.path;
+      
+      // Debug logging
+      console.log(`Checking ${item.text}: currentPath=${currentPath}, itemPath=${itemPath}`);
+      
+      // Exact match
+      if (currentPath === itemPath) {
+        console.log(`✓ Exact match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle dashboard as root
+      if (itemPath === '/dashboard' && (currentPath === '/' || currentPath === '/dashboard')) {
+        console.log(`✓ Dashboard match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle stories section
+      if (itemPath === '/stories/library' && currentPath.includes('/stories')) {
+        console.log(`✓ Stories match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle messages section
+      if (itemPath === '/messages/library' && currentPath.includes('/messages')) {
+        console.log(`✓ Messages match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle settings section
+      if (itemPath === '/settings/profile' && currentPath.includes('/settings')) {
+        console.log(`✓ Settings match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle admin section
+      if (itemPath === '/admin/dashboard' && currentPath.includes('/admin')) {
+        console.log(`✓ Admin match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle legacy books section
+      if (itemPath === '/legacy-books' && currentPath.includes('/legacy-books')) {
+        console.log(`✓ Legacy Books match for ${item.text}`);
+        return true;
+      }
+      
+      // Handle video call section
+      if (itemPath === '/video-call' && currentPath.includes('/video-call')) {
+        console.log(`✓ Video Call match for ${item.text}`);
+        return true;
+      }
+      
+      console.log(`✗ No match for ${item.text}`);
+      return false;
+    })();
+    
     const isCollapsed = sidebarCollapsed && !mobileOpen;
 
     return (
@@ -199,32 +258,44 @@ const Layout: React.FC = () => {
             width: isCollapsed ? 'auto' : { xs: '100%', sm: '92%' },
             minHeight: isCollapsed ? 48 : { xs: 48, sm: 56, md: 64 },
             justifyContent: isCollapsed ? 'center' : 'flex-start',
+            position: 'relative',
+            zIndex: isSelected ? 2 : 1,
             background: isSelected 
-              ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)' 
+              ? 'linear-gradient(135deg, #059669 0%, #10b981 100%) !important' 
               : 'transparent',
-            color: isSelected ? 'white' : '#6b7280',
+            color: isSelected ? 'white !important' : '#6b7280',
             boxShadow: isSelected 
-              ? '0 4px 20px rgba(16,185,129,0.25)' 
+              ? '0 4px 20px rgba(16,185,129,0.25) !important' 
               : 'none',
             '&:hover': {
               background: isSelected 
-                ? 'linear-gradient(135deg, #047857 0%, #059669 100%)' 
+                ? 'linear-gradient(135deg, #047857 0%, #059669 100%) !important' 
                 : 'rgba(16, 185, 129, 0.05)',
-              color: isSelected ? 'white' : '#059669',
-              transform: 'translateX(4px)',
+              color: isSelected ? 'white !important' : '#059669',
+              transform: isSelected ? 'none' : 'translateX(4px)',
+            },
+            '&.Mui-selected': {
+              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%) !important',
+              color: 'white !important',
+              boxShadow: '0 4px 20px rgba(16,185,129,0.25) !important',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #047857 0%, #059669 100%) !important',
+                color: 'white !important',
+              },
             },
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             cursor: 'pointer',
             '& .MuiListItemIcon-root': {
-              color: isSelected ? 'white' : '#059669',
+              color: isSelected ? 'white !important' : '#059669',
               minWidth: isCollapsed ? 'auto' : { xs: 32, sm: 36, md: 40 },
             },
             '& .MuiListItemText-primary': {
               fontWeight: isSelected ? 600 : 500,
               fontSize: { xs: '0.875rem', sm: '0.9rem', md: '0.95rem' },
+              color: isSelected ? 'white !important' : 'inherit',
             },
             '& .MuiListItemText-secondary': {
-              color: isSelected ? 'rgba(255, 255, 255, 0.8)' : '#9ca3af',
+              color: isSelected ? 'rgba(255, 255, 255, 0.8) !important' : '#9ca3af',
               fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
               display: isCollapsed ? 'none' : 'block',
             },

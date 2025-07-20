@@ -304,7 +304,7 @@ const Register: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Person sx={{ color: '#059669' }} />
+                      <Person />
                     </InputAdornment>
                   ),
                 }}
@@ -322,7 +322,7 @@ const Register: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email sx={{ color: '#059669' }} />
+                      <Email />
                     </InputAdornment>
                   ),
                 }}
@@ -340,7 +340,7 @@ const Register: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock sx={{ color: '#059669' }} />
+                      <Lock />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -348,7 +348,6 @@ const Register: React.FC = () => {
                       <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         edge="end"
-                        sx={{ color: '#059669' }}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -369,7 +368,7 @@ const Register: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock sx={{ color: '#059669' }} />
+                      <Lock />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -377,7 +376,6 @@ const Register: React.FC = () => {
                       <IconButton
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         edge="end"
-                        sx={{ color: '#059669' }}
                       >
                         {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>

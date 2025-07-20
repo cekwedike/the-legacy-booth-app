@@ -267,7 +267,7 @@ const Login: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email sx={{ color: '#059669' }} />
+                      <Email />
                     </InputAdornment>
                   ),
                 }}
@@ -285,7 +285,7 @@ const Login: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock sx={{ color: '#059669' }} />
+                      <Lock />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -293,7 +293,6 @@ const Login: React.FC = () => {
                       <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         edge="end"
-                        sx={{ color: '#059669' }}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
