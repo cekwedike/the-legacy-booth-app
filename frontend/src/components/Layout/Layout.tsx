@@ -37,9 +37,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Mic,
+  LightMode,
+  DarkMode,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme as useAppTheme } from '../../contexts/ThemeContext';
 
 // Add CSS animations
 const globalStyles = `
@@ -75,11 +78,12 @@ const Layout: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { user, logout } = useAuth();
+  const { isDarkMode, toggleTheme } = useAppTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
+  const isTablet = useMediaQuery(muiTheme.breakpoints.down('lg'));
 
   const handleDrawerToggle = (): void => {
     setMobileOpen(!mobileOpen);
@@ -263,14 +267,16 @@ const Layout: React.FC = () => {
             background: isSelected 
               ? 'linear-gradient(135deg, #059669 0%, #10b981 100%) !important' 
               : 'transparent',
-            color: isSelected ? 'white !important' : '#6b7280',
+            color: isSelected ? 'white !important' : muiTheme.palette.text.secondary,
             boxShadow: isSelected 
               ? '0 4px 20px rgba(16,185,129,0.25) !important' 
               : 'none',
             '&:hover': {
               background: isSelected 
                 ? 'linear-gradient(135deg, #047857 0%, #059669 100%) !important' 
-                : 'rgba(16, 185, 129, 0.05)',
+                : muiTheme.palette.mode === 'dark' 
+                  ? 'rgba(16, 185, 129, 0.15)' 
+                  : 'rgba(16, 185, 129, 0.05)',
               color: isSelected ? 'white !important' : '#059669',
               transform: isSelected ? 'none' : 'translateX(4px)',
             },
@@ -295,7 +301,7 @@ const Layout: React.FC = () => {
               color: isSelected ? 'white !important' : 'inherit',
             },
             '& .MuiListItemText-secondary': {
-              color: isSelected ? 'rgba(255, 255, 255, 0.8) !important' : '#9ca3af',
+              color: isSelected ? 'rgba(255, 255, 255, 0.8) !important' : muiTheme.palette.text.secondary,
               fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
               display: isCollapsed ? 'none' : 'block',
             },
@@ -325,16 +331,18 @@ const Layout: React.FC = () => {
   const drawer = (
     <Box sx={{ 
       height: '100%', 
-      background: '#ffffff',
-      borderRight: '1px solid #e5e7eb',
+      background: muiTheme.palette.background.paper,
+      borderRight: `1px solid ${muiTheme.palette.divider}`,
       display: 'flex',
       flexDirection: 'column',
     }}>
       {/* Header */}
       <Box sx={{ 
         p: { xs: 1.5, sm: 2, md: 3 }, 
-        borderBottom: '1px solid #e5e7eb',
-        background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+        borderBottom: `1px solid ${muiTheme.palette.divider}`,
+        background: muiTheme.palette.mode === 'dark' 
+          ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)'
+          : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
       }}>
         <Box sx={{ 
           display: 'flex', 
@@ -365,7 +373,7 @@ const Layout: React.FC = () => {
             {!sidebarCollapsed && (
               <Typography variant="h6" sx={{ 
                 fontWeight: 700,
-                color: '#1f2937',
+                color: muiTheme.palette.text.primary,
                 fontSize: { xs: '0.875rem', sm: '1rem', md: '1.25rem' },
                 background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
                 backgroundClip: 'text',
@@ -380,12 +388,16 @@ const Layout: React.FC = () => {
             <IconButton
               onClick={handleSidebarToggle}
               sx={{ 
-                color: '#059669',
-                background: 'rgba(16, 185, 129, 0.05)',
+                color: muiTheme.palette.mode === 'dark' ? 'inherit' : '#059669',
+                background: muiTheme.palette.mode === 'dark' 
+                  ? 'rgba(16, 185, 129, 0.15)' 
+                  : 'rgba(16, 185, 129, 0.05)',
                 width: { xs: 28, sm: 32 },
                 height: { xs: 28, sm: 32 },
                 '&:hover': {
-                  background: 'rgba(16, 185, 129, 0.1)',
+                  background: muiTheme.palette.mode === 'dark' 
+                    ? 'rgba(16, 185, 129, 0.25)' 
+                    : 'rgba(16, 185, 129, 0.1)',
                 },
               }}
             >
@@ -420,8 +432,8 @@ const Layout: React.FC = () => {
       {/* Footer */}
       <Box sx={{ 
         p: { xs: 1, sm: 1.5, md: 2 }, 
-        borderTop: '1px solid #e5e7eb',
-        background: '#f9fafb',
+        borderTop: `1px solid ${muiTheme.palette.divider}`,
+        background: muiTheme.palette.mode === 'dark' ? '#1e293b' : '#f9fafb',
       }}>
         <Box sx={{ 
           display: 'flex', 
@@ -442,13 +454,13 @@ const Layout: React.FC = () => {
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" sx={{ 
                 fontWeight: 600, 
-                color: '#1f2937',
+                color: muiTheme.palette.text.primary,
                 fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' }
               }}>
                 {user?.name || 'User'}
               </Typography>
               <Typography variant="caption" sx={{ 
-                color: '#6b7280',
+                color: muiTheme.palette.text.secondary,
                 fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' }
               }}>
                 {user?.role || 'User'}
@@ -463,14 +475,16 @@ const Layout: React.FC = () => {
             onClick={handleLogout}
             startIcon={<Logout />}
             sx={{
-              borderColor: '#e5e7eb',
-              color: '#6b7280',
+              borderColor: muiTheme.palette.divider,
+              color: muiTheme.palette.text.secondary,
               fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
               py: { xs: 0.5, sm: 0.75, md: 1 },
               '&:hover': {
                 borderColor: '#ef4444',
                 color: '#ef4444',
-                background: 'rgba(239, 68, 68, 0.05)',
+                background: muiTheme.palette.mode === 'dark' 
+                  ? 'rgba(239, 68, 68, 0.15)' 
+                  : 'rgba(239, 68, 68, 0.05)',
               },
             }}
           >
@@ -491,9 +505,11 @@ const Layout: React.FC = () => {
           position="fixed" 
           sx={{ 
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            background: '#ffffff',
-            borderBottom: '1px solid #e5e7eb',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+            background: muiTheme.palette.background.paper,
+            borderBottom: `1px solid ${muiTheme.palette.divider}`,
+            boxShadow: muiTheme.palette.mode === 'dark' 
+              ? '0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2)'
+              : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
             width: { 
               xs: '100%', 
               md: `calc(100% - ${sidebarCollapsed ? collapsedDrawerWidth : drawerWidth}px)` 
@@ -510,7 +526,7 @@ const Layout: React.FC = () => {
               sx={{ 
                 mr: { xs: 1, sm: 2 }, 
                 display: { md: 'none' },
-                color: '#059669',
+                color: muiTheme.palette.mode === 'dark' ? 'inherit' : '#059669',
               }}
             >
               <MenuIcon />
@@ -518,7 +534,7 @@ const Layout: React.FC = () => {
             
             <Typography variant="h6" sx={{ 
               flexGrow: 1, 
-              color: '#1f2937',
+              color: muiTheme.palette.text.primary,
               fontWeight: 600,
               fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
               display: { xs: 'block', sm: 'block' }
@@ -527,20 +543,33 @@ const Layout: React.FC = () => {
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
+              <IconButton 
+                onClick={toggleTheme}
+                sx={{ 
+                  color: muiTheme.palette.mode === 'dark' ? 'inherit' : '#059669',
+                  display: { xs: 'none', sm: 'flex' }
+                }}
+              >
+                {isDarkMode ? <LightMode /> : <DarkMode />}
+              </IconButton>
               <IconButton sx={{ 
-                color: '#059669',
+                color: muiTheme.palette.mode === 'dark' ? 'inherit' : '#059669',
                 display: { xs: 'none', sm: 'flex' }
               }}>
                 <Search />
               </IconButton>
-              <IconButton sx={{ color: '#059669' }}>
+              <IconButton sx={{ 
+                color: muiTheme.palette.mode === 'dark' ? 'inherit' : '#059669' 
+              }}>
                 <Badge badgeContent={3} color="error">
                   <Notifications />
                 </Badge>
               </IconButton>
               <IconButton
                 onClick={handleProfileMenuOpen}
-                sx={{ color: '#059669' }}
+                sx={{ 
+                  color: muiTheme.palette.mode === 'dark' ? 'inherit' : '#059669' 
+                }}
               >
                 <Avatar 
                   sx={{ 
@@ -613,8 +642,8 @@ const Layout: React.FC = () => {
               display: { xs: 'block', md: 'none' },
               '& .MuiDrawer-paper': { 
                 width: { xs: '100%', sm: drawerWidth },
-                background: '#ffffff',
-                borderRight: '1px solid #e5e7eb',
+                background: muiTheme.palette.background.paper,
+                borderRight: `1px solid ${muiTheme.palette.divider}`,
                 boxSizing: 'border-box',
               },
             }}
@@ -627,8 +656,8 @@ const Layout: React.FC = () => {
               display: { xs: 'none', md: 'block' },
               '& .MuiDrawer-paper': { 
                 width: sidebarCollapsed ? collapsedDrawerWidth : drawerWidth,
-                background: '#ffffff',
-                borderRight: '1px solid #e5e7eb',
+                background: muiTheme.palette.background.paper,
+                borderRight: `1px solid ${muiTheme.palette.divider}`,
                 transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 boxSizing: 'border-box',
               },
@@ -648,7 +677,7 @@ const Layout: React.FC = () => {
               xs: '100%', 
               md: `calc(100% - ${sidebarCollapsed ? collapsedDrawerWidth : drawerWidth}px)` 
             },
-            background: '#f9fafb',
+            background: muiTheme.palette.background.default,
             overflow: 'auto',
             display: 'flex',
             flexDirection: 'column',
