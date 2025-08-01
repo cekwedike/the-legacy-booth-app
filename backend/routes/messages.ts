@@ -281,8 +281,9 @@ router.post('/:messageId/upload', authenticateToken, requireOwnershipOrStaff('me
     await message.save();
 
     // Start transcription if OpenAI is available
-    if (openai && req.file?.path) {
-      transcribeMessage(messageId, req.file.path).catch(console.error);
+    if (openai && req.file?.path && messageId) {
+      const filePath = req.file.path;
+      transcribeMessage(messageId, filePath).catch(console.error);
     }
 
     res.json({
@@ -432,7 +433,7 @@ async function transcribeMessage(messageId: string, filePath: string): Promise<v
     message.transcription = {
       text: transcription.text,
       confidence: 0.9,
-      language: transcription.language || 'en',
+      language: (transcription as any).language || 'en',
       status: 'completed'
     };
 

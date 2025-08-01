@@ -108,6 +108,12 @@ export interface IMessage extends Document {
     tags?: string[];
     notes?: string;
   };
+  delivery?: {
+    method: 'email' | 'sms' | 'push' | 'in-app';
+    status: 'pending' | 'sent' | 'delivered' | 'failed';
+    attempts: number;
+    lastAttempt?: Date;
+  };
   status: 'draft' | 'recorded' | 'scheduled' | 'sent' | 'delivered' | 'viewed';
   scheduledFor?: Date;
   deliveredAt?: Date;
@@ -163,6 +169,13 @@ export interface ILegacyBook extends Document {
     email?: string;
     phone?: string;
   }>;
+  publishing?: {
+    isPublished: boolean;
+    publishedAt?: Date;
+    publisher?: string;
+    isbn?: string;
+    edition?: string;
+  };
   stories: Array<{
     story: string | IStory;
     order: number;

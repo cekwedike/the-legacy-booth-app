@@ -371,8 +371,9 @@ router.post('/:storyId/upload', authenticateToken, requireOwnershipOrStaff('stor
     await story.save();
 
     // Start transcription if OpenAI is available
-    if (openai) {
-      transcribeRecording(storyId, req.file.path).catch(console.error);
+    if (openai && req.file?.path) {
+      const filePath = req.file.path;
+      transcribeRecording(storyId, filePath).catch(console.error);
     }
 
     res.json({
@@ -518,14 +519,14 @@ async function transcribeRecording(storyId: string, filePath: string): Promise<v
     await story.save();
 
     const transcription = await openai.audio.transcriptions.create({
-      file: await fs.readFile(filePath),
+      file: await fs.readFile(filePath) as any,
       model: "whisper-1",
     });
 
     story.transcription = {
       text: transcription.text,
       confidence: 0.9, // Whisper doesn't provide confidence scores
-      language: transcription.language || 'en',
+      language: (transcription as any).language || 'en',
       status: 'completed'
     };
 

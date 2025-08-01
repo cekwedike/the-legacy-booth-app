@@ -338,6 +338,10 @@ router.delete('/:bookId/stories/:storyId', authenticateToken, requireOwnershipOr
   try {
     const { bookId, storyId } = req.params;
 
+    if (!storyId) {
+      return res.status(400).json({ error: 'Story ID is required' });
+    }
+
     const book = await LegacyBook.findById(bookId);
     if (!book) {
       return res.status(404).json({ error: 'Legacy book not found' });
