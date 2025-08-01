@@ -371,7 +371,7 @@ router.post('/:storyId/upload', authenticateToken, requireOwnershipOrStaff('stor
     await story.save();
 
     // Start transcription if OpenAI is available
-    if (openai && req.file?.path) {
+    if (openai && req.file?.path && storyId) {
       const filePath = req.file.path;
       transcribeRecording(storyId, filePath).catch(console.error);
     }
