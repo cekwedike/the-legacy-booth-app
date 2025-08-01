@@ -31,7 +31,7 @@ const router = express.Router();
  *                 type: string
  *               role:
  *                 type: string
- *                 enum: [resident, family, caregiver, staff, admin]
+ *                 enum: [faculty, senior, admin]
  *               roomNumber:
  *                 type: string
  *               dateOfBirth:
@@ -59,9 +59,9 @@ router.post('/register', async (req: express.Request, res: express.Response) => 
     }
 
     // Validate required fields based on role
-    if (role === 'resident') {
+    if (role === 'senior') {
       if (!roomNumber || !dateOfBirth) {
-        return res.status(400).json({ error: 'Room number and date of birth required for residents' });
+        return res.status(400).json({ error: 'Room number and date of birth required for seniors' });
       }
     }
 

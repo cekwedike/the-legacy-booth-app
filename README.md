@@ -1,16 +1,22 @@
 # The Legacy Booth
 
-A modern React TypeScript application for seniors to preserve their memories and connect with loved ones through storytelling.
+A modern React TypeScript application for faculty to guide seniors in preserving their memories and connecting with loved ones through storytelling.
 
 ## 🚀 Features
 
-- **Story Recording**: Audio/video recording with automatic transcription
-- **Message Creation**: Personal messages for family and friends
-- **Legacy Books**: Compile stories and messages into beautiful books
-- **Video Calls**: Real-time communication with loved ones
+- **Story Recording**: Faculty guide seniors in audio/video recording with automatic transcription
+- **Message Creation**: Help seniors create personal messages for family and friends
+- **Legacy Books**: Faculty assist seniors in compiling stories and messages into beautiful books
+- **Video Sessions**: Real-time communication between faculty and seniors
 - **Accessibility**: Built-in accessibility features for seniors
-- **Admin Panel**: User and content management
+- **Admin Panel**: User and content management for faculty
 - **Modern Tech Stack**: React 18, TypeScript, Vite, Material-UI
+
+## 👥 User Roles
+
+- **Faculty**: Primary users who guide seniors through legacy creation
+- **Seniors**: Secondary users who are guided by faculty in creating their legacy
+- **Admin**: System administrators who manage faculty and content
 
 ## 🛠 Tech Stack
 
@@ -68,7 +74,7 @@ sudo systemctl start mongod
 ### 4. Initialize Database (Optional)
 ```bash
 cd backend
-node scripts/init-db.js
+npm run init-db
 ```
 
 ### 5. Start Development Servers

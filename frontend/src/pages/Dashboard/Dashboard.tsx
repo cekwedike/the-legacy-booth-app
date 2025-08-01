@@ -6,15 +6,10 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions,
   Button,
-  Avatar,
-  Chip,
-  LinearProgress,
   useTheme,
-  useMediaQuery,
 } from '@mui/material';
-import { ArrowForward, Add, Star } from '@mui/icons-material';
+import { ArrowForward } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getDashboardConfig, Stat, QuickAction } from '../../config/dashboardConfig';
@@ -24,8 +19,6 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   if (!user) return null;
 
@@ -33,8 +26,8 @@ const Dashboard: React.FC = () => {
   const firstName = user?.name?.split(' ')[0] || 'Friend';
   const welcomeMessage = config.welcomeMessage.replace('{name}', firstName);
 
-  // Resident Dashboard
-  if (user.role === 'resident') {
+  // Faculty Dashboard
+  if (user.role === 'faculty') {
     return (
       <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
         <Box sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 2, sm: 4 } }}>
@@ -75,18 +68,18 @@ const Dashboard: React.FC = () => {
                 justifyContent: 'center',
                 mb: { xs: 1, sm: 2 }
               }}>
-                              <Typography variant="h3" sx={{ 
-                fontWeight: 900,
-                color: theme.palette.text.primary,
-                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                letterSpacing: '-0.02em',
-                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}>
-                Legacy Booth
-              </Typography>
+                <Typography variant="h3" sx={{ 
+                  fontWeight: 900,
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                  letterSpacing: '-0.02em',
+                  background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
+                  Legacy Booth
+                </Typography>
               </Box>
               <Typography variant="h6" sx={{ 
                 fontWeight: 400, 
@@ -95,7 +88,7 @@ const Dashboard: React.FC = () => {
                 fontStyle: 'italic',
                 letterSpacing: '0.05em'
               }}>
-                Preserve Your Story
+                Guide Seniors to Preserve Their Stories
               </Typography>
             </Box>
 
@@ -279,140 +272,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // Family Member Dashboard
-  if (user.role === 'family') {
-    return (
-      <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
-        <Box sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 2, sm: 4 } }}>
-          {/* Welcome Header */}
-          <Box sx={{ 
-            mb: { xs: 2, sm: 4 }, 
-            textAlign: 'center',
-            background: theme.palette.mode === 'dark' 
-              ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
-              : 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
-            borderRadius: { xs: 2, sm: 4 },
-            p: { xs: 2, sm: 3, md: 4 },
-            border: theme.palette.mode === 'dark' 
-              ? '1px solid #334155'
-              : '1px solid #e5e7eb',
-            boxShadow: theme.palette.mode === 'dark'
-              ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
-              : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          }}>
-            <Typography variant="h2" sx={{ 
-              fontWeight: 800, 
-              color: theme.palette.text.primary,
-              mb: { xs: 1, sm: 2 },
-              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}>
-              {welcomeMessage}
-            </Typography>
-            <Typography variant="h5" sx={{ 
-              fontWeight: 400, 
-              color: theme.palette.text.secondary,
-              maxWidth: '600px',
-              mx: 'auto',
-              fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' }
-            }}>
-              {config.subtitle}
-            </Typography>
-          </Box>
-
-          {/* Quick Actions */}
-          <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
-            {config.quickActions.map((action: QuickAction, index: number) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card sx={{ 
-                  height: '100%',
-                  cursor: 'pointer',
-                  background: theme.palette.background.paper,
-                  border: theme.palette.mode === 'dark' 
-                    ? '1px solid #334155'
-                    : '1px solid #e5e7eb',
-                  borderRadius: { xs: 2, sm: 3 },
-                  '&:hover': {
-                    boxShadow: theme.palette.mode === 'dark'
-                      ? '0 10px 15px -3px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.1)'
-                      : '0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)',
-                    borderColor: '#10b981',
-                    transform: 'translateY(-2px)',
-                  },
-                  transition: 'all 0.3s ease'
-                }}
-                  onClick={() => navigate(action.path)}
-                >
-                  <CardContent sx={{ 
-                    p: { xs: 2, sm: 3 }, 
-                    textAlign: 'center',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
-                  }}>
-                    <Box>
-                      <Box sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        width: { xs: 50, sm: 60 },
-                        height: { xs: 50, sm: 60 },
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                        color: 'white',
-                        mb: { xs: 1.5, sm: 2 },
-                        mx: 'auto',
-                        boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-                      }}>
-                        {getIcon(action.iconName)}
-                      </Box>
-                      <Typography variant="h6" sx={{ 
-                        fontWeight: 600, 
-                        color: theme.palette.text.primary, 
-                        mb: { xs: 0.5, sm: 1 },
-                        fontSize: { xs: '1rem', sm: '1.25rem' }
-                      }}>
-                        {action.title}
-                      </Typography>
-                      <Typography variant="body2" sx={{ 
-                        color: theme.palette.text.secondary, 
-                        mb: { xs: 1.5, sm: 2 },
-                        fontSize: { xs: '0.875rem', sm: '1rem' }
-                      }}>
-                        {action.description}
-                      </Typography>
-                    </Box>
-                    <Button
-                      variant="outlined"
-                      endIcon={<ArrowForward />}
-                      sx={{
-                        borderColor: '#059669',
-                        color: '#059669',
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                        '&:hover': {
-                          borderColor: '#10b981',
-                          color: '#10b981',
-                          background: 'rgba(16, 185, 129, 0.05)',
-                        },
-                      }}
-                    >
-                      Get Started
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Container>
-    );
-  }
-
-  // Default Dashboard
+  // Default Dashboard (for admin and other roles)
   return (
     <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
       <Box sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 2, sm: 4 } }}>

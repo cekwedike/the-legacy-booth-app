@@ -7,7 +7,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: 'resident' | 'staff' | 'admin';
+  role: 'faculty' | 'senior' | 'admin';
   roomNumber?: string;
   dateOfBirth?: Date;
   emergencyContact?: {
@@ -87,7 +87,7 @@ export interface IMessage extends Document {
   };
   title: string;
   message?: string;
-  type: 'birthday' | 'anniversary' | 'holiday' | 'daily' | 'encouragement' | 'memory' | 'other';
+  type: 'birthday' | 'anniversary' | 'holiday' | 'daily' | 'encouragement' | 'memory' | 'advice' | 'other';
   content?: {
     videoUrl?: string;
     audioUrl?: string;
@@ -223,7 +223,7 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
-  role?: 'resident' | 'staff' | 'admin';
+  role?: 'faculty' | 'senior' | 'admin';
   roomNumber?: string;
   dateOfBirth?: string;
   emergencyContact?: {

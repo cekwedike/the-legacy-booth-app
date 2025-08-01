@@ -22,16 +22,16 @@ const userSchema = new Schema<IUser>({
   },
   role: {
     type: String,
-    enum: ['resident', 'staff', 'admin'],
-    default: 'resident'
+    enum: ['faculty', 'senior', 'admin'],
+    default: 'faculty'
   },
   roomNumber: {
     type: String,
-    required: function(this: IUser) { return this.role === 'resident'; }
+    required: function(this: IUser) { return this.role === 'senior'; }
   },
   dateOfBirth: {
     type: Date,
-    required: function(this: IUser) { return this.role === 'resident'; }
+    required: function(this: IUser) { return this.role === 'senior'; }
   },
   emergencyContact: {
     name: String,

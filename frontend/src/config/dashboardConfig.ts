@@ -1,14 +1,3 @@
-import {
-  Book,
-  Message,
-  VideoCall,
-  Mic,
-  PlayArrow,
-  Star,
-  Add,
-  ArrowForward
-} from '@mui/icons-material';
-
 export interface QuickAction {
   title: string;
   description: string;
@@ -89,46 +78,46 @@ export interface DashboardConfig {
 }
 
 export const dashboardConfig: Record<string, DashboardConfig> = {
-  resident: {
+  faculty: {
     quickActions: [
       {
-        title: 'Share Your Story',
-        description: 'Record and preserve your life memories',
+        title: 'Guide Story Creation',
+        description: 'Help seniors record and preserve their life memories',
         iconName: 'Mic',
         path: '/stories/record',
         color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        buttonText: 'Start Recording'
+        buttonText: 'Start Session'
       },
       {
-        title: 'Send Love Notes',
-        description: 'Create personal messages for family',
+        title: 'Message Support',
+        description: 'Assist seniors in sending messages to family',
         iconName: 'Message',
         path: '/messages/record',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        buttonText: 'Send Message'
+        buttonText: 'Help with Messages'
       },
       {
-        title: 'Family Connect',
-        description: 'Video chat with loved ones',
-        iconName: 'VideoCall',
-        path: '/video-call',
-        color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        buttonText: 'Start Call'
-      },
-      {
-        title: 'Create Legacy Book',
-        description: 'Compile stories into beautiful books',
+        title: 'Legacy Books',
+        description: 'Create beautiful legacy books with seniors',
         iconName: 'Book',
         path: '/legacy-books',
-        color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        buttonText: 'Create Book'
+        color: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)',
+        buttonText: 'Create Legacy Book'
+      },
+      {
+        title: 'Video Sessions',
+        description: 'Connect with seniors for remote sessions',
+        iconName: 'VideoCall',
+        path: '/video-call',
+        color: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+        buttonText: 'Start Session'
       }
     ],
     stats: [], // Will be populated from actual data
     recentStories: [], // Will be populated from actual data
     progressGoals: [], // Will be populated from actual data
-    welcomeMessage: 'Hello {name}! Ready To Share More Memories?',
-    subtitle: 'Your Legacy Is Being Beautifully Preserved Today.',
+    welcomeMessage: 'Good Morning, {name}!',
+    subtitle: 'You\'re Helping Create Beautiful Legacies Today.',
     sections: {
       quickActions: 'Quick Actions',
       recentStories: 'Recent Stories',
@@ -167,38 +156,116 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
       showQuickActions: true,
     }
   },
-  family: {
+  senior: {
     quickActions: [
       {
-        title: 'Read Messages',
-        description: 'View heartfelt messages from your loved one',
+        title: 'Share Your Story',
+        description: 'Record and preserve your life memories',
+        iconName: 'Mic',
+        path: '/stories/record',
+        color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+        buttonText: 'Start Recording'
+      },
+      {
+        title: 'Send Messages',
+        description: 'Create messages for your loved ones',
         iconName: 'Message',
-        path: '/messages/library',
+        path: '/messages/record',
         color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        buttonText: 'Read Messages'
+        buttonText: 'Create Message'
       },
       {
-        title: 'Start Video Call',
-        description: 'Connect face-to-face with your loved one',
-        iconName: 'VideoCall',
-        path: '/video-call',
-        color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        buttonText: 'Start Call'
-      },
-      {
-        title: 'Browse Legacy Books',
-        description: 'Read your loved one\'s life stories',
+        title: 'View Legacy Books',
+        description: 'See your beautiful legacy books',
         iconName: 'Book',
         path: '/legacy-books',
-        color: 'linear-gradient(135deg, #047857 0%, #065f46 100%)',
-        buttonText: 'Browse Books'
+        color: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)',
+        buttonText: 'View Books'
+      },
+      {
+        title: 'Video Call',
+        description: 'Connect with family and friends',
+        iconName: 'VideoCall',
+        path: '/video-call',
+        color: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+        buttonText: 'Start Call'
       }
     ],
     stats: [], // Will be populated from actual data
     recentStories: [], // Will be populated from actual data
     progressGoals: [], // Will be populated from actual data
-    welcomeMessage: 'Welcome Back, {name}!',
-    subtitle: 'Your Loved One Has Been Busy Creating Memories For You.',
+    welcomeMessage: 'Good Morning, {name}!',
+    subtitle: 'Your Legacy Awaits - Let\'s Create Something Beautiful Together.',
+    sections: {
+      quickActions: 'Quick Actions',
+      recentStories: 'Recent Stories',
+      progressOverview: 'Progress Overview',
+      viewAllButton: 'View All',
+      recordNewButton: 'Record New'
+    },
+    layout: {
+      quickActionsGrid: {
+        xs: 12,
+        sm: 6,
+        md: 4,
+        lg: 3,
+      },
+      cardHeight: '150px',
+      iconSize: 40,
+      iconBorderRadius: '8px',
+      cardBackground: 'transparent',
+      cardBorderRadius: 0,
+      cardPadding: 0,
+      hoverEffect: {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+        borderColor: 'transparent',
+      },
+      typography: {
+        titleColor: '#333',
+        descriptionColor: '#666',
+        statsColor: '#059669',
+      },
+    },
+    features: {
+      showRecentStories: true,
+      showProgressOverview: true,
+      showStats: true,
+      showQuickActions: true,
+    }
+  },
+  admin: {
+    quickActions: [
+      {
+        title: 'User Management',
+        description: 'Manage faculty and senior accounts',
+        iconName: 'Book',
+        path: '/admin/users',
+        color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+        buttonText: 'Manage Users'
+      },
+      {
+        title: 'Content Review',
+        description: 'Review and moderate content',
+        iconName: 'Message',
+        path: '/admin/content',
+        color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
+        buttonText: 'Review Content'
+      },
+      {
+        title: 'System Overview',
+        description: 'View system statistics and analytics',
+        iconName: 'VideoCall',
+        path: '/admin/dashboard',
+        color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        buttonText: 'View Analytics'
+      }
+    ],
+    stats: [], // Will be populated from actual data
+    recentStories: [], // Will be populated from actual data
+    progressGoals: [], // Will be populated from actual data
+    welcomeMessage: 'Good Morning, {name}!',
+    subtitle: 'System Administration Dashboard.',
     sections: {
       quickActions: 'Quick Actions',
       recentStories: 'Recent Stories',
@@ -231,78 +298,8 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
       },
     },
     features: {
-      showRecentStories: false, // Family doesn't need recent stories
-      showProgressOverview: false, // Family doesn't need progress
-      showStats: true,
-      showQuickActions: true,
-    }
-  },
-  caregiver: {
-    quickActions: [
-      {
-        title: 'Assist with Stories',
-        description: 'Help residents record their life experiences',
-        iconName: 'Book',
-        path: '/stories/library',
-        color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-        buttonText: 'Assist Stories'
-      },
-      {
-        title: 'Message Support',
-        description: 'Help residents send messages to family',
-        iconName: 'Message',
-        path: '/messages/library',
-        color: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)',
-        buttonText: 'Support Messages'
-      },
-      {
-        title: 'Activity Monitor',
-        description: 'Track resident engagement and progress',
-        iconName: 'VideoCall',
-        path: '/video-call',
-        color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        buttonText: 'Monitor Activity'
-      }
-    ],
-    stats: [], // Will be populated from actual data
-    recentStories: [], // Will be populated from actual data
-    progressGoals: [], // Will be populated from actual data
-    welcomeMessage: 'Good Morning, {name}!',
-    subtitle: 'You\'re Helping Create Beautiful Legacies Today.',
-    sections: {
-      quickActions: 'Quick Actions',
-      recentStories: 'Recent Stories',
-      progressOverview: 'Progress Overview',
-      viewAllButton: 'View All',
-      recordNewButton: 'Record New'
-    },
-    layout: {
-      quickActionsGrid: {
-        xs: 12,
-        sm: 6,
-        md: 4,
-        lg: 3,
-      },
-      cardHeight: '150px',
-      iconSize: 40,
-      iconBorderRadius: '8px',
-      cardBackground: 'transparent',
-      cardBorderRadius: 0,
-      cardPadding: 0,
-      hoverEffect: {
-        transform: 'translateY(-5px)',
-        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-        borderColor: 'transparent',
-      },
-      typography: {
-        titleColor: '#333',
-        descriptionColor: '#666',
-        statsColor: '#10b981',
-      },
-    },
-    features: {
-      showRecentStories: true,
-      showProgressOverview: true,
+      showRecentStories: false, // Admin doesn't need recent stories
+      showProgressOverview: false, // Admin doesn't need progress
       showStats: true,
       showQuickActions: true,
     }
@@ -310,5 +307,5 @@ export const dashboardConfig: Record<string, DashboardConfig> = {
 };
 
 export const getDashboardConfig = (role: string): DashboardConfig => {
-  return dashboardConfig[role] || dashboardConfig.resident;
+  return dashboardConfig[role] || dashboardConfig.faculty;
 }; 
