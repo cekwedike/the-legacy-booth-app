@@ -32,7 +32,7 @@ const messageSchema = new Schema<IMessage>({
   },
   type: {
     type: String,
-    enum: ['birthday', 'anniversary', 'holiday', 'daily', 'encouragement', 'memory', 'advice', 'other'],
+    enum: ['birthday', 'anniversary', 'holiday', 'daily', 'encouragement', 'memory', 'other'],
     required: true
   },
   content: {

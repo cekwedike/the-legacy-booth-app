@@ -44,10 +44,10 @@ const options = {
             email: { type: 'string', format: 'email', description: 'Email address' },
             role: { 
               type: 'string', 
-              enum: ['faculty', 'senior', 'admin'],
+              enum: ['resident', 'staff', 'admin'],
               description: 'User role'
             },
-            roomNumber: { type: 'string', description: 'Room number (for seniors)' },
+            roomNumber: { type: 'string', description: 'Room number (for residents)' },
             dateOfBirth: { type: 'string', format: 'date', description: 'Date of birth' },
             isActive: { type: 'boolean', description: 'Account status' },
             preferences: {

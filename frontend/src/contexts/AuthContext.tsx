@@ -13,7 +13,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     _id: 'dev-user-id',
     name: 'Development User',
     email: 'dev@legacybooth.com',
-    role: 'faculty',
+    role: 'resident',
     status: 'active',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()

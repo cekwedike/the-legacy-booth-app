@@ -25,25 +25,14 @@ const initializeDatabase = async (): Promise<void> => {
 
     const demoUsers = [
       {
-        name: 'Dr. Sarah Johnson',
-        email: 'faculty@demo.com',
+        name: 'Sarah Johnson',
+        email: 'resident@demo.com',
         password: hashedPassword,
-        role: 'faculty' as const,
-        preferences: {
-          theme: 'light' as const,
-          fontSize: 'medium' as const,
-          audioEnabled: true
-        }
-      },
-      {
-        name: 'Margaret Williams',
-        email: 'senior@demo.com',
-        password: hashedPassword,
-        role: 'senior' as const,
+        role: 'resident' as const,
         roomNumber: '101',
         dateOfBirth: new Date('1945-03-15'),
         emergencyContact: {
-          name: 'Michael Williams',
+          name: 'Michael Johnson',
           relationship: 'Son',
           phone: '555-0123',
           email: 'michael@example.com'
@@ -51,6 +40,17 @@ const initializeDatabase = async (): Promise<void> => {
         preferences: {
           theme: 'light' as const,
           fontSize: 'large' as const,
+          audioEnabled: true
+        }
+      },
+      {
+        name: 'Staff Member',
+        email: 'staff@demo.com',
+        password: hashedPassword,
+        role: 'staff' as const,
+        preferences: {
+          theme: 'light' as const,
+          fontSize: 'medium' as const,
           audioEnabled: true
         }
       },
@@ -70,13 +70,13 @@ const initializeDatabase = async (): Promise<void> => {
     const createdUsers = await User.insertMany(demoUsers);
     console.log('Created demo users');
 
-    // Create sample stories for the senior (guided by faculty)
-    const senior = createdUsers.find(user => user.role === 'senior');
+    // Create sample stories for the resident
+    const resident = createdUsers.find(user => user.role === 'resident');
     
-    if (senior) {
+    if (resident) {
       const sampleStories = [
         {
-          resident: senior._id,
+          resident: resident._id,
           title: 'My First Job',
           prompt: 'Tell me about your first job and how you got it.',
           category: 'career' as const,
@@ -100,7 +100,7 @@ const initializeDatabase = async (): Promise<void> => {
           }
         },
         {
-          resident: senior._id,
+          resident: resident._id,
           title: 'Family Vacation to the Beach',
           prompt: 'Tell me about a memorable family vacation.',
           category: 'family' as const,
@@ -131,7 +131,7 @@ const initializeDatabase = async (): Promise<void> => {
       // Create sample messages
       const sampleMessages = [
         {
-          sender: senior._id,
+          sender: resident._id,
           recipient: {
             name: 'Michael Johnson',
             relationship: 'Son',
@@ -154,7 +154,7 @@ const initializeDatabase = async (): Promise<void> => {
           scheduledFor: new Date('2024-06-15')
         },
         {
-          sender: senior._id,
+          sender: resident._id,
           recipient: {
             name: 'Emily Johnson',
             relationship: 'Granddaughter',
@@ -184,8 +184,8 @@ const initializeDatabase = async (): Promise<void> => {
 
     console.log('Database initialization completed successfully!');
     console.log('\nDemo accounts created:');
-    console.log('Faculty: faculty@demo.com / password123');
-    console.log('Senior: senior@demo.com / password123');
+    console.log('Resident: resident@demo.com / password123');
+    console.log('Staff: staff@demo.com / password123');
     console.log('Admin: admin@demo.com / password123');
 
   } catch (error) {
