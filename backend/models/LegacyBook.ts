@@ -215,13 +215,17 @@ legacyBookSchema.methods.removeStory = function(this: ILegacyBook, storyId: stri
 // Method to update book status
 legacyBookSchema.methods.updateStatus = function(this: ILegacyBook, newStatus: string): Promise<ILegacyBook> {
   this.status = newStatus as any;
-  this.metadata.lastModified = new Date();
+  if (this.metadata) {
+    this.metadata.lastModified = new Date();
+  }
   return this.save();
 };
 
 // Method to add recipient
 legacyBookSchema.methods.addRecipient = function(this: ILegacyBook, recipientData: any): Promise<ILegacyBook> {
-  this.recipients.push(recipientData);
+  if (this.recipients) {
+    this.recipients.push(recipientData);
+  }
   return this.save();
 };
 

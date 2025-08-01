@@ -109,7 +109,7 @@ storySchema.virtual('wordCount').get(function(this: IStory): number {
 
 // Virtual for reading time (average 200 words per minute)
 storySchema.virtual('readingTime').get(function(this: IStory): number {
-  return Math.ceil(this.wordCount / 200);
+  return Math.ceil((this.wordCount || 0) / 200);
 });
 
 // Method to get story summary

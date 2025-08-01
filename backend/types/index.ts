@@ -55,9 +55,24 @@ export interface IStory extends Document {
     keywords?: string[];
     sentiment?: 'positive' | 'neutral' | 'negative';
   };
+  metadata?: {
+    wordCount?: number;
+    readingTime?: number;
+    lastModified?: Date;
+  };
+  privacy?: {
+    isPublic: boolean;
+    sharedWith?: string[];
+  };
+  legacyBook?: {
+    included: boolean;
+    pageNumber?: number;
+    chapter?: string;
+  };
   status: 'draft' | 'recorded' | 'transcribed' | 'edited' | 'published';
   createdAt: Date;
   updatedAt: Date;
+  wordCount?: number;
 }
 
 // Message Types
@@ -71,6 +86,7 @@ export interface IMessage extends Document {
     phone?: string;
   };
   title: string;
+  message?: string;
   type: 'birthday' | 'anniversary' | 'holiday' | 'daily' | 'encouragement' | 'memory' | 'other';
   content?: {
     videoUrl?: string;
@@ -84,7 +100,18 @@ export interface IMessage extends Document {
     language?: string;
     status: 'pending' | 'processing' | 'completed' | 'failed' | 'not_available';
   };
+  privacy?: {
+    isPrivate: boolean;
+    sharedWith?: string[];
+  };
+  metadata?: {
+    tags?: string[];
+    notes?: string;
+  };
   status: 'draft' | 'recorded' | 'scheduled' | 'sent' | 'delivered' | 'viewed';
+  scheduledFor?: Date;
+  deliveredAt?: Date;
+  viewedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -96,6 +123,46 @@ export interface ILegacyBook extends Document {
   title: string;
   subtitle?: string;
   dedication?: string;
+  coverImage?: {
+    url?: string;
+    alt?: string;
+  };
+  content?: {
+    chapters?: Array<{
+      title: string;
+      content: string;
+      order: number;
+    }>;
+    introduction?: string;
+    conclusion?: string;
+  };
+  design?: {
+    theme: string;
+    fontFamily: string;
+    fontSize: number;
+    spacing: number;
+    colorScheme: string;
+  };
+  files?: {
+    pdf?: string;
+    epub?: string;
+    print?: string;
+  };
+  format?: {
+    wordCount?: number;
+    pageCount?: number;
+    estimatedReadingTime?: number;
+  };
+  metadata?: {
+    lastModified?: Date;
+    version?: number;
+  };
+  recipients?: Array<{
+    name: string;
+    relationship: string;
+    email?: string;
+    phone?: string;
+  }>;
   stories: Array<{
     story: string | IStory;
     order: number;
@@ -109,6 +176,10 @@ export interface ILegacyBook extends Document {
   status: 'draft' | 'in-progress' | 'review' | 'approved' | 'published' | 'delivered';
   createdAt: Date;
   updatedAt: Date;
+  addStory(storyId: string, order?: number): Promise<ILegacyBook>;
+  removeStory(storyId: string): Promise<ILegacyBook>;
+  updateStatus(newStatus: string): Promise<ILegacyBook>;
+  addRecipient(recipientData: any): Promise<ILegacyBook>;
 }
 
 // Request Types

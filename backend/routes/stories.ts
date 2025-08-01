@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
       await fs.mkdir(uploadDir, { recursive: true });
       cb(null, uploadDir);
     } catch (error) {
-      cb(error as Error);
+      cb(error as Error, uploadDir);
     }
   },
   filename: (req: AuthenticatedRequest, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
@@ -365,7 +365,7 @@ router.post('/:storyId/upload', authenticateToken, requireOwnershipOrStaff('stor
       duration: Number(duration) || 0,
       fileSize: req.file.size,
       format: isVideo ? 'video' : 'audio'
-    };
+    } as any;
     story.status = 'recorded';
 
     await story.save();

@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
       await fs.mkdir(uploadDir, { recursive: true });
       cb(null, uploadDir);
     } catch (error) {
-      cb(error as Error);
+      cb(error as Error, uploadDir);
     }
   },
   filename: (req: AuthenticatedRequest, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
@@ -275,13 +275,13 @@ router.post('/:messageId/upload', authenticateToken, requireOwnershipOrStaff('me
       audioUrl: isVideo ? undefined : fileUrl,
       duration: Number(duration) || 0,
       fileSize: req.file.size
-    };
+    } as any;
     message.status = 'recorded';
 
     await message.save();
 
     // Start transcription if OpenAI is available
-    if (openai) {
+    if (openai && req.file?.path) {
       transcribeMessage(messageId, req.file.path).catch(console.error);
     }
 
@@ -425,7 +425,7 @@ async function transcribeMessage(messageId: string, filePath: string): Promise<v
     await message.save();
 
     const transcription = await openai.audio.transcriptions.create({
-      file: await fs.readFile(filePath),
+      file: await fs.readFile(filePath) as any,
       model: "whisper-1",
     });
 
