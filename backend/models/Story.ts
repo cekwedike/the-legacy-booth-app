@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document } from 'mongoose';
+import { IStory } from '../types';
 
-const storySchema = new mongoose.Schema({
+const storySchema = new Schema<IStory>({
   resident: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -101,21 +102,21 @@ storySchema.index({ 'transcription.status': 1 });
 storySchema.index({ status: 1 });
 
 // Virtual for story length
-storySchema.virtual('wordCount').get(function() {
-  if (!this.content.editedText) return 0;
+storySchema.virtual('wordCount').get(function(this: IStory): number {
+  if (!this.content?.editedText) return 0;
   return this.content.editedText.split(/\s+/).length;
 });
 
 // Virtual for reading time (average 200 words per minute)
-storySchema.virtual('readingTime').get(function() {
+storySchema.virtual('readingTime').get(function(this: IStory): number {
   return Math.ceil(this.wordCount / 200);
 });
 
 // Method to get story summary
-storySchema.methods.getSummary = function() {
-  if (this.content.summary) return this.content.summary;
+storySchema.methods.getSummary = function(this: IStory): string {
+  if (this.content?.summary) return this.content.summary;
   
-  if (this.content.editedText) {
+  if (this.content?.editedText) {
     const words = this.content.editedText.split(' ');
     return words.slice(0, 50).join(' ') + (words.length > 50 ? '...' : '');
   }
@@ -123,4 +124,4 @@ storySchema.methods.getSummary = function() {
   return 'No content available';
 };
 
-module.exports = mongoose.model('Story', storySchema); 
+export default mongoose.model<IStory>('Story', storySchema); 

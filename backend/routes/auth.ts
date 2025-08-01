@@ -1,6 +1,8 @@
-const express = require('express');
-const User = require('../models/User');
-const { authenticateToken, generateToken, requireRole } = require('../middleware/auth');
+import express from 'express';
+import User from '../models/User';
+import { authenticateToken, generateToken, requireRole } from '../middleware/auth';
+import { AuthenticatedRequest, RegisterRequest, LoginRequest } from '../types';
+
 const router = express.Router();
 
 /**
@@ -46,9 +48,9 @@ const router = express.Router();
  *         description: Registration failed
  */
 // Register new user (public)
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: express.Request, res: express.Response) => {
   try {
-    const { name, email, password, role, roomNumber, dateOfBirth, emergencyContact } = req.body;
+    const { name, email, password, role, roomNumber, dateOfBirth, emergencyContact }: RegisterRequest = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -108,24 +110,30 @@ router.post('/register', async (req, res) => {
  *     responses:
  *       200:
  *         description: Login successful
- *       400:
- *         description: Email and password required
  *       401:
  *         description: Invalid credentials
  *       500:
  *         description: Login failed
  */
-// Login
-router.post('/login', async (req, res) => {
+// Login user (public)
+router.post('/login', async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password }: LoginRequest = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required' });
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = await User.findOne({ email });
-    if (!user || !user.isActive) {
+    // Check if user is active
+    if (!user.isActive) {
+      return res.status(401).json({ error: 'Account is deactivated' });
+    }
+
+    // Verify password
+    const isValidPassword = await user.comparePassword(password);
+    if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -133,6 +141,7 @@ router.post('/login', async (req, res) => {
     user.lastLogin = new Date();
     await user.save();
 
+    // Generate JWT token
     const token = generateToken(user._id);
 
     res.json({
@@ -150,17 +159,36 @@ router.post('/login', async (req, res) => {
  * @swagger
  * /api/auth/profile:
  *   get:
- *     summary: Get current user profile
+ *     summary: Get user profile
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile
+ *         description: User profile retrieved successfully
  *       401:
  *         description: Unauthorized
- *       500:
- *         description: Failed to fetch profile
+ */
+// Get user profile (protected)
+router.get('/profile', authenticateToken, async (req: AuthenticatedRequest, res: express.Response) => {
+  try {
+    const user = await User.findById(req.user!._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      user: user.toJSON()
+    });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/auth/profile:
  *   put:
  *     summary: Update user profile
  *     tags: [Auth]
@@ -177,42 +205,28 @@ router.post('/login', async (req, res) => {
  *                 type: string
  *               preferences:
  *                 type: object
- *               emergencyContact:
- *                 type: string
  *     responses:
  *       200:
  *         description: Profile updated successfully
  *       401:
  *         description: Unauthorized
  *       500:
- *         description: Failed to update profile
+ *         description: Update failed
  */
-// Get current user profile
-router.get('/profile', authenticateToken, async (req, res) => {
+// Update user profile (protected)
+router.put('/profile', authenticateToken, async (req: AuthenticatedRequest, res: express.Response) => {
   try {
-    const user = await User.findById(req.user._id);
-    res.json({ user: user.toJSON() });
-  } catch (error) {
-    console.error('Profile fetch error:', error);
-    res.status(500).json({ error: 'Failed to fetch profile' });
-  }
-});
+    const { name, preferences } = req.body;
+    const user = await User.findById(req.user!._id);
 
-// Update user profile
-router.put('/profile', authenticateToken, async (req, res) => {
-  try {
-    const { name, preferences, emergencyContact } = req.body;
-    const updates = {};
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    if (name) updates.name = name;
-    if (preferences) updates.preferences = { ...req.user.preferences, ...preferences };
-    if (emergencyContact) updates.emergencyContact = emergencyContact;
+    if (name) user.name = name;
+    if (preferences) user.preferences = { ...user.preferences, ...preferences };
 
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      updates,
-      { new: true, runValidators: true }
-    );
+    await user.save();
 
     res.json({
       message: 'Profile updated successfully',
@@ -227,7 +241,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
 /**
  * @swagger
  * /api/auth/change-password:
- *   put:
+ *   post:
  *     summary: Change user password
  *     tags: [Auth]
  *     security:
@@ -249,121 +263,142 @@ router.put('/profile', authenticateToken, async (req, res) => {
  *     responses:
  *       200:
  *         description: Password changed successfully
- *       400:
- *         description: Current and new password required or incorrect
  *       401:
- *         description: Unauthorized
+ *         description: Invalid current password
  *       500:
- *         description: Failed to change password
+ *         description: Password change failed
  */
-// Change password
-router.put('/change-password', authenticateToken, async (req, res) => {
+// Change password (protected)
+router.post('/change-password', authenticateToken, async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user!._id);
 
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: 'Current and new password required' });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    const user = await User.findById(req.user._id);
-    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
-
-    if (!isCurrentPasswordValid) {
-      return res.status(400).json({ error: 'Current password is incorrect' });
+    // Verify current password
+    const isValidPassword = await user.comparePassword(currentPassword);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid current password' });
     }
 
+    // Update password
     user.password = newPassword;
     await user.save();
 
-    res.json({ message: 'Password changed successfully' });
+    res.json({
+      message: 'Password changed successfully'
+    });
   } catch (error) {
     console.error('Password change error:', error);
     res.status(500).json({ error: 'Failed to change password' });
   }
 });
 
-// Get all users (staff/admin only)
-router.get('/users', authenticateToken, requireRole(['staff', 'admin']), async (req, res) => {
+/**
+ * @swagger
+ * /api/auth/users:
+ *   get:
+ *     summary: Get all users (admin only)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *         description: Filter by user role
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Filter by user status
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *       403:
+ *         description: Insufficient permissions
+ */
+// Get all users (admin only)
+router.get('/users', authenticateToken, requireRole(['admin', 'staff']), async (req: AuthenticatedRequest, res: express.Response) => {
   try {
-    const { role, isActive } = req.query;
-    const filter = {};
+    const { role, status } = req.query;
+    const filter: any = {};
 
     if (role) filter.role = role;
-    if (isActive !== undefined) filter.isActive = isActive === 'true';
+    if (status) filter.isActive = status === 'active';
 
-    const users = await User.find(filter).select('-password');
-    res.json({ users });
+    const users = await User.find(filter).select('-password').sort({ createdAt: -1 });
+
+    res.json({
+      users: users.map(user => user.toJSON())
+    });
   } catch (error) {
     console.error('Users fetch error:', error);
     res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 
-// Toggle user active status (staff/admin only)
-router.put('/users/:userId/toggle-status', authenticateToken, requireRole(['staff', 'admin']), async (req, res) => {
+/**
+ * @swagger
+ * /api/auth/users/{userId}:
+ *   put:
+ *     summary: Update user (admin only)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isActive:
+ *                 type: boolean
+ *               role:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       403:
+ *         description: Insufficient permissions
+ *       404:
+ *         description: User not found
+ */
+// Update user (admin only)
+router.put('/users/:userId', authenticateToken, requireRole(['admin']), async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId);
+    const { isActive, role } = req.body;
 
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    user.isActive = !user.isActive;
+    if (typeof isActive === 'boolean') user.isActive = isActive;
+    if (role) user.role = role;
+
     await user.save();
 
     res.json({
-      message: `User ${user.isActive ? 'activated' : 'deactivated'} successfully`,
+      message: 'User updated successfully',
       user: user.toJSON()
     });
   } catch (error) {
-    console.error('User status toggle error:', error);
-    res.status(500).json({ error: 'Failed to toggle user status' });
+    console.error('User update error:', error);
+    res.status(500).json({ error: 'Failed to update user' });
   }
 });
 
-/**
- * @swagger
- * /api/auth/verify:
- *   get:
- *     summary: Verify JWT token
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Token is valid
- *       401:
- *         description: Unauthorized
- */
-// Verify token
-router.get('/verify', authenticateToken, (req, res) => {
-  res.json({ valid: true, user: req.user.toJSON() });
-});
-
-/**
- * @swagger
- * /api/auth/me:
- *   get:
- *     summary: Get current authenticated user
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Authenticated user
- *       401:
- *         description: Unauthorized
- */
-router.get('/me', authenticateToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user.toJSON());
-  } catch (error) {
-    console.error('Auth me error:', error);
-    res.status(500).json({ error: 'Failed to fetch user' });
-  }
-});
-
-module.exports = router; 
+export default router; 

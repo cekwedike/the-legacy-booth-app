@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document } from 'mongoose';
+import { IMessage } from '../types';
 
-const messageSchema = new mongoose.Schema({
+const messageSchema = new Schema<IMessage>({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -111,31 +112,31 @@ messageSchema.index({ scheduledFor: 1, status: 1 });
 messageSchema.index({ 'delivery.attempts': 1 });
 
 // Virtual for message age
-messageSchema.virtual('age').get(function() {
-  return Math.floor((Date.now() - this.createdAt) / (1000 * 60 * 60 * 24));
+messageSchema.virtual('age').get(function(this: IMessage): number {
+  return Math.floor((Date.now() - this.createdAt.getTime()) / (1000 * 60 * 60 * 24));
 });
 
 // Virtual for delivery status
-messageSchema.virtual('isDelivered').get(function() {
+messageSchema.virtual('isDelivered').get(function(this: IMessage): boolean {
   return this.status === 'delivered' || this.status === 'viewed';
 });
 
 // Method to mark as delivered
-messageSchema.methods.markAsDelivered = function() {
+messageSchema.methods.markAsDelivered = function(this: IMessage): Promise<IMessage> {
   this.status = 'delivered';
   this.deliveredAt = new Date();
   return this.save();
 };
 
 // Method to mark as viewed
-messageSchema.methods.markAsViewed = function() {
+messageSchema.methods.markAsViewed = function(this: IMessage): Promise<IMessage> {
   this.status = 'viewed';
   this.viewedAt = new Date();
   return this.save();
 };
 
 // Method to get delivery status
-messageSchema.methods.getDeliveryStatus = function() {
+messageSchema.methods.getDeliveryStatus = function(this: IMessage): string {
   if (this.status === 'viewed') return 'Viewed';
   if (this.status === 'delivered') return 'Delivered';
   if (this.status === 'sent') return 'Sent';
@@ -144,4 +145,4 @@ messageSchema.methods.getDeliveryStatus = function() {
   return 'Draft';
 };
 
-module.exports = mongoose.model('Message', messageSchema); 
+export default mongoose.model<IMessage>('Message', messageSchema); 

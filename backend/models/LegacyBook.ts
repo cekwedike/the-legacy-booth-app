@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document } from 'mongoose';
+import { ILegacyBook } from '../types';
 
-const legacyBookSchema = new mongoose.Schema({
+const legacyBookSchema = new Schema<ILegacyBook>({
   resident: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -181,7 +182,7 @@ legacyBookSchema.index({ 'recipients.email': 1 });
 legacyBookSchema.index({ status: 1, 'publishing.estimatedDelivery': 1 });
 
 // Virtual for book completion percentage
-legacyBookSchema.virtual('completionPercentage').get(function() {
+legacyBookSchema.virtual('completionPercentage').get(function(this: ILegacyBook): number {
   if (this.status === 'delivered') return 100;
   if (this.status === 'published') return 90;
   if (this.status === 'approved') return 80;
@@ -191,12 +192,12 @@ legacyBookSchema.virtual('completionPercentage').get(function() {
 });
 
 // Virtual for total word count
-legacyBookSchema.virtual('totalWordCount').get(function() {
-  return this.format.wordCount || 0;
+legacyBookSchema.virtual('totalWordCount').get(function(this: ILegacyBook): number {
+  return this.format?.wordCount || 0;
 });
 
 // Method to add story to book
-legacyBookSchema.methods.addStory = function(storyId, order = 0) {
+legacyBookSchema.methods.addStory = function(this: ILegacyBook, storyId: string, order: number = 0): Promise<ILegacyBook> {
   const existingStory = this.stories.find(s => s.story.toString() === storyId.toString());
   if (!existingStory) {
     this.stories.push({ story: storyId, order });
@@ -206,22 +207,22 @@ legacyBookSchema.methods.addStory = function(storyId, order = 0) {
 };
 
 // Method to remove story from book
-legacyBookSchema.methods.removeStory = function(storyId) {
+legacyBookSchema.methods.removeStory = function(this: ILegacyBook, storyId: string): Promise<ILegacyBook> {
   this.stories = this.stories.filter(s => s.story.toString() !== storyId.toString());
   return this.save();
 };
 
 // Method to update book status
-legacyBookSchema.methods.updateStatus = function(newStatus) {
-  this.status = newStatus;
+legacyBookSchema.methods.updateStatus = function(this: ILegacyBook, newStatus: string): Promise<ILegacyBook> {
+  this.status = newStatus as any;
   this.metadata.lastModified = new Date();
   return this.save();
 };
 
 // Method to add recipient
-legacyBookSchema.methods.addRecipient = function(recipientData) {
+legacyBookSchema.methods.addRecipient = function(this: ILegacyBook, recipientData: any): Promise<ILegacyBook> {
   this.recipients.push(recipientData);
   return this.save();
 };
 
-module.exports = mongoose.model('LegacyBook', legacyBookSchema); 
+export default mongoose.model<ILegacyBook>('LegacyBook', legacyBookSchema); 

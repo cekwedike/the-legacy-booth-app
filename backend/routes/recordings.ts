@@ -1,7 +1,9 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs').promises;
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs/promises';
+import { AuthenticatedRequest } from '../types';
+
 const router = express.Router();
 
 /**
@@ -40,18 +42,18 @@ const router = express.Router();
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
+  destination: async (req: any, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
     const uploadDir = path.join(__dirname, '../uploads/recordings');
     try {
       await fs.mkdir(uploadDir, { recursive: true });
       cb(null, uploadDir);
     } catch (error) {
-      cb(error);
+      cb(error as Error);
     }
   },
-  filename: (req, file, cb) => {
+  filename: (req: AuthenticatedRequest, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `recording-${req.user._id}-${uniqueSuffix}${path.extname(file.originalname)}`);
+    cb(null, `recording-${req.user!._id}-${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
 
@@ -60,7 +62,7 @@ const upload = multer({
   limits: {
     fileSize: 100 * 1024 * 1024, // 100MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowedTypes = ['audio/wav', 'audio/mp3', 'audio/m4a', 'video/mp4', 'video/webm'];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
@@ -71,7 +73,7 @@ const upload = multer({
 });
 
 // Upload recording
-router.post('/upload', upload.single('recording'), async (req, res) => {
+router.post('/upload', upload.single('recording'), async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No recording file provided' });
@@ -96,4 +98,4 @@ router.post('/upload', upload.single('recording'), async (req, res) => {
   }
 });
 
-module.exports = router; 
+export default router; 

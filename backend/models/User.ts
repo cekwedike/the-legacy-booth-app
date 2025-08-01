@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose, { Schema, Document } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { IUser } from '../types';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema<IUser>({
   name: {
     type: String,
     required: true,
@@ -26,11 +27,11 @@ const userSchema = new mongoose.Schema({
   },
   roomNumber: {
     type: String,
-    required: function() { return this.role === 'resident'; }
+    required: function(this: IUser) { return this.role === 'resident'; }
   },
   dateOfBirth: {
     type: Date,
-    required: function() { return this.role === 'resident'; }
+    required: function(this: IUser) { return this.role === 'resident'; }
   },
   emergencyContact: {
     name: String,
@@ -75,17 +76,17 @@ userSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
-    next(error);
+    next(error as Error);
   }
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Get user age
-userSchema.virtual('age').get(function() {
+userSchema.virtual('age').get(function(this: IUser): number | null {
   if (!this.dateOfBirth) return null;
   const today = new Date();
   const birthDate = new Date(this.dateOfBirth);
@@ -100,10 +101,10 @@ userSchema.virtual('age').get(function() {
 });
 
 // Remove password from JSON output
-userSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function(this: IUser): any {
   const user = this.toObject();
   delete user.password;
   return user;
 };
 
-module.exports = mongoose.model('User', userSchema); 
+export default mongoose.model<IUser>('User', userSchema); 
