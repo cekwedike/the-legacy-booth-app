@@ -36,7 +36,7 @@ const AdminDashboard: React.FC = () => {
           <Grid item xs={12} md={6} lg={3}>
             <Card>
               <CardContent>
-                <Typography variant="h6">Total Messages</Typography>
+                <Typography variant="h6">Total Messages</Typography
                 <Typography variant="h4">0</Typography>
               </CardContent>
             </Card>
